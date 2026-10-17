@@ -1,0 +1,966 @@
+{
+  "nodes": [
+    {
+      "name": "edge-gateway",
+      "tier": 1,
+      "revenue_critical": true,
+      "customer_facing": false,
+      "language": "go",
+      "description": "North-south edge router and TLS termination",
+      "team": "Infrastructure"
+    },
+    {
+      "name": "web-bff",
+      "tier": 1,
+      "revenue_critical": true,
+      "customer_facing": true,
+      "language": "ts",
+      "description": "Backend-for-frontend for the web storefront",
+      "team": "Storefront"
+    },
+    {
+      "name": "mobile-bff",
+      "tier": 1,
+      "revenue_critical": true,
+      "customer_facing": true,
+      "language": "ts",
+      "description": "Backend-for-frontend for iOS and Android",
+      "team": "Storefront"
+    },
+    {
+      "name": "partner-api",
+      "tier": 1,
+      "revenue_critical": true,
+      "customer_facing": true,
+      "language": "go",
+      "description": "Public partner REST API and webhooks",
+      "team": "Growth"
+    },
+    {
+      "name": "admin-console",
+      "tier": 1,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "ts",
+      "description": "Internal operator console",
+      "team": "Infrastructure"
+    },
+    {
+      "name": "status-page",
+      "tier": 1,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "ts",
+      "description": "Public status and uptime page",
+      "team": "Infrastructure"
+    },
+    {
+      "name": "health-aggregator",
+      "tier": 2,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "go",
+      "description": "Rolls up service health probes",
+      "team": "Infrastructure"
+    },
+    {
+      "name": "order-orchestrator",
+      "tier": 2,
+      "revenue_critical": true,
+      "customer_facing": false,
+      "language": "java",
+      "description": "Saga orchestration for order placement",
+      "team": "Storefront"
+    },
+    {
+      "name": "checkout-api",
+      "tier": 2,
+      "revenue_critical": true,
+      "customer_facing": false,
+      "language": "ts",
+      "description": "Checkout session and payment intent handling",
+      "team": "Storefront"
+    },
+    {
+      "name": "cart-service",
+      "tier": 2,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "ts",
+      "description": "Cart persistence and pricing preview",
+      "team": "Storefront"
+    },
+    {
+      "name": "catalog-api",
+      "tier": 2,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "java",
+      "description": "Product catalog reads",
+      "team": "Storefront"
+    },
+    {
+      "name": "search-api",
+      "tier": 2,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "go",
+      "description": "Product search and faceting",
+      "team": "Storefront"
+    },
+    {
+      "name": "recommendation-api",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "python",
+      "description": "Related-products model serving",
+      "team": "Storefront"
+    },
+    {
+      "name": "loyalty-service",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "java",
+      "description": "Points accrual and redemption",
+      "team": "Growth"
+    },
+    {
+      "name": "receipts-service",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "ts",
+      "description": "Receipt generation and archival",
+      "team": "Growth"
+    },
+    {
+      "name": "fraud-screen",
+      "tier": 2,
+      "revenue_critical": true,
+      "customer_facing": false,
+      "language": "python",
+      "description": "Realtime fraud scoring on checkout",
+      "team": "Identity"
+    },
+    {
+      "name": "email-dispatch",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "ts",
+      "description": "Transactional email delivery",
+      "team": "Growth"
+    },
+    {
+      "name": "webhook-relay",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "go",
+      "description": "Outbound webhook fan-out with retries",
+      "team": "Growth"
+    },
+    {
+      "name": "analytics-ingest",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "go",
+      "description": "Clickstream and order event ingestion",
+      "team": "Growth"
+    },
+    {
+      "name": "notifications-api",
+      "tier": 2,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "ts",
+      "description": "Notification preferences and fan-out",
+      "team": "Growth"
+    },
+    {
+      "name": "push-gateway",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "go",
+      "description": "APNs and FCM push delivery",
+      "team": "Growth"
+    },
+    {
+      "name": "template-renderer",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "ts",
+      "description": "Handlebars template rendering service",
+      "team": "Growth"
+    },
+    {
+      "name": "user-profile",
+      "tier": 2,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "java",
+      "description": "User profile and preferences",
+      "team": "Identity"
+    },
+    {
+      "name": "auth-service",
+      "tier": 1,
+      "revenue_critical": true,
+      "customer_facing": false,
+      "language": "go",
+      "description": "OIDC token issuance and introspection",
+      "team": "Identity"
+    },
+    {
+      "name": "session-store",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "go",
+      "description": "Session state with TTL eviction",
+      "team": "Identity"
+    },
+    {
+      "name": "permissions-api",
+      "tier": 2,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "java",
+      "description": "RBAC policy evaluation",
+      "team": "Identity"
+    },
+    {
+      "name": "billing-api",
+      "tier": 2,
+      "revenue_critical": true,
+      "customer_facing": false,
+      "language": "java",
+      "description": "Subscription and invoice orchestration",
+      "team": "Payments Platform"
+    },
+    {
+      "name": "payments-api",
+      "tier": 2,
+      "revenue_critical": true,
+      "customer_facing": false,
+      "language": "java",
+      "description": "Payment authorization and capture",
+      "team": "Payments Platform"
+    },
+    {
+      "name": "ledger-service",
+      "tier": 2,
+      "revenue_critical": true,
+      "customer_facing": false,
+      "language": "ts",
+      "description": "Double-entry ledger, source of financial truth",
+      "team": "Payments Platform"
+    },
+    {
+      "name": "invoice-service",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "java",
+      "description": "Invoice PDF generation",
+      "team": "Payments Platform"
+    },
+    {
+      "name": "tax-engine",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "python",
+      "description": "Jurisdictional tax calculation",
+      "team": "Payments Platform"
+    },
+    {
+      "name": "currency-oracle",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "go",
+      "description": "FX rate cache and conversion",
+      "team": "Payments Platform"
+    },
+    {
+      "name": "settlement-worker",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "java",
+      "description": "Nightly settlement batch",
+      "team": "Payments Platform"
+    },
+    {
+      "name": "reconciliation-job",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "python",
+      "description": "Ledger-to-bank reconciliation",
+      "team": "Payments Platform"
+    },
+    {
+      "name": "inventory-service",
+      "tier": 2,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "java",
+      "description": "Stock levels and reservations",
+      "team": "Infrastructure"
+    },
+    {
+      "name": "shipping-api",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "go",
+      "description": "Carrier rates and label purchase",
+      "team": "Infrastructure"
+    },
+    {
+      "name": "pricing-engine",
+      "tier": 2,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "python",
+      "description": "Dynamic price and promotion resolution",
+      "team": "Storefront"
+    },
+    {
+      "name": "feature-flags",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "go",
+      "description": "Flag evaluation at the edge",
+      "team": "Infrastructure"
+    },
+    {
+      "name": "postgres-primary",
+      "tier": 3,
+      "revenue_critical": true,
+      "customer_facing": false,
+      "language": "sql",
+      "description": "Primary OLTP Postgres cluster",
+      "team": "Infrastructure"
+    },
+    {
+      "name": "redis-cache",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "c",
+      "description": "Shared Redis cache and rate limiter",
+      "team": "Infrastructure"
+    },
+    {
+      "name": "kafka-bus",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "scala",
+      "description": "Event backbone",
+      "team": "Infrastructure"
+    },
+    {
+      "name": "object-store",
+      "tier": 3,
+      "revenue_critical": false,
+      "customer_facing": false,
+      "language": "c",
+      "description": "S3-compatible blob storage",
+      "team": "Infrastructure"
+    }
+  ],
+  "edges": [
+    {
+      "source": "edge-gateway",
+      "target": "web-bff",
+      "criticality": 5,
+      "protocol": "http"
+    },
+    {
+      "source": "edge-gateway",
+      "target": "mobile-bff",
+      "criticality": 5,
+      "protocol": "http"
+    },
+    {
+      "source": "edge-gateway",
+      "target": "partner-api",
+      "criticality": 4,
+      "protocol": "http"
+    },
+    {
+      "source": "edge-gateway",
+      "target": "admin-console",
+      "criticality": 2,
+      "protocol": "http"
+    },
+    {
+      "source": "edge-gateway",
+      "target": "status-page",
+      "criticality": 1,
+      "protocol": "http"
+    },
+    {
+      "source": "web-bff",
+      "target": "order-orchestrator",
+      "criticality": 5,
+      "protocol": "grpc"
+    },
+    {
+      "source": "web-bff",
+      "target": "cart-service",
+      "criticality": 4,
+      "protocol": "http"
+    },
+    {
+      "source": "web-bff",
+      "target": "catalog-api",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "web-bff",
+      "target": "search-api",
+      "criticality": 2,
+      "protocol": "http"
+    },
+    {
+      "source": "web-bff",
+      "target": "recommendation-api",
+      "criticality": 1,
+      "protocol": "http"
+    },
+    {
+      "source": "web-bff",
+      "target": "auth-service",
+      "criticality": 5,
+      "protocol": "grpc"
+    },
+    {
+      "source": "mobile-bff",
+      "target": "order-orchestrator",
+      "criticality": 5,
+      "protocol": "grpc"
+    },
+    {
+      "source": "mobile-bff",
+      "target": "cart-service",
+      "criticality": 4,
+      "protocol": "http"
+    },
+    {
+      "source": "mobile-bff",
+      "target": "catalog-api",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "mobile-bff",
+      "target": "notifications-api",
+      "criticality": 2,
+      "protocol": "http"
+    },
+    {
+      "source": "mobile-bff",
+      "target": "auth-service",
+      "criticality": 5,
+      "protocol": "grpc"
+    },
+    {
+      "source": "partner-api",
+      "target": "order-orchestrator",
+      "criticality": 4,
+      "protocol": "grpc"
+    },
+    {
+      "source": "partner-api",
+      "target": "loyalty-service",
+      "criticality": 2,
+      "protocol": "http"
+    },
+    {
+      "source": "partner-api",
+      "target": "auth-service",
+      "criticality": 5,
+      "protocol": "grpc"
+    },
+    {
+      "source": "admin-console",
+      "target": "order-orchestrator",
+      "criticality": 2,
+      "protocol": "grpc"
+    },
+    {
+      "source": "admin-console",
+      "target": "auth-service",
+      "criticality": 4,
+      "protocol": "grpc"
+    },
+    {
+      "source": "admin-console",
+      "target": "permissions-api",
+      "criticality": 4,
+      "protocol": "grpc"
+    },
+    {
+      "source": "status-page",
+      "target": "health-aggregator",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "health-aggregator",
+      "target": "notifications-api",
+      "criticality": 2,
+      "protocol": "http"
+    },
+    {
+      "source": "order-orchestrator",
+      "target": "checkout-api",
+      "criticality": 5,
+      "protocol": "grpc"
+    },
+    {
+      "source": "order-orchestrator",
+      "target": "inventory-service",
+      "criticality": 4,
+      "protocol": "grpc"
+    },
+    {
+      "source": "order-orchestrator",
+      "target": "shipping-api",
+      "criticality": 2,
+      "protocol": "http"
+    },
+    {
+      "source": "checkout-api",
+      "target": "fraud-screen",
+      "criticality": 3,
+      "protocol": "grpc"
+    },
+    {
+      "source": "checkout-api",
+      "target": "user-profile",
+      "criticality": 2,
+      "protocol": "http"
+    },
+    {
+      "source": "checkout-api",
+      "target": "auth-service",
+      "criticality": 4,
+      "protocol": "grpc"
+    },
+    {
+      "source": "checkout-api",
+      "target": "payments-api",
+      "criticality": 5,
+      "protocol": "grpc"
+    },
+    {
+      "source": "checkout-api",
+      "target": "inventory-service",
+      "criticality": 4,
+      "protocol": "grpc"
+    },
+    {
+      "source": "checkout-api",
+      "target": "pricing-engine",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "checkout-api",
+      "target": "feature-flags",
+      "criticality": 1,
+      "protocol": "http"
+    },
+    {
+      "source": "cart-service",
+      "target": "checkout-api",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "cart-service",
+      "target": "catalog-api",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "cart-service",
+      "target": "redis-cache",
+      "criticality": 4,
+      "protocol": "resp"
+    },
+    {
+      "source": "catalog-api",
+      "target": "postgres-primary",
+      "criticality": 5,
+      "protocol": "pg"
+    },
+    {
+      "source": "catalog-api",
+      "target": "redis-cache",
+      "criticality": 3,
+      "protocol": "resp"
+    },
+    {
+      "source": "search-api",
+      "target": "catalog-api",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "search-api",
+      "target": "redis-cache",
+      "criticality": 2,
+      "protocol": "resp"
+    },
+    {
+      "source": "recommendation-api",
+      "target": "catalog-api",
+      "criticality": 2,
+      "protocol": "http"
+    },
+    {
+      "source": "recommendation-api",
+      "target": "search-api",
+      "criticality": 2,
+      "protocol": "http"
+    },
+    {
+      "source": "loyalty-service",
+      "target": "checkout-api",
+      "criticality": 2,
+      "protocol": "http"
+    },
+    {
+      "source": "loyalty-service",
+      "target": "postgres-primary",
+      "criticality": 4,
+      "protocol": "pg"
+    },
+    {
+      "source": "receipts-service",
+      "target": "checkout-api",
+      "criticality": 2,
+      "protocol": "http"
+    },
+    {
+      "source": "receipts-service",
+      "target": "template-renderer",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "receipts-service",
+      "target": "object-store",
+      "criticality": 3,
+      "protocol": "s3"
+    },
+    {
+      "source": "fraud-screen",
+      "target": "ledger-service",
+      "criticality": 2,
+      "protocol": "grpc"
+    },
+    {
+      "source": "fraud-screen",
+      "target": "redis-cache",
+      "criticality": 4,
+      "protocol": "resp"
+    },
+    {
+      "source": "email-dispatch",
+      "target": "receipts-service",
+      "criticality": 2,
+      "protocol": "http"
+    },
+    {
+      "source": "email-dispatch",
+      "target": "template-renderer",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "webhook-relay",
+      "target": "notifications-api",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "webhook-relay",
+      "target": "kafka-bus",
+      "criticality": 4,
+      "protocol": "kafka"
+    },
+    {
+      "source": "analytics-ingest",
+      "target": "checkout-api",
+      "criticality": 1,
+      "protocol": "kafka"
+    },
+    {
+      "source": "analytics-ingest",
+      "target": "kafka-bus",
+      "criticality": 4,
+      "protocol": "kafka"
+    },
+    {
+      "source": "notifications-api",
+      "target": "push-gateway",
+      "criticality": 3,
+      "protocol": "grpc"
+    },
+    {
+      "source": "notifications-api",
+      "target": "template-renderer",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "notifications-api",
+      "target": "postgres-primary",
+      "criticality": 4,
+      "protocol": "pg"
+    },
+    {
+      "source": "notifications-api",
+      "target": "redis-cache",
+      "criticality": 4,
+      "protocol": "resp"
+    },
+    {
+      "source": "push-gateway",
+      "target": "template-renderer",
+      "criticality": 2,
+      "protocol": "http"
+    },
+    {
+      "source": "push-gateway",
+      "target": "object-store",
+      "criticality": 2,
+      "protocol": "s3"
+    },
+    {
+      "source": "template-renderer",
+      "target": "object-store",
+      "criticality": 2,
+      "protocol": "s3"
+    },
+    {
+      "source": "user-profile",
+      "target": "session-store",
+      "criticality": 3,
+      "protocol": "resp"
+    },
+    {
+      "source": "user-profile",
+      "target": "postgres-primary",
+      "criticality": 4,
+      "protocol": "pg"
+    },
+    {
+      "source": "user-profile",
+      "target": "redis-cache",
+      "criticality": 3,
+      "protocol": "resp"
+    },
+    {
+      "source": "auth-service",
+      "target": "session-store",
+      "criticality": 5,
+      "protocol": "resp"
+    },
+    {
+      "source": "auth-service",
+      "target": "permissions-api",
+      "criticality": 3,
+      "protocol": "grpc"
+    },
+    {
+      "source": "auth-service",
+      "target": "postgres-primary",
+      "criticality": 4,
+      "protocol": "pg"
+    },
+    {
+      "source": "session-store",
+      "target": "redis-cache",
+      "criticality": 5,
+      "protocol": "resp"
+    },
+    {
+      "source": "permissions-api",
+      "target": "postgres-primary",
+      "criticality": 4,
+      "protocol": "pg"
+    },
+    {
+      "source": "billing-api",
+      "target": "ledger-service",
+      "criticality": 5,
+      "protocol": "grpc"
+    },
+    {
+      "source": "billing-api",
+      "target": "invoice-service",
+      "criticality": 3,
+      "protocol": "grpc"
+    },
+    {
+      "source": "billing-api",
+      "target": "tax-engine",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "payments-api",
+      "target": "fraud-screen",
+      "criticality": 3,
+      "protocol": "grpc"
+    },
+    {
+      "source": "payments-api",
+      "target": "billing-api",
+      "criticality": 4,
+      "protocol": "grpc"
+    },
+    {
+      "source": "payments-api",
+      "target": "ledger-service",
+      "criticality": 5,
+      "protocol": "grpc"
+    },
+    {
+      "source": "payments-api",
+      "target": "currency-oracle",
+      "criticality": 2,
+      "protocol": "http"
+    },
+    {
+      "source": "ledger-service",
+      "target": "postgres-primary",
+      "criticality": 5,
+      "protocol": "pg"
+    },
+    {
+      "source": "ledger-service",
+      "target": "redis-cache",
+      "criticality": 3,
+      "protocol": "resp"
+    },
+    {
+      "source": "ledger-service",
+      "target": "kafka-bus",
+      "criticality": 3,
+      "protocol": "kafka"
+    },
+    {
+      "source": "invoice-service",
+      "target": "template-renderer",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "invoice-service",
+      "target": "object-store",
+      "criticality": 3,
+      "protocol": "s3"
+    },
+    {
+      "source": "tax-engine",
+      "target": "currency-oracle",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "currency-oracle",
+      "target": "redis-cache",
+      "criticality": 3,
+      "protocol": "resp"
+    },
+    {
+      "source": "settlement-worker",
+      "target": "ledger-service",
+      "criticality": 5,
+      "protocol": "grpc"
+    },
+    {
+      "source": "settlement-worker",
+      "target": "kafka-bus",
+      "criticality": 3,
+      "protocol": "kafka"
+    },
+    {
+      "source": "reconciliation-job",
+      "target": "settlement-worker",
+      "criticality": 3,
+      "protocol": "grpc"
+    },
+    {
+      "source": "reconciliation-job",
+      "target": "postgres-primary",
+      "criticality": 4,
+      "protocol": "pg"
+    },
+    {
+      "source": "inventory-service",
+      "target": "postgres-primary",
+      "criticality": 5,
+      "protocol": "pg"
+    },
+    {
+      "source": "inventory-service",
+      "target": "kafka-bus",
+      "criticality": 3,
+      "protocol": "kafka"
+    },
+    {
+      "source": "shipping-api",
+      "target": "inventory-service",
+      "criticality": 3,
+      "protocol": "grpc"
+    },
+    {
+      "source": "shipping-api",
+      "target": "postgres-primary",
+      "criticality": 3,
+      "protocol": "pg"
+    },
+    {
+      "source": "pricing-engine",
+      "target": "catalog-api",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "pricing-engine",
+      "target": "currency-oracle",
+      "criticality": 3,
+      "protocol": "http"
+    },
+    {
+      "source": "pricing-engine",
+      "target": "feature-flags",
+      "criticality": 2,
+      "protocol": "http"
+    },
+    {
+      "source": "feature-flags",
+      "target": "redis-cache",
+      "criticality": 4,
+      "protocol": "resp"
+    }
+  ]
+}

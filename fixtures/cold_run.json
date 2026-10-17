@@ -1,0 +1,2185 @@
+{
+  "scenario": "cold",
+  "recorded_with": "deterministic-planner",
+  "metrics": {
+    "type": "run_end",
+    "at": 1792203558385,
+    "run_id": "run-fcb9bc11",
+    "elapsed_ms": 215.6,
+    "tool_calls": 11,
+    "graph_latency_ms": 126.17,
+    "hops": 8,
+    "wrote": [
+      "CAUSED_BY",
+      "Postmortem",
+      "RESOLVED_BY"
+    ],
+    "recalled_memory": true,
+    "recalled_own_postmortem": false,
+    "mode": "deterministic-planner",
+    "memory": {
+      "self_authored_postmortems": 1,
+      "seeded_postmortems": 11,
+      "agent_steps": 11
+    }
+  },
+  "answer": {
+    "incident_id": "INC-3001",
+    "title": "checkout-api p99 latency breach",
+    "service": "checkout-api",
+    "severity": "SEV1",
+    "root_cause": {
+      "text": "PR #4471 deployed to ledger-service 23 minutes ago, touching src/db/connection-pool.ts",
+      "pr_number": 4471,
+      "service": "ledger-service",
+      "file": "src/db/connection-pool.ts",
+      "author": "Ben Ortiz",
+      "hops_upstream": 2,
+      "citation": 1
+    },
+    "blast_radius": {
+      "count": 11,
+      "customer_facing": [
+        "mobile-bff",
+        "partner-api",
+        "web-bff"
+      ],
+      "citation": 2
+    },
+    "propagation": {
+      "chain": [
+        "ledger-service",
+        "payments-api",
+        "checkout-api"
+      ],
+      "citation": 3
+    },
+    "page": {
+      "name": "Priya Raghavan",
+      "handle": "priya",
+      "role": "Staff Engineer",
+      "timezone": "Asia/Kolkata",
+      "team": "Payments Platform",
+      "commits": 47,
+      "prior_incidents_on_file": 1,
+      "instead_of_on_call": "Marcus Webb",
+      "citation": 4
+    },
+    "memory": {
+      "postmortem_id": "PM-INC-2041",
+      "incident_id": "INC-2041",
+      "lesson": "ledger-service ran a fixed Postgres pool of 20 connections. A retry storm from checkout-api saturated it and every caller queued on acquire, so p99 latency climbed while CPU stayed flat -- the signature of pool exhaustion rather than compute pressure. Fix was to raise the pool ceiling to 60 and add a per-caller bulkhead in src/db/connection-pool.ts so one noisy upstream cannot consume the whole pool. Check pool saturation before chasing CPU whenever latency rises with flat utilisation.",
+      "similarity": 0.4045,
+      "self_authored": false,
+      "written_by": "Priya Raghavan",
+      "citation": 5
+    },
+    "fix": {
+      "runbook": "Connection pool exhaustion -- ledger-service",
+      "body": "Symptom: p99 latency climbing while CPU stays flat, acquire timeouts in logs, waiters queueing on the connection pool.\n1. Check pool saturation: pg_stat_activity count vs the configured ceiling in src/db/connection-pool.ts.\n2. If saturated, raise the ceiling and restart rolling. Do not restart all replicas.\n3. Identify the noisy upstream from per-caller acquire metrics and rate limit it.\n4. Add or verify the per-caller bulkhead so one upstream cannot take the whole pool.\nEscalate to Payments Platform if the ledger balance endpoint is affected.",
+      "citation": 6
+    },
+    "narration": {
+      "Triage": "Resolved to checkout-api. 11 services degrade with it, 3 customer-facing (mobile-bff, partner-api, web-bff). Closest prior incident is INC-2041, related but not conclusive.",
+      "Investigator": "Root cause is PR #4471 deployed to ledger-service 23 minutes ago, 2 hops upstream of the alert, touching src/db/connection-pool.ts. Author Ben Ortiz. Propagation proven: ledger-service -> payments-api -> checkout-api.",
+      "Comms": "Paging Priya Raghavan (47 commits on the file, 1 prior incident(s) on it) rather than the rotation default Marcus Webb. Postmortem written back to the graph."
+    },
+    "wrote": [
+      "CAUSED_BY",
+      "Postmortem",
+      "RESOLVED_BY"
+    ],
+    "citations": [
+      {
+        "n": 1,
+        "label": "Deploy of PR #4471 to ledger-service",
+        "nodes": [
+          "PR#4471",
+          "ledger-service"
+        ],
+        "tool": "recent_changes"
+      },
+      {
+        "n": 2,
+        "label": "11 dependent services",
+        "nodes": [
+          "mobile-bff",
+          "partner-api",
+          "web-bff"
+        ],
+        "tool": "blast_radius"
+      },
+      {
+        "n": 3,
+        "label": "Criticality-weighted dependency path",
+        "nodes": [
+          "ledger-service",
+          "payments-api",
+          "checkout-api"
+        ],
+        "tool": "causal_path"
+      },
+      {
+        "n": 4,
+        "label": "Priya Raghavan via WORKED_ON",
+        "nodes": [
+          "Priya Raghavan",
+          "src/db/connection-pool.ts"
+        ],
+        "tool": "who_knows"
+      },
+      {
+        "n": 5,
+        "label": "Postmortem PM-INC-2041",
+        "nodes": [
+          "PM-INC-2041"
+        ],
+        "tool": "similar_incidents"
+      },
+      {
+        "n": 6,
+        "label": "Connection pool exhaustion -- ledger-service",
+        "nodes": [
+          "Connection pool exhaustion -- ledger-service"
+        ],
+        "tool": "get_runbook"
+      }
+    ]
+  },
+  "events": [
+    {
+      "type": "run_start",
+      "at": 1792203558169,
+      "run_id": "run-fcb9bc11",
+      "scenario": "cold",
+      "tenant": "acme",
+      "incident_id": "INC-3001",
+      "alert": {
+        "id": "ALRT-3001",
+        "metric": "p99_latency_ms",
+        "value": 4200.0,
+        "threshold": 1500.0,
+        "service": "checkout-api"
+      },
+      "symptom": "checkout-api p99 latency 4200ms, threshold 1500ms, error rate climbing, payment intent creation slow, CPU flat across replicas",
+      "title": "checkout-api p99 latency breach",
+      "severity": "SEV1",
+      "mode": "deterministic-planner",
+      "narrative": "Cold run. Nothing in memory names this deploy; the agent has to traverse.",
+      "memory": {
+        "self_authored_postmortems": 0,
+        "seeded_postmortems": 11,
+        "agent_steps": 0
+      }
+    },
+    {
+      "type": "agent_start",
+      "at": 1792203558169,
+      "agent": "Triage",
+      "tools": [
+        "resolve_entity",
+        "similar_incidents",
+        "blast_radius",
+        "criticality_rank"
+      ]
+    },
+    {
+      "type": "thought",
+      "at": 1792203558169,
+      "agent": "Triage",
+      "text": "Resolving the alert text to a node in the service graph."
+    },
+    {
+      "type": "tool_call",
+      "at": 1792203558169,
+      "agent": "Triage",
+      "tool": "resolve_entity",
+      "args": {
+        "text": "checkout-api p99 latency 4200ms, threshold 1500ms, error rate climbing, payment intent creation slow, CPU flat across replicas"
+      },
+      "step": 1
+    },
+    {
+      "type": "tool_result",
+      "at": 1792203558174,
+      "agent": "Triage",
+      "tool": "resolve_entity",
+      "step": 1,
+      "summary": "checkout-api",
+      "note": "",
+      "latency_ms": 3.266,
+      "data": {
+        "resolved": true,
+        "label": "Service",
+        "name": "checkout-api",
+        "id": "svc-008",
+        "tier": 2,
+        "revenue_critical": true,
+        "customer_facing": false,
+        "description": "Checkout session and payment intent handling",
+        "repo": "acme/checkout-api",
+        "candidates": [
+          {
+            "name": "checkout-api",
+            "score": 4.0
+          },
+          {
+            "name": "fraud-screen",
+            "score": 2.0
+          }
+        ]
+      },
+      "path": {
+        "nodes": [
+          {
+            "id": "svc-008",
+            "name": "checkout-api",
+            "tier": 2,
+            "language": "ts",
+            "repo": "acme/checkout-api",
+            "description": "Checkout session and payment intent handling",
+            "revenue_critical": true,
+            "customer_facing": false,
+            "_label": "Service"
+          }
+        ],
+        "edges": []
+      },
+      "cypher": "CALL db.idx.fulltext.queryNodes('Service', $q) YIELD node, score\n    RETURN node, score ORDER BY score DESC LIMIT 5",
+      "step_id": "step-INC-3001-558173166"
+    },
+    {
+      "type": "thought",
+      "at": 1792203558174,
+      "agent": "Triage",
+      "text": "Checking whether this failure signature has been seen before."
+    },
+    {
+      "type": "tool_call",
+      "at": 1792203558174,
+      "agent": "Triage",
+      "tool": "similar_incidents",
+      "args": {
+        "symptom_text": "checkout-api p99 latency 4200ms, threshold 1500ms, error rate climbing, payment intent creation slow, CPU flat across replicas",
+        "k": 3
+      },
+      "step": 2
+    },
+    {
+      "type": "tool_result",
+      "at": 1792203558219,
+      "agent": "Triage",
+      "tool": "similar_incidents",
+      "step": 2,
+      "summary": "3 results",
+      "note": "3 incidents, 3 postmortems",
+      "latency_ms": 18.886,
+      "data": {
+        "query": "checkout-api p99 latency 4200ms, threshold 1500ms, error rate climbing, payment intent creation slow, CPU flat across replicas",
+        "count": 3,
+        "incidents": [
+          {
+            "incident_id": "INC-2041",
+            "title": "ledger-service connection pool exhaustion under checkout retry storm",
+            "symptom": "ledger-service p99 latency 6100ms, connection pool exhausted, acquire timeouts, waiters queueing, checkout retries amplifying load",
+            "severity": "SEV1",
+            "started_at": "2026-09-29T02:13:51Z",
+            "similarity": 0.3473,
+            "affected_services": [
+              "inventory-service",
+              "ledger-service",
+              "edge-gateway"
+            ],
+            "resolved_by": [
+              "Priya Raghavan"
+            ],
+            "caused_by_pr": null,
+            "postmortem_id": "PM-INC-2041",
+            "lesson": "ledger-service ran a fixed Postgres pool of 20 connections. A retry storm from checkout-api saturated it and every caller queued on acquire, so p99 latency climbed while CPU stayed flat -- the signature of pool exhaustion rather than compute pressure. Fix was to raise the pool ceiling to 60 and add a per-caller bulkhead in src/db/connection-pool.ts so one noisy upstream cannot consume the whole pool. Check pool saturation before chasing CPU whenever latency rises with flat utilisation.",
+            "written_by": "Priya Raghavan"
+          },
+          {
+            "incident_id": "INC-2033",
+            "title": "payments-api capture timeouts after gRPC deadline change",
+            "symptom": "payments-api capture calls timing out, gRPC DEADLINE_EXCEEDED to ledger-service, order completion rate down 12%",
+            "severity": "SEV2",
+            "started_at": "2026-09-24T02:13:51Z",
+            "similarity": 0.307,
+            "affected_services": [
+              "invoice-service",
+              "payments-api",
+              "billing-api"
+            ],
+            "resolved_by": [
+              "Tomas Lindqvist"
+            ],
+            "caused_by_pr": null,
+            "postmortem_id": "PM-INC-2033",
+            "lesson": "A deadline reduction from 5s to 800ms in LedgerClient.java was shipped without measuring the ledger p99. Deadlines must be set from observed downstream p99 times 1.5, never from a round number.",
+            "written_by": "Tomas Lindqvist"
+          },
+          {
+            "incident_id": "INC-2048",
+            "title": "edge-gateway TLS session cache misconfiguration spiked handshake latency",
+            "symptom": "edge-gateway handshake latency 900ms, TLS session resumption rate near zero, all customer-facing surfaces slower",
+            "severity": "SEV2",
+            "started_at": "2026-10-06T02:13:51Z",
+            "similarity": 0.3039,
+            "affected_services": [
+              "cart-service",
+              "partner-api",
+              "edge-gateway"
+            ],
+            "resolved_by": [
+              "Noor Haddad"
+            ],
+            "caused_by_pr": null,
+            "postmortem_id": "PM-INC-2048",
+            "lesson": "A config rollout zeroed the TLS session cache size. Handshake cost is now a gated SLO on every edge-gateway config change.",
+            "written_by": "Noor Haddad"
+          }
+        ],
+        "postmortems": [
+          {
+            "postmortem_id": "PM-INC-2041",
+            "lesson": "ledger-service ran a fixed Postgres pool of 20 connections. A retry storm from checkout-api saturated it and every caller queued on acquire, so p99 latency climbed while CPU stayed flat -- the signature of pool exhaustion rather than compute pressure. Fix was to raise the pool ceiling to 60 and add a per-caller bulkhead in src/db/connection-pool.ts so one noisy upstream cannot consume the whole pool. Check pool saturation before chasing CPU whenever latency rises with flat utilisation.",
+            "written_by": "Priya Raghavan",
+            "self_authored": false,
+            "incident_id": "INC-2041",
+            "incident_title": "ledger-service connection pool exhaustion under checkout retry storm",
+            "applies_to": [
+              "ledger-service"
+            ],
+            "similarity": 0.4045
+          },
+          {
+            "postmortem_id": "PM-INC-2037",
+            "lesson": "Synchronous replication was configured on one replica only. Promotion picked an async replica. Quorum commit across two replicas is now required.",
+            "written_by": "Marcus Webb",
+            "self_authored": false,
+            "incident_id": "INC-2037",
+            "incident_title": "postgres-primary failover left replicas lagging 40 minutes",
+            "applies_to": [
+              "postgres-primary"
+            ],
+            "similarity": 0.3604
+          },
+          {
+            "postmortem_id": "PM-INC-2056",
+            "lesson": "The rate refresher failed silently when the upstream returned 304. Staleness is now an alerting metric rather than a log line.",
+            "written_by": "Liam Doyle",
+            "self_authored": false,
+            "incident_id": "INC-2056",
+            "incident_title": "currency-oracle stale FX rates mispriced international carts",
+            "applies_to": [
+              "currency-oracle"
+            ],
+            "similarity": 0.2819
+          }
+        ],
+        "self_authored_hits": 0,
+        "recalled_own_postmortem": false,
+        "index_latency_ms": {
+          "Incident": 10.433,
+          "Postmortem": 8.131
+        }
+      },
+      "path": {
+        "nodes": [
+          {
+            "id": "PM-INC-2044",
+            "lesson": "Scoring model rollouts had no shadow-mode gate. All model versions now run in shadow against production traffic for 24h before any live share.",
+            "created_at": 1791003651257,
+            "created_by": "Ingrid Vos",
+            "_label": "Postmortem"
+          },
+          {
+            "id": "INC-2044",
+            "title": "fraud-screen model rollout blocked checkout for low-risk customers",
+            "symptom": "fraud-screen decline rate up 8x, checkout-api conversion dropped, model v7 rolled to 100% without shadow comparison",
+            "started_at": 1790993631257,
+            "started_iso": "2026-10-03T02:13:51Z",
+            "resolved_at": 1790996451257,
+            "severity": "SEV2",
+            "status": "resolved",
+            "_label": "Incident"
+          },
+          {
+            "id": "PM-INC-2033",
+            "lesson": "A deadline reduction from 5s to 800ms in LedgerClient.java was shipped without measuring the ledger p99. Deadlines must be set from observed downstream p99 times 1.5, never from a round number.",
+            "created_at": 1790225511257,
+            "created_by": "Tomas Lindqvist",
+            "_label": "Postmortem"
+          },
+          {
+            "id": "INC-2033",
+            "title": "payments-api capture timeouts after gRPC deadline change",
+            "symptom": "payments-api capture calls timing out, gRPC DEADLINE_EXCEEDED to ledger-service, order completion rate down 12%",
+            "started_at": 1790216031257,
+            "started_iso": "2026-09-24T02:13:51Z",
+            "resolved_at": 1790218311257,
+            "severity": "SEV2",
+            "status": "resolved",
+            "_label": "Incident"
+          },
+          {
+            "id": "PM-INC-2056",
+            "lesson": "The rate refresher failed silently when the upstream returned 304. Staleness is now an alerting metric rather than a log line.",
+            "created_at": 1791780891257,
+            "created_by": "Liam Doyle",
+            "_label": "Postmortem"
+          },
+          {
+            "id": "INC-2056",
+            "title": "currency-oracle stale FX rates mispriced international carts",
+            "symptom": "currency-oracle serving rates 6 hours stale, pricing-engine quoting wrong totals for non-USD carts",
+            "started_at": 1791771231257,
+            "started_iso": "2026-10-12T02:13:51Z",
+            "resolved_at": 1791773691257,
+            "severity": "SEV3",
+            "status": "resolved",
+            "_label": "Incident"
+          },
+          {
+            "id": "PM-INC-2048",
+            "lesson": "A config rollout zeroed the TLS session cache size. Handshake cost is now a gated SLO on every edge-gateway config change.",
+            "created_at": 1791261771257,
+            "created_by": "Noor Haddad",
+            "_label": "Postmortem"
+          },
+          {
+            "id": "INC-2048",
+            "title": "edge-gateway TLS session cache misconfiguration spiked handshake latency",
+            "symptom": "edge-gateway handshake latency 900ms, TLS session resumption rate near zero, all customer-facing surfaces slower",
+            "started_at": 1791252831257,
+            "started_iso": "2026-10-06T02:13:51Z",
+            "resolved_at": 1791254571257,
+            "severity": "SEV2",
+            "status": "resolved",
+            "_label": "Incident"
+          },
+          {
+            "id": "PM-INC-2037",
+            "lesson": "Synchronous replication was configured on one replica only. Promotion picked an async replica. Quorum commit across two replicas is now required.",
+            "created_at": 1790404431257,
+            "created_by": "Marcus Webb",
+            "_label": "Postmortem"
+          },
+          {
+            "id": "INC-2037",
+            "title": "postgres-primary failover left replicas lagging 40 minutes",
+            "symptom": "postgres-primary failover triggered, replica lag 40 minutes, read-after-write inconsistency across catalog-api and user-profile",
+            "started_at": 1790388831257,
+            "started_iso": "2026-09-26T02:13:51Z",
+            "resolved_at": 1790397231257,
+            "severity": "SEV1",
+            "status": "resolved",
+            "_label": "Incident"
+          },
+          {
+            "id": "PM-INC-2041",
+            "lesson": "ledger-service ran a fixed Postgres pool of 20 connections. A retry storm from checkout-api saturated it and every caller queued on acquire, so p99 latency climbed while CPU stayed flat -- the signature of pool exhaustion rather than compute pressure. Fix was to raise the pool ceiling to 60 and add a per-caller bulkhead in src/db/connection-pool.ts so one noisy upstream cannot consume the whole pool. Check pool saturation before chasing CPU whenever latency rises with flat utilisation.",
+            "created_at": 1790659671257,
+            "created_by": "Priya Raghavan",
+            "_label": "Postmortem"
+          },
+          {
+            "id": "INC-2041",
+            "title": "ledger-service connection pool exhaustion under checkout retry storm",
+            "symptom": "ledger-service p99 latency 6100ms, connection pool exhausted, acquire timeouts, waiters queueing, checkout retries amplifying load",
+            "started_at": 1790648031257,
+            "started_iso": "2026-09-29T02:13:51Z",
+            "resolved_at": 1790652471257,
+            "severity": "SEV1",
+            "status": "resolved",
+            "_label": "Incident"
+          },
+          {
+            "id": "PM-INC-2018",
+            "lesson": "Index rebuilds had no rate limit and ran on a cron that overlapped peak hours. Rebuilds are now token-bucket limited and scheduled off-peak.",
+            "created_at": 1789278531257,
+            "created_by": "Chen Wei",
+            "_label": "Postmortem"
+          },
+          {
+            "id": "PM-INC-2044",
+            "lesson": "Scoring model rollouts had no shadow-mode gate. All model versions now run in shadow against production traffic for 24h before any live share.",
+            "created_at": 1791003651257,
+            "created_by": "Ingrid Vos",
+            "_label": "Postmortem"
+          },
+          {
+            "id": "PM-INC-2051",
+            "lesson": "template-renderer shipped a breaking template schema without a version negotiation. Renderer responses are now versioned and the fan-out worker falls back to the previous template on schema mismatch.",
+            "created_at": 1791434811257,
+            "created_by": "Mei Tanaka",
+            "_label": "Postmortem"
+          },
+          {
+            "id": "PM-INC-2029",
+            "lesson": "maxmemory-policy was allkeys-lru across shared cache namespaces, so a batch job filled redis-cache and evicted live session keys. Namespace isolation with per-prefix memory budgets prevented recurrence.",
+            "created_at": 1789967151257,
+            "created_by": "Grace Mbeki",
+            "_label": "Postmortem"
+          },
+          {
+            "id": "PM-INC-2041",
+            "lesson": "ledger-service ran a fixed Postgres pool of 20 connections. A retry storm from checkout-api saturated it and every caller queued on acquire, so p99 latency climbed while CPU stayed flat -- the signature of pool exhaustion rather than compute pressure. Fix was to raise the pool ceiling to 60 and add a per-caller bulkhead in src/db/connection-pool.ts so one noisy upstream cannot consume the whole pool. Check pool saturation before chasing CPU whenever latency rises with flat utilisation.",
+            "created_at": 1790659671257,
+            "created_by": "Priya Raghavan",
+            "_label": "Postmortem"
+          },
+          {
+            "id": "PM-INC-2037",
+            "lesson": "Synchronous replication was configured on one replica only. Promotion picked an async replica. Quorum commit across two replicas is now required.",
+            "created_at": 1790404431257,
+            "created_by": "Marcus Webb",
+            "_label": "Postmortem"
+          },
+          {
+            "id": "PM-INC-2056",
+            "lesson": "The rate refresher failed silently when the upstream returned 304. Staleness is now an alerting metric rather than a log line.",
+            "created_at": 1791780891257,
+            "created_by": "Liam Doyle",
+            "_label": "Postmortem"
+          }
+        ],
+        "edges": [
+          {
+            "source": "INC-2044",
+            "target": "PM-INC-2044",
+            "rel": "PRODUCED"
+          },
+          {
+            "source": "INC-2033",
+            "target": "PM-INC-2033",
+            "rel": "PRODUCED"
+          },
+          {
+            "source": "INC-2056",
+            "target": "PM-INC-2056",
+            "rel": "PRODUCED"
+          },
+          {
+            "source": "INC-2048",
+            "target": "PM-INC-2048",
+            "rel": "PRODUCED"
+          },
+          {
+            "source": "INC-2037",
+            "target": "PM-INC-2037",
+            "rel": "PRODUCED"
+          },
+          {
+            "source": "INC-2041",
+            "target": "PM-INC-2041",
+            "rel": "PRODUCED"
+          }
+        ]
+      },
+      "cypher": "CALL db.idx.vector.queryNodes('Incident','embedding', $k, vecf32($v))\n    YIELD node, score\n    WHERE node.status = 'resolved'\n    OPTIONAL MATCH (node)-[:PRODUCED]->(pm:Postmortem)\n    OPTIONAL MATCH (node)-[:AFFECTED]->(s:Service)\n    OPTIONAL MATCH (node)-[:RESOLVED_BY]->(p:Person)\n    OPTIONAL MATCH (node)-[:CAUSED_BY]->(d:Deploy)-[:SHIPS]->(pr:PullRequest)\n    RETURN node, score, pm, collect(DISTINCT s.name) AS services,\n           collect(DISTINCT p.name) AS resolvers, pr.number AS pr_number",
+      "step_id": "step-INC-3001-558193980"
+    },
+    {
+      "type": "thought",
+      "at": 1792203558219,
+      "agent": "Triage",
+      "text": "Walking dependents of checkout-api to size the impact."
+    },
+    {
+      "type": "tool_call",
+      "at": 1792203558219,
+      "agent": "Triage",
+      "tool": "blast_radius",
+      "args": {
+        "service": "checkout-api",
+        "max_depth": 4
+      },
+      "step": 3
+    },
+    {
+      "type": "tool_result",
+      "at": 1792203558253,
+      "agent": "Triage",
+      "tool": "blast_radius",
+      "step": 3,
+      "summary": "11 results",
+      "note": "11 impacted, 3 customer-facing",
+      "latency_ms": 18.361,
+      "data": {
+        "source": "checkout-api",
+        "count": 11,
+        "max_hops": 3,
+        "customer_facing": [
+          "mobile-bff",
+          "partner-api",
+          "web-bff"
+        ],
+        "customer_facing_count": 3,
+        "revenue_critical": [
+          "order-orchestrator",
+          "mobile-bff",
+          "partner-api",
+          "web-bff",
+          "edge-gateway"
+        ],
+        "by_hop": [
+          {
+            "hops": 1,
+            "new_services": [
+              "analytics-ingest",
+              "cart-service",
+              "loyalty-service",
+              "order-orchestrator",
+              "receipts-service"
+            ],
+            "latency_ms": 3.446
+          },
+          {
+            "hops": 2,
+            "new_services": [
+              "admin-console",
+              "email-dispatch",
+              "mobile-bff",
+              "partner-api",
+              "web-bff"
+            ],
+            "latency_ms": 3.506
+          },
+          {
+            "hops": 3,
+            "new_services": [
+              "edge-gateway"
+            ],
+            "latency_ms": 3.261
+          },
+          {
+            "hops": 4,
+            "new_services": [],
+            "latency_ms": 3.547
+          }
+        ],
+        "services": [
+          {
+            "name": "cart-service",
+            "hops": 1,
+            "tier": 2,
+            "customer_facing": false,
+            "revenue_critical": false
+          },
+          {
+            "name": "order-orchestrator",
+            "hops": 1,
+            "tier": 2,
+            "customer_facing": false,
+            "revenue_critical": true
+          },
+          {
+            "name": "analytics-ingest",
+            "hops": 1,
+            "tier": 3,
+            "customer_facing": false,
+            "revenue_critical": false
+          },
+          {
+            "name": "loyalty-service",
+            "hops": 1,
+            "tier": 3,
+            "customer_facing": false,
+            "revenue_critical": false
+          },
+          {
+            "name": "receipts-service",
+            "hops": 1,
+            "tier": 3,
+            "customer_facing": false,
+            "revenue_critical": false
+          },
+          {
+            "name": "admin-console",
+            "hops": 2,
+            "tier": 1,
+            "customer_facing": false,
+            "revenue_critical": false
+          },
+          {
+            "name": "mobile-bff",
+            "hops": 2,
+            "tier": 1,
+            "customer_facing": true,
+            "revenue_critical": true
+          },
+          {
+            "name": "partner-api",
+            "hops": 2,
+            "tier": 1,
+            "customer_facing": true,
+            "revenue_critical": true
+          },
+          {
+            "name": "web-bff",
+            "hops": 2,
+            "tier": 1,
+            "customer_facing": true,
+            "revenue_critical": true
+          },
+          {
+            "name": "email-dispatch",
+            "hops": 2,
+            "tier": 3,
+            "customer_facing": false,
+            "revenue_critical": false
+          },
+          {
+            "name": "edge-gateway",
+            "hops": 3,
+            "tier": 1,
+            "customer_facing": false,
+            "revenue_critical": true
+          }
+        ]
+      },
+      "path": {
+        "nodes": [
+          {
+            "id": "svc-008",
+            "name": "checkout-api",
+            "tier": 2,
+            "language": "ts",
+            "repo": "acme/checkout-api",
+            "description": "Checkout session and payment intent handling",
+            "revenue_critical": true,
+            "customer_facing": false,
+            "_label": "Service"
+          },
+          {
+            "id": "svc-009",
+            "name": "cart-service",
+            "tier": 2,
+            "language": "ts",
+            "repo": "acme/cart-service",
+            "description": "Cart persistence and pricing preview",
+            "revenue_critical": false,
+            "customer_facing": false,
+            "_label": "Service",
+            "hops": 1
+          },
+          {
+            "id": "svc-007",
+            "name": "order-orchestrator",
+            "tier": 2,
+            "language": "java",
+            "repo": "acme/order-orchestrator",
+            "description": "Saga orchestration for order placement",
+            "revenue_critical": true,
+            "customer_facing": false,
+            "_label": "Service",
+            "hops": 1
+          },
+          {
+            "id": "svc-018",
+            "name": "analytics-ingest",
+            "tier": 3,
+            "language": "go",
+            "repo": "acme/analytics-ingest",
+            "description": "Clickstream and order event ingestion",
+            "revenue_critical": false,
+            "customer_facing": false,
+            "_label": "Service",
+            "hops": 1
+          },
+          {
+            "id": "svc-013",
+            "name": "loyalty-service",
+            "tier": 3,
+            "language": "java",
+            "repo": "acme/loyalty-service",
+            "description": "Points accrual and redemption",
+            "revenue_critical": false,
+            "customer_facing": false,
+            "_label": "Service",
+            "hops": 1
+          },
+          {
+            "id": "svc-014",
+            "name": "receipts-service",
+            "tier": 3,
+            "language": "ts",
+            "repo": "acme/receipts-service",
+            "description": "Receipt generation and archival",
+            "revenue_critical": false,
+            "customer_facing": false,
+            "_label": "Service",
+            "hops": 1
+          },
+          {
+            "id": "svc-004",
+            "name": "admin-console",
+            "tier": 1,
+            "language": "ts",
+            "repo": "acme/admin-console",
+            "description": "Internal operator console",
+            "revenue_critical": false,
+            "customer_facing": false,
+            "_label": "Service",
+            "hops": 2
+          },
+          {
+            "id": "svc-002",
+            "name": "mobile-bff",
+            "tier": 1,
+            "language": "ts",
+            "repo": "acme/mobile-bff",
+            "description": "Backend-for-frontend for iOS and Android",
+            "revenue_critical": true,
+            "customer_facing": true,
+            "_label": "Service",
+            "hops": 2
+          },
+          {
+            "id": "svc-003",
+            "name": "partner-api",
+            "tier": 1,
+            "language": "go",
+            "repo": "acme/partner-api",
+            "description": "Public partner REST API and webhooks",
+            "revenue_critical": true,
+            "customer_facing": true,
+            "_label": "Service",
+            "hops": 2
+          },
+          {
+            "id": "svc-001",
+            "name": "web-bff",
+            "tier": 1,
+            "language": "ts",
+            "repo": "acme/web-bff",
+            "description": "Backend-for-frontend for the web storefront",
+            "revenue_critical": true,
+            "customer_facing": true,
+            "_label": "Service",
+            "hops": 2
+          },
+          {
+            "id": "svc-016",
+            "name": "email-dispatch",
+            "tier": 3,
+            "language": "ts",
+            "repo": "acme/email-dispatch",
+            "description": "Transactional email delivery",
+            "revenue_critical": false,
+            "customer_facing": false,
+            "_label": "Service",
+            "hops": 2
+          },
+          {
+            "id": "svc-000",
+            "name": "edge-gateway",
+            "tier": 1,
+            "language": "go",
+            "repo": "acme/edge-gateway",
+            "description": "North-south edge router and TLS termination",
+            "revenue_critical": true,
+            "customer_facing": false,
+            "_label": "Service",
+            "hops": 3
+          }
+        ],
+        "edges": [
+          {
+            "source": "web-bff",
+            "target": "edge-gateway",
+            "rel": "IMPACTS",
+            "criticality": 5,
+            "protocol": "http"
+          },
+          {
+            "source": "mobile-bff",
+            "target": "edge-gateway",
+            "rel": "IMPACTS",
+            "criticality": 5,
+            "protocol": "http"
+          },
+          {
+            "source": "partner-api",
+            "target": "edge-gateway",
+            "rel": "IMPACTS",
+            "criticality": 4,
+            "protocol": "http"
+          },
+          {
+            "source": "admin-console",
+            "target": "edge-gateway",
+            "rel": "IMPACTS",
+            "criticality": 2,
+            "protocol": "http"
+          },
+          {
+            "source": "order-orchestrator",
+            "target": "web-bff",
+            "rel": "IMPACTS",
+            "criticality": 5,
+            "protocol": "grpc"
+          },
+          {
+            "source": "order-orchestrator",
+            "target": "mobile-bff",
+            "rel": "IMPACTS",
+            "criticality": 5,
+            "protocol": "grpc"
+          },
+          {
+            "source": "order-orchestrator",
+            "target": "partner-api",
+            "rel": "IMPACTS",
+            "criticality": 4,
+            "protocol": "grpc"
+          },
+          {
+            "source": "order-orchestrator",
+            "target": "admin-console",
+            "rel": "IMPACTS",
+            "criticality": 2,
+            "protocol": "grpc"
+          },
+          {
+            "source": "checkout-api",
+            "target": "order-orchestrator",
+            "rel": "IMPACTS",
+            "criticality": 5,
+            "protocol": "grpc"
+          },
+          {
+            "source": "checkout-api",
+            "target": "cart-service",
+            "rel": "IMPACTS",
+            "criticality": 3,
+            "protocol": "http"
+          },
+          {
+            "source": "checkout-api",
+            "target": "loyalty-service",
+            "rel": "IMPACTS",
+            "criticality": 2,
+            "protocol": "http"
+          },
+          {
+            "source": "checkout-api",
+            "target": "receipts-service",
+            "rel": "IMPACTS",
+            "criticality": 2,
+            "protocol": "http"
+          },
+          {
+            "source": "checkout-api",
+            "target": "analytics-ingest",
+            "rel": "IMPACTS",
+            "criticality": 1,
+            "protocol": "kafka"
+          },
+          {
+            "source": "cart-service",
+            "target": "web-bff",
+            "rel": "IMPACTS",
+            "criticality": 4,
+            "protocol": "http"
+          },
+          {
+            "source": "cart-service",
+            "target": "mobile-bff",
+            "rel": "IMPACTS",
+            "criticality": 4,
+            "protocol": "http"
+          },
+          {
+            "source": "loyalty-service",
+            "target": "partner-api",
+            "rel": "IMPACTS",
+            "criticality": 2,
+            "protocol": "http"
+          },
+          {
+            "source": "receipts-service",
+            "target": "email-dispatch",
+            "rel": "IMPACTS",
+            "criticality": 2,
+            "protocol": "http"
+          }
+        ]
+      },
+      "cypher": "MATCH (s:Service {name:$name})\n    CALL algo.BFS(s, $level, 'IMPACTS') YIELD nodes\n    UNWIND nodes AS n\n    RETURN n",
+      "step_id": "step-INC-3001-558237693"
+    },
+    {
+      "type": "thought",
+      "at": 1792203558253,
+      "agent": "Triage",
+      "text": "Nothing in memory names this. Ranking structural criticality to decide what matters."
+    },
+    {
+      "type": "tool_call",
+      "at": 1792203558253,
+      "agent": "Triage",
+      "tool": "criticality_rank",
+      "args": {
+        "top": 8
+      },
+      "step": 4
+    },
+    {
+      "type": "tool_result",
+      "at": 1792203558267,
+      "agent": "Triage",
+      "tool": "criticality_rank",
+      "step": 4,
+      "summary": "8 results",
+      "note": "redis-cache, postgres-primary, object-store",
+      "latency_ms": 4.663,
+      "data": {
+        "count": 8,
+        "ranking": [
+          {
+            "rank": 1,
+            "name": "redis-cache",
+            "pagerank": 0.007198,
+            "tier": 3,
+            "direct_dependents": 10,
+            "revenue_critical": false
+          },
+          {
+            "rank": 2,
+            "name": "postgres-primary",
+            "pagerank": 0.005772,
+            "tier": 3,
+            "direct_dependents": 10,
+            "revenue_critical": true
+          },
+          {
+            "rank": 3,
+            "name": "object-store",
+            "pagerank": 0.003602,
+            "tier": 3,
+            "direct_dependents": 4,
+            "revenue_critical": false
+          },
+          {
+            "rank": 4,
+            "name": "kafka-bus",
+            "pagerank": 0.002672,
+            "tier": 3,
+            "direct_dependents": 5,
+            "revenue_critical": false
+          },
+          {
+            "rank": 5,
+            "name": "template-renderer",
+            "pagerank": 0.002315,
+            "tier": 3,
+            "direct_dependents": 5,
+            "revenue_critical": false
+          },
+          {
+            "rank": 6,
+            "name": "checkout-api",
+            "pagerank": 0.002023,
+            "tier": 2,
+            "direct_dependents": 5,
+            "revenue_critical": true
+          },
+          {
+            "rank": 7,
+            "name": "catalog-api",
+            "pagerank": 0.00202,
+            "tier": 2,
+            "direct_dependents": 6,
+            "revenue_critical": false
+          },
+          {
+            "rank": 8,
+            "name": "notifications-api",
+            "pagerank": 0.002001,
+            "tier": 2,
+            "direct_dependents": 3,
+            "revenue_critical": false
+          }
+        ],
+        "algorithm": "algo.pageRank"
+      },
+      "path": {
+        "nodes": [
+          {
+            "id": "svc-039",
+            "name": "redis-cache",
+            "tier": 3,
+            "language": "c",
+            "repo": "acme/redis-cache",
+            "description": "Shared Redis cache and rate limiter",
+            "revenue_critical": false,
+            "customer_facing": false,
+            "_label": "Service"
+          },
+          {
+            "id": "svc-038",
+            "name": "postgres-primary",
+            "tier": 3,
+            "language": "sql",
+            "repo": "acme/postgres-primary",
+            "description": "Primary OLTP Postgres cluster",
+            "revenue_critical": true,
+            "customer_facing": false,
+            "_label": "Service"
+          },
+          {
+            "id": "svc-041",
+            "name": "object-store",
+            "tier": 3,
+            "language": "c",
+            "repo": "acme/object-store",
+            "description": "S3-compatible blob storage",
+            "revenue_critical": false,
+            "customer_facing": false,
+            "_label": "Service"
+          },
+          {
+            "id": "svc-040",
+            "name": "kafka-bus",
+            "tier": 3,
+            "language": "scala",
+            "repo": "acme/kafka-bus",
+            "description": "Event backbone",
+            "revenue_critical": false,
+            "customer_facing": false,
+            "_label": "Service"
+          },
+          {
+            "id": "svc-021",
+            "name": "template-renderer",
+            "tier": 3,
+            "language": "ts",
+            "repo": "acme/template-renderer",
+            "description": "Handlebars template rendering service",
+            "revenue_critical": false,
+            "customer_facing": false,
+            "_label": "Service"
+          },
+          {
+            "id": "svc-008",
+            "name": "checkout-api",
+            "tier": 2,
+            "language": "ts",
+            "repo": "acme/checkout-api",
+            "description": "Checkout session and payment intent handling",
+            "revenue_critical": true,
+            "customer_facing": false,
+            "_label": "Service"
+          },
+          {
+            "id": "svc-010",
+            "name": "catalog-api",
+            "tier": 2,
+            "language": "java",
+            "repo": "acme/catalog-api",
+            "description": "Product catalog reads",
+            "revenue_critical": false,
+            "customer_facing": false,
+            "_label": "Service"
+          },
+          {
+            "id": "svc-019",
+            "name": "notifications-api",
+            "tier": 2,
+            "language": "ts",
+            "repo": "acme/notifications-api",
+            "description": "Notification preferences and fan-out",
+            "revenue_critical": false,
+            "customer_facing": false,
+            "_label": "Service"
+          }
+        ],
+        "edges": []
+      },
+      "cypher": "CALL algo.pageRank('Service','DEPENDS_ON') YIELD node, score\n    OPTIONAL MATCH (node)<-[:DEPENDS_ON]-(dependent:Service)\n    RETURN node, score, count(DISTINCT dependent) AS direct_dependents\n    ORDER BY score DESC\n    LIMIT $top",
+      "step_id": "step-INC-3001-558257827"
+    },
+    {
+      "type": "thought",
+      "at": 1792203558267,
+      "agent": "Triage",
+      "text": "Resolved to checkout-api. 11 services degrade with it, 3 customer-facing (mobile-bff, partner-api, web-bff). Closest prior incident is INC-2041, related but not conclusive."
+    },
+    {
+      "type": "handoff",
+      "at": 1792203558267,
+      "from": "Triage",
+      "to": "Investigator",
+      "step_id": "step-INC-3001-558257827"
+    },
+    {
+      "type": "agent_start",
+      "at": 1792203558267,
+      "agent": "Investigator",
+      "tools": [
+        "recent_changes",
+        "causal_path",
+        "similar_incidents",
+        "get_runbook",
+        "write_finding"
+      ]
+    },
+    {
+      "type": "thought",
+      "at": 1792203558267,
+      "agent": "Investigator",
+      "text": "Looking for deploys within two hops of checkout-api -- the cause is rarely on the service that alerted."
+    },
+    {
+      "type": "tool_call",
+      "at": 1792203558267,
+      "agent": "Investigator",
+      "tool": "recent_changes",
+      "args": {
+        "service": "checkout-api",
+        "window_minutes": 120,
+        "hops": 2
+      },
+      "step": 5
+    },
+    {
+      "type": "tool_result",
+      "at": 1792203558280,
+      "agent": "Investigator",
+      "tool": "recent_changes",
+      "step": 5,
+      "summary": "2 results",
+      "note": "2 deploys within 2 hops / 120min",
+      "latency_ms": 6.44,
+      "data": {
+        "service": "checkout-api",
+        "window_minutes": 120,
+        "hops_searched": 2,
+        "count": 2,
+        "deploys": [
+          {
+            "deploy_id": "dep-cause",
+            "sha": "9f2c41ab77de",
+            "service": "ledger-service",
+            "hops_from_symptom": 2,
+            "minutes_ago": 23,
+            "at": "2026-10-17T01:50:51Z",
+            "status": "success",
+            "risk_score": 0.87,
+            "pr_number": 4471,
+            "pr_title": "perf(ledger-service): reuse pooled client in post-entry hot path",
+            "additions": 96,
+            "deletions": 41,
+            "author": "Ben Ortiz",
+            "files": [
+              "src/db/connection-pool.ts",
+              "src/ledger/post-entry.ts"
+            ]
+          },
+          {
+            "deploy_id": "dep-decoy-2",
+            "sha": "7f6475699aef",
+            "service": "catalog-api",
+            "hops_from_symptom": 2,
+            "minutes_ago": 73,
+            "at": "2026-10-17T01:05:51Z",
+            "status": "success",
+            "risk_score": 0.33,
+            "pr_number": 4519,
+            "pr_title": "chore(catalog-api): regenerate openapi client",
+            "additions": 44,
+            "deletions": 24,
+            "author": "Chen Wei",
+            "files": [
+              "src/metrics/emit.java"
+            ]
+          }
+        ]
+      },
+      "path": {
+        "nodes": [
+          {
+            "id": "dep-cause",
+            "sha": "9f2c41ab77de",
+            "at": 1792202178162,
+            "at_iso": "2026-10-17T01:50:51Z",
+            "status": "success",
+            "pr_number": 4471,
+            "risk_score": 0.87,
+            "_label": "Deploy"
+          },
+          {
+            "id": "pr-4471",
+            "number": 4471,
+            "title": "perf(ledger-service): reuse pooled client in post-entry hot path",
+            "merged_at": 1792201938162,
+            "additions": 96,
+            "deletions": 41,
+            "_label": "PullRequest"
+          },
+          {
+            "id": "dep-decoy-2",
+            "sha": "7f6475699aef",
+            "at": 1792199151257,
+            "at_iso": "2026-10-17T01:05:51Z",
+            "status": "success",
+            "pr_number": 4519,
+            "risk_score": 0.33,
+            "_label": "Deploy"
+          },
+          {
+            "id": "pr-4519",
+            "number": 4519,
+            "title": "chore(catalog-api): regenerate openapi client",
+            "merged_at": 1792198731257,
+            "additions": 44,
+            "deletions": 24,
+            "_label": "PullRequest"
+          }
+        ],
+        "edges": [
+          {
+            "source": "dep-cause",
+            "target": "ledger-service",
+            "rel": "DEPLOYED_TO"
+          },
+          {
+            "source": "dep-cause",
+            "target": "PR#4471",
+            "rel": "SHIPS"
+          },
+          {
+            "source": "dep-decoy-2",
+            "target": "catalog-api",
+            "rel": "DEPLOYED_TO"
+          },
+          {
+            "source": "dep-decoy-2",
+            "target": "PR#4519",
+            "rel": "SHIPS"
+          }
+        ]
+      },
+      "cypher": "MATCH (t:Service {name:$name})-[:DEPENDS_ON*0..2]->(dep:Service)\n    MATCH (d:Deploy)-[:DEPLOYED_TO]->(dep)\n    WHERE d.at >= $cutoff\n    MATCH (d)-[:SHIPS]->(pr:PullRequest)\n    OPTIONAL MATCH (pr)-[:TOUCHES]->(f:File)\n    OPTIONAL MATCH (author:Person)-[:AUTHORED]->(pr)\n    RETURN DISTINCT d, dep.name AS service, pr, author.name AS author,\n           collect(DISTINCT f.path) AS files\n    ORDER BY d.risk_score DESC, d.at DESC\n    LIMIT 10",
+      "step_id": "step-INC-3001-558274022"
+    },
+    {
+      "type": "thought",
+      "at": 1792203558280,
+      "agent": "Investigator",
+      "text": "Proving how a failure in ledger-service reaches checkout-api."
+    },
+    {
+      "type": "tool_call",
+      "at": 1792203558280,
+      "agent": "Investigator",
+      "tool": "causal_path",
+      "args": {
+        "to_service": "ledger-service",
+        "from_service": "checkout-api"
+      },
+      "step": 6
+    },
+    {
+      "type": "tool_result",
+      "at": 1792203558289,
+      "agent": "Investigator",
+      "tool": "causal_path",
+      "step": 6,
+      "summary": "{'found': True, 'propagation': ['ledger-service', 'payments-api', 'checkout-api'",
+      "note": "ledger-service -> payments-api -> checkout-api",
+      "latency_ms": 4.464,
+      "data": {
+        "found": true,
+        "propagation": [
+          "ledger-service",
+          "payments-api",
+          "checkout-api"
+        ],
+        "chain": "ledger-service -> payments-api -> checkout-api",
+        "hops": 2,
+        "path_weight": 2.0,
+        "links": [
+          {
+            "from": "ledger-service",
+            "to": "payments-api",
+            "criticality": 5,
+            "protocol": "grpc"
+          },
+          {
+            "from": "payments-api",
+            "to": "checkout-api",
+            "criticality": 5,
+            "protocol": "grpc"
+          }
+        ]
+      },
+      "path": {
+        "nodes": [
+          {
+            "id": "svc-008",
+            "name": "checkout-api",
+            "tier": 2,
+            "language": "ts",
+            "repo": "acme/checkout-api",
+            "description": "Checkout session and payment intent handling",
+            "revenue_critical": true,
+            "customer_facing": false,
+            "_label": "Service"
+          },
+          {
+            "id": "svc-027",
+            "name": "payments-api",
+            "tier": 2,
+            "language": "java",
+            "repo": "acme/payments-api",
+            "description": "Payment authorization and capture",
+            "revenue_critical": true,
+            "customer_facing": false,
+            "_label": "Service"
+          },
+          {
+            "id": "svc-028",
+            "name": "ledger-service",
+            "tier": 2,
+            "language": "ts",
+            "repo": "acme/ledger-service",
+            "description": "Double-entry ledger, source of financial truth",
+            "revenue_critical": true,
+            "customer_facing": false,
+            "_label": "Service"
+          }
+        ],
+        "edges": [
+          {
+            "source": "payments-api",
+            "target": "ledger-service",
+            "rel": "DEPENDS_ON",
+            "criticality": 5,
+            "protocol": "grpc"
+          },
+          {
+            "source": "checkout-api",
+            "target": "payments-api",
+            "rel": "DEPENDS_ON",
+            "criticality": 5,
+            "protocol": "grpc"
+          }
+        ]
+      },
+      "cypher": "MATCH (a:Service {name:$from}), (b:Service {name:$to})\n    CALL algo.SPpaths({sourceNode:a, targetNode:b, relTypes:['DEPENDS_ON'],\n                       weightProp:'cost', pathCount:1})\n    YIELD path, pathWeight, pathCost\n    RETURN path, pathWeight, pathCost",
+      "step_id": "step-INC-3001-558284591"
+    },
+    {
+      "type": "thought",
+      "at": 1792203558289,
+      "agent": "Investigator",
+      "text": "Pulling the operational runbook."
+    },
+    {
+      "type": "tool_call",
+      "at": 1792203558289,
+      "agent": "Investigator",
+      "tool": "get_runbook",
+      "args": {
+        "symptom": "connection pool exhausted acquire timeouts p99 latency",
+        "service": "ledger-service"
+      },
+      "step": 7
+    },
+    {
+      "type": "tool_result",
+      "at": 1792203558304,
+      "agent": "Investigator",
+      "tool": "get_runbook",
+      "step": 7,
+      "summary": "5 results",
+      "note": "Connection pool exhaustion -- ledger-service",
+      "latency_ms": 6.274,
+      "data": {
+        "service": "ledger-service",
+        "symptom": "connection pool exhausted acquire timeouts p99 latency",
+        "count": 5,
+        "best": {
+          "runbook_id": "rb-000",
+          "title": "Connection pool exhaustion -- ledger-service",
+          "body": "Symptom: p99 latency climbing while CPU stays flat, acquire timeouts in logs, waiters queueing on the connection pool.\n1. Check pool saturation: pg_stat_activity count vs the configured ceiling in src/db/connection-pool.ts.\n2. If saturated, raise the ceiling and restart rolling. Do not restart all replicas.\n3. Identify the noisy upstream from per-caller acquire metrics and rate limit it.\n4. Add or verify the per-caller bulkhead so one upstream cannot take the whole pool.\nEscalate to Payments Platform if the ledger balance endpoint is affected.",
+          "covers": [
+            "ledger-service"
+          ],
+          "similarity": 0.55,
+          "covers_target": true
+        },
+        "runbooks": [
+          {
+            "runbook_id": "rb-000",
+            "title": "Connection pool exhaustion -- ledger-service",
+            "body": "Symptom: p99 latency climbing while CPU stays flat, acquire timeouts in logs, waiters queueing on the connection pool.\n1. Check pool saturation: pg_stat_activity count vs the configured ceiling in src/db/connection-pool.ts.\n2. If saturated, raise the ceiling and restart rolling. Do not restart all replicas.\n3. Identify the noisy upstream from per-caller acquire metrics and rate limit it.\n4. Add or verify the per-caller bulkhead so one upstream cannot take the whole pool.\nEscalate to Payments Platform if the ledger balance endpoint is affected.",
+            "covers": [
+              "ledger-service"
+            ],
+            "similarity": 0.55,
+            "covers_target": true
+          },
+          {
+            "runbook_id": "rb-024",
+            "title": "Restart procedure -- cart-service",
+            "body": "Restart cart-service rolling, one replica at a time, waiting for readiness. Never restart all replicas: in-flight requests will fail and upstreams will retry, amplifying load.",
+            "covers": [
+              "cart-service"
+            ],
+            "similarity": 0.3332,
+            "covers_target": false
+          },
+          {
+            "runbook_id": "rb-004",
+            "title": "Checkout retry storm -- checkout-api",
+            "body": "Retries in src/http/retry.ts use exponential backoff with jitter. If downstream latency rises, cap the retry budget before it amplifies load onto payments-api and ledger-service.",
+            "covers": [
+              "checkout-api"
+            ],
+            "similarity": 0.3287,
+            "covers_target": false
+          },
+          {
+            "runbook_id": "rb-034",
+            "title": "Restart procedure -- receipts-service",
+            "body": "Restart receipts-service rolling, one replica at a time, waiting for readiness. Never restart all replicas: in-flight requests will fail and upstreams will retry, amplifying load.",
+            "covers": [
+              "receipts-service"
+            ],
+            "similarity": 0.3125,
+            "covers_target": false
+          },
+          {
+            "runbook_id": "rb-032",
+            "title": "Restart procedure -- loyalty-service",
+            "body": "Restart loyalty-service rolling, one replica at a time, waiting for readiness. Never restart all replicas: in-flight requests will fail and upstreams will retry, amplifying load.",
+            "covers": [
+              "loyalty-service"
+            ],
+            "similarity": 0.2977,
+            "covers_target": false
+          }
+        ]
+      },
+      "path": {
+        "nodes": [
+          {
+            "id": "rb-034",
+            "title": "Restart procedure -- receipts-service",
+            "body": "Restart receipts-service rolling, one replica at a time, waiting for readiness. Never restart all replicas: in-flight requests will fail and upstreams will retry, amplifying load.",
+            "_label": "Runbook"
+          },
+          {
+            "id": "rb-024",
+            "title": "Restart procedure -- cart-service",
+            "body": "Restart cart-service rolling, one replica at a time, waiting for readiness. Never restart all replicas: in-flight requests will fail and upstreams will retry, amplifying load.",
+            "_label": "Runbook"
+          },
+          {
+            "id": "rb-000",
+            "title": "Connection pool exhaustion -- ledger-service",
+            "body": "Symptom: p99 latency climbing while CPU stays flat, acquire timeouts in logs, waiters queueing on the connection pool.\n1. Check pool saturation: pg_stat_activity count vs the configured ceiling in src/db/connection-pool.ts.\n2. If saturated, raise the ceiling and restart rolling. Do not restart all replicas.\n3. Identify the noisy upstream from per-caller acquire metrics and rate limit it.\n4. Add or verify the per-caller bulkhead so one upstream cannot take the whole pool.\nEscalate to Payments Platform if the ledger balance endpoint is affected.",
+            "_label": "Runbook"
+          },
+          {
+            "id": "rb-004",
+            "title": "Checkout retry storm -- checkout-api",
+            "body": "Retries in src/http/retry.ts use exponential backoff with jitter. If downstream latency rises, cap the retry budget before it amplifies load onto payments-api and ledger-service.",
+            "_label": "Runbook"
+          },
+          {
+            "id": "rb-032",
+            "title": "Restart procedure -- loyalty-service",
+            "body": "Restart loyalty-service rolling, one replica at a time, waiting for readiness. Never restart all replicas: in-flight requests will fail and upstreams will retry, amplifying load.",
+            "_label": "Runbook"
+          }
+        ],
+        "edges": []
+      },
+      "cypher": "CALL db.idx.vector.queryNodes('Runbook','embedding', 5, vecf32($v))\n    YIELD node, score\n    OPTIONAL MATCH (node)-[:COVERS]->(s:Service)\n    RETURN node, score, collect(DISTINCT s.name) AS services",
+      "step_id": "step-INC-3001-558295921"
+    },
+    {
+      "type": "thought",
+      "at": 1792203558304,
+      "agent": "Investigator",
+      "text": "Recording the causal edge in the graph."
+    },
+    {
+      "type": "tool_call",
+      "at": 1792203558304,
+      "agent": "Investigator",
+      "tool": "write_finding",
+      "args": {
+        "kind": "root_cause",
+        "pr_number": 4471
+      },
+      "step": 8
+    },
+    {
+      "type": "tool_result",
+      "at": 1792203558312,
+      "agent": "Investigator",
+      "tool": "write_finding",
+      "step": 8,
+      "summary": "{'written': 'CAUSED_BY', 'incident_id': 'INC-3001', 'deploy_id': 'dep-cause', 'd",
+      "note": "CAUSED_BY",
+      "latency_ms": 3.898,
+      "data": {
+        "written": "CAUSED_BY",
+        "incident_id": "INC-3001",
+        "deploy_id": "dep-cause",
+        "deploy_sha": "9f2c41ab77de",
+        "service": "ledger-service",
+        "pr_number": 4471,
+        "pr_title": "perf(ledger-service): reuse pooled client in post-entry hot path"
+      },
+      "path": {
+        "nodes": [
+          {
+            "id": "dep-cause",
+            "sha": "9f2c41ab77de",
+            "at": 1792202178162,
+            "at_iso": "2026-10-17T01:50:51Z",
+            "status": "success",
+            "pr_number": 4471,
+            "risk_score": 0.87,
+            "_label": "Deploy"
+          },
+          {
+            "id": "pr-4471",
+            "number": 4471,
+            "title": "perf(ledger-service): reuse pooled client in post-entry hot path",
+            "merged_at": 1792201938162,
+            "additions": 96,
+            "deletions": 41,
+            "_label": "PullRequest"
+          }
+        ],
+        "edges": [
+          {
+            "source": "INC-3001",
+            "target": "dep-cause",
+            "rel": "CAUSED_BY"
+          }
+        ]
+      },
+      "cypher": "MATCH (i:Incident {id:$incident})\n        MATCH (d:Deploy)\n        WHERE d.id = $deploy_id OR d.pr_number = $pr_number\n        MERGE (i)-[:CAUSED_BY]->(d)\n        WITH i, d\n        OPTIONAL MATCH (d)-[:SHIPS]->(pr:PullRequest)\n        OPTIONAL MATCH (d)-[:DEPLOYED_TO]->(s:Service)\n        RETURN d, pr, s.name",
+      "step_id": "step-INC-3001-558308042"
+    },
+    {
+      "type": "write",
+      "at": 1792203558312,
+      "kind": "CAUSED_BY",
+      "detail": {
+        "written": "CAUSED_BY",
+        "incident_id": "INC-3001",
+        "deploy_id": "dep-cause",
+        "deploy_sha": "9f2c41ab77de",
+        "service": "ledger-service",
+        "pr_number": 4471,
+        "pr_title": "perf(ledger-service): reuse pooled client in post-entry hot path"
+      },
+      "path": {
+        "nodes": [
+          {
+            "id": "dep-cause",
+            "sha": "9f2c41ab77de",
+            "at": 1792202178162,
+            "at_iso": "2026-10-17T01:50:51Z",
+            "status": "success",
+            "pr_number": 4471,
+            "risk_score": 0.87,
+            "_label": "Deploy"
+          },
+          {
+            "id": "pr-4471",
+            "number": 4471,
+            "title": "perf(ledger-service): reuse pooled client in post-entry hot path",
+            "merged_at": 1792201938162,
+            "additions": 96,
+            "deletions": 41,
+            "_label": "PullRequest"
+          }
+        ],
+        "edges": [
+          {
+            "source": "INC-3001",
+            "target": "dep-cause",
+            "rel": "CAUSED_BY"
+          }
+        ]
+      }
+    },
+    {
+      "type": "thought",
+      "at": 1792203558312,
+      "agent": "Investigator",
+      "text": "Root cause is PR #4471 deployed to ledger-service 23 minutes ago, 2 hops upstream of the alert, touching src/db/connection-pool.ts. Author Ben Ortiz. Propagation proven: ledger-service -> payments-api -> checkout-api."
+    },
+    {
+      "type": "handoff",
+      "at": 1792203558312,
+      "from": "Investigator",
+      "to": "Comms",
+      "step_id": "step-INC-3001-558308042"
+    },
+    {
+      "type": "agent_start",
+      "at": 1792203558312,
+      "agent": "Comms",
+      "tools": [
+        "who_knows",
+        "get_runbook",
+        "write_finding"
+      ]
+    },
+    {
+      "type": "thought",
+      "at": 1792203558312,
+      "agent": "Comms",
+      "text": "Finding who actually knows src/db/connection-pool.ts."
+    },
+    {
+      "type": "tool_call",
+      "at": 1792203558312,
+      "agent": "Comms",
+      "tool": "who_knows",
+      "args": {
+        "service_or_file": "src/db/connection-pool.ts"
+      },
+      "step": 9
+    },
+    {
+      "type": "tool_result",
+      "at": 1792203558323,
+      "agent": "Comms",
+      "tool": "who_knows",
+      "step": 9,
+      "summary": "2 results",
+      "note": "Priya Raghavan (47 commits)",
+      "latency_ms": 7.006,
+      "data": {
+        "target": "src/db/connection-pool.ts",
+        "count": 2,
+        "people": [
+          {
+            "name": "Priya Raghavan",
+            "handle": "priya",
+            "role": "Staff Engineer",
+            "timezone": "Asia/Kolkata",
+            "team": "Payments Platform",
+            "on_call": false,
+            "commits": 47,
+            "prior_incidents_on_file": 1,
+            "files": [
+              "src/db/connection-pool.ts"
+            ],
+            "services": [
+              "ledger-service"
+            ],
+            "expertise_score": 72
+          },
+          {
+            "name": "Tomas Lindqvist",
+            "handle": "tomas",
+            "role": "Senior Engineer",
+            "timezone": "Europe/Stockholm",
+            "team": "Payments Platform",
+            "on_call": false,
+            "commits": 6,
+            "prior_incidents_on_file": 1,
+            "files": [
+              "src/db/connection-pool.ts"
+            ],
+            "services": [
+              "ledger-service"
+            ],
+            "expertise_score": 31
+          }
+        ],
+        "recommended": {
+          "name": "Priya Raghavan",
+          "handle": "priya",
+          "role": "Staff Engineer",
+          "timezone": "Asia/Kolkata",
+          "team": "Payments Platform",
+          "on_call": false,
+          "commits": 47,
+          "prior_incidents_on_file": 1,
+          "files": [
+            "src/db/connection-pool.ts"
+          ],
+          "services": [
+            "ledger-service"
+          ],
+          "expertise_score": 72
+        },
+        "on_call_default": {
+          "name": "Marcus Webb",
+          "handle": "mwebb",
+          "team": "Infrastructure"
+        },
+        "owning_team": null,
+        "differs_from_rotation": true
+      },
+      "path": {
+        "nodes": [
+          {
+            "id": "p-00",
+            "name": "Priya Raghavan",
+            "handle": "priya",
+            "role": "Staff Engineer",
+            "timezone": "Asia/Kolkata",
+            "on_call": false,
+            "_label": "Person"
+          },
+          {
+            "id": "p-03",
+            "name": "Tomas Lindqvist",
+            "handle": "tomas",
+            "role": "Senior Engineer",
+            "timezone": "Europe/Stockholm",
+            "on_call": false,
+            "_label": "Person"
+          }
+        ],
+        "edges": []
+      },
+      "cypher": "MATCH (p:Person)-[w:WORKED_ON]->(f:File)-[:BELONGS_TO]->(owner:Service)\n    WHERE f.path = $target OR f.path CONTAINS $target OR owner.name = $target\n    OPTIONAL MATCH (i:Incident)-[:IMPLICATED]->(f)\n    OPTIONAL MATCH (i)-[:RESOLVED_BY]->(p)\n    OPTIONAL MATCH (p)-[:MEMBER_OF]->(t:Team)\n    RETURN p, t.name AS team,\n           sum(w.commits) AS commits,\n           max(w.last_at) AS last_at,\n           count(DISTINCT i) AS prior_incidents,\n           collect(DISTINCT f.path) AS files,\n           collect(DISTINCT owner.name) AS services\n    ORDER BY prior_incidents DESC, commits DESC\n    LIMIT 8",
+      "step_id": "step-INC-3001-558319538"
+    },
+    {
+      "type": "thought",
+      "at": 1792203558323,
+      "agent": "Comms",
+      "text": "Writing the lesson back into the graph so the next run starts here."
+    },
+    {
+      "type": "tool_call",
+      "at": 1792203558323,
+      "agent": "Comms",
+      "tool": "write_finding",
+      "args": {
+        "kind": "postmortem",
+        "lesson": "checkout-api p99 latency breached threshold with flat CPU: connection pool exhausted, acquire timeouts, waiters queueing. That is pool exhaustion, not compute pressure. Cause was PR #4471 deployed to ledger-service 2 hops upstream, touching src/db/connection-pool.ts. Pooled client reuse in the hot path reduced the effective pool ceiling, so callers queued on acquire and the latency surfaced at the customer-facing service rather than at the service that changed. Fix: raise the pool ceiling and add a per-caller bulkhead. For this signature, check pool saturation before CPU.",
+        "service": "ledger-service"
+      },
+      "step": 10
+    },
+    {
+      "type": "tool_result",
+      "at": 1792203558376,
+      "agent": "Comms",
+      "tool": "write_finding",
+      "step": 10,
+      "summary": "{'written': 'Postmortem', 'postmortem_id': 'PM-INC-3001-BB', 'incident_id': 'INC",
+      "note": "Postmortem",
+      "latency_ms": 48.986,
+      "data": {
+        "written": "Postmortem",
+        "postmortem_id": "PM-INC-3001-BB",
+        "incident_id": "INC-3001",
+        "lesson": "checkout-api p99 latency breached threshold with flat CPU: connection pool exhausted, acquire timeouts, waiters queueing. That is pool exhaustion, not compute pressure. Cause was PR #4471 deployed to ledger-service 2 hops upstream, touching src/db/connection-pool.ts. Pooled client reuse in the hot path reduced the effective pool ceiling, so callers queued on acquire and the latency surfaced at the customer-facing service rather than at the service that changed. Fix: raise the pool ceiling and add a per-caller bulkhead. For this signature, check pool saturation before CPU.",
+        "created_by": "blackbox",
+        "applies_to": "ledger-service",
+        "embedded": true
+      },
+      "path": {
+        "nodes": [
+          {
+            "id": "PM-INC-3001-BB",
+            "lesson": "checkout-api p99 latency breached threshold with flat CPU: connection pool exhausted, acquire timeouts, waiters queueing. That is pool exhaustion, not compute pressure. Cause was PR #4471 deployed to ledger-service 2 hops upstream, touching src/db/connection-pool.ts. Pooled client reuse in the hot path reduced the effective pool ceiling, so callers queued on acquire and the latency surfaced at the customer-facing service rather than at the service that changed. Fix: raise the pool ceiling and add a per-caller bulkhead. For this signature, check pool saturation before CPU.",
+            "created_at": 1792203558324,
+            "created_by": "blackbox",
+            "_label": "Postmortem"
+          }
+        ],
+        "edges": [
+          {
+            "source": "INC-3001",
+            "target": "PM-INC-3001-BB",
+            "rel": "PRODUCED"
+          }
+        ]
+      },
+      "cypher": "MATCH (i:Incident {id:$incident})\n        MERGE (pm:Postmortem {id:$pm_id})\n        SET pm.lesson = $lesson, pm.created_at = $now, pm.created_by = 'blackbox',\n            pm.embedding = vecf32($vec)\n        MERGE (i)-[:PRODUCED]->(pm)\n        WITH pm, i\n        OPTIONAL MATCH (s:Service {name:$service})\n        FOREACH (x IN CASE WHEN s IS NULL THEN [] ELSE [1] END |\n                 MERGE (pm)-[:APPLIES_TO]->(s))\n        RETURN pm, i.title",
+      "step_id": "step-INC-3001-558372882"
+    },
+    {
+      "type": "write",
+      "at": 1792203558376,
+      "kind": "Postmortem",
+      "detail": {
+        "written": "Postmortem",
+        "postmortem_id": "PM-INC-3001-BB",
+        "incident_id": "INC-3001",
+        "lesson": "checkout-api p99 latency breached threshold with flat CPU: connection pool exhausted, acquire timeouts, waiters queueing. That is pool exhaustion, not compute pressure. Cause was PR #4471 deployed to ledger-service 2 hops upstream, touching src/db/connection-pool.ts. Pooled client reuse in the hot path reduced the effective pool ceiling, so callers queued on acquire and the latency surfaced at the customer-facing service rather than at the service that changed. Fix: raise the pool ceiling and add a per-caller bulkhead. For this signature, check pool saturation before CPU.",
+        "created_by": "blackbox",
+        "applies_to": "ledger-service",
+        "embedded": true
+      },
+      "path": {
+        "nodes": [
+          {
+            "id": "PM-INC-3001-BB",
+            "lesson": "checkout-api p99 latency breached threshold with flat CPU: connection pool exhausted, acquire timeouts, waiters queueing. That is pool exhaustion, not compute pressure. Cause was PR #4471 deployed to ledger-service 2 hops upstream, touching src/db/connection-pool.ts. Pooled client reuse in the hot path reduced the effective pool ceiling, so callers queued on acquire and the latency surfaced at the customer-facing service rather than at the service that changed. Fix: raise the pool ceiling and add a per-caller bulkhead. For this signature, check pool saturation before CPU.",
+            "created_at": 1792203558324,
+            "created_by": "blackbox",
+            "_label": "Postmortem"
+          }
+        ],
+        "edges": [
+          {
+            "source": "INC-3001",
+            "target": "PM-INC-3001-BB",
+            "rel": "PRODUCED"
+          }
+        ]
+      }
+    },
+    {
+      "type": "thought",
+      "at": 1792203558376,
+      "agent": "Comms",
+      "text": "Closing the incident against the owner."
+    },
+    {
+      "type": "tool_call",
+      "at": 1792203558376,
+      "agent": "Comms",
+      "tool": "write_finding",
+      "args": {
+        "kind": "resolution",
+        "person": "Priya Raghavan"
+      },
+      "step": 11
+    },
+    {
+      "type": "tool_result",
+      "at": 1792203558383,
+      "agent": "Comms",
+      "tool": "write_finding",
+      "step": 11,
+      "summary": "{'written': 'RESOLVED_BY', 'incident_id': 'INC-3001', 'person': 'Priya Raghavan'",
+      "note": "RESOLVED_BY",
+      "latency_ms": 3.928,
+      "data": {
+        "written": "RESOLVED_BY",
+        "incident_id": "INC-3001",
+        "person": "Priya Raghavan"
+      },
+      "path": {
+        "nodes": [
+          {
+            "id": "p-00",
+            "name": "Priya Raghavan",
+            "handle": "priya",
+            "role": "Staff Engineer",
+            "timezone": "Asia/Kolkata",
+            "on_call": false,
+            "_label": "Person"
+          }
+        ],
+        "edges": [
+          {
+            "source": "INC-3001",
+            "target": "Priya Raghavan",
+            "rel": "RESOLVED_BY"
+          }
+        ]
+      },
+      "cypher": "MATCH (i:Incident {id:$incident})\n        SET i.status = 'resolved', i.resolved_at = $now\n        WITH i\n        OPTIONAL MATCH (p:Person {name:$person})\n        FOREACH (x IN CASE WHEN p IS NULL THEN [] ELSE [1] END |\n                 MERGE (i)-[:RESOLVED_BY]->(p))\n        RETURN i, p",
+      "step_id": "step-INC-3001-558380424"
+    },
+    {
+      "type": "write",
+      "at": 1792203558383,
+      "kind": "RESOLVED_BY",
+      "detail": {
+        "written": "RESOLVED_BY",
+        "incident_id": "INC-3001",
+        "person": "Priya Raghavan"
+      },
+      "path": {
+        "nodes": [
+          {
+            "id": "p-00",
+            "name": "Priya Raghavan",
+            "handle": "priya",
+            "role": "Staff Engineer",
+            "timezone": "Asia/Kolkata",
+            "on_call": false,
+            "_label": "Person"
+          }
+        ],
+        "edges": [
+          {
+            "source": "INC-3001",
+            "target": "Priya Raghavan",
+            "rel": "RESOLVED_BY"
+          }
+        ]
+      }
+    },
+    {
+      "type": "thought",
+      "at": 1792203558383,
+      "agent": "Comms",
+      "text": "Paging Priya Raghavan (47 commits on the file, 1 prior incident(s) on it) rather than the rotation default Marcus Webb. Postmortem written back to the graph."
+    },
+    {
+      "type": "answer",
+      "at": 1792203558383,
+      "answer": {
+        "incident_id": "INC-3001",
+        "title": "checkout-api p99 latency breach",
+        "service": "checkout-api",
+        "severity": "SEV1",
+        "root_cause": {
+          "text": "PR #4471 deployed to ledger-service 23 minutes ago, touching src/db/connection-pool.ts",
+          "pr_number": 4471,
+          "service": "ledger-service",
+          "file": "src/db/connection-pool.ts",
+          "author": "Ben Ortiz",
+          "hops_upstream": 2,
+          "citation": 1
+        },
+        "blast_radius": {
+          "count": 11,
+          "customer_facing": [
+            "mobile-bff",
+            "partner-api",
+            "web-bff"
+          ],
+          "citation": 2
+        },
+        "propagation": {
+          "chain": [
+            "ledger-service",
+            "payments-api",
+            "checkout-api"
+          ],
+          "citation": 3
+        },
+        "page": {
+          "name": "Priya Raghavan",
+          "handle": "priya",
+          "role": "Staff Engineer",
+          "timezone": "Asia/Kolkata",
+          "team": "Payments Platform",
+          "commits": 47,
+          "prior_incidents_on_file": 1,
+          "instead_of_on_call": "Marcus Webb",
+          "citation": 4
+        },
+        "memory": {
+          "postmortem_id": "PM-INC-2041",
+          "incident_id": "INC-2041",
+          "lesson": "ledger-service ran a fixed Postgres pool of 20 connections. A retry storm from checkout-api saturated it and every caller queued on acquire, so p99 latency climbed while CPU stayed flat -- the signature of pool exhaustion rather than compute pressure. Fix was to raise the pool ceiling to 60 and add a per-caller bulkhead in src/db/connection-pool.ts so one noisy upstream cannot consume the whole pool. Check pool saturation before chasing CPU whenever latency rises with flat utilisation.",
+          "similarity": 0.4045,
+          "self_authored": false,
+          "written_by": "Priya Raghavan",
+          "citation": 5
+        },
+        "fix": {
+          "runbook": "Connection pool exhaustion -- ledger-service",
+          "body": "Symptom: p99 latency climbing while CPU stays flat, acquire timeouts in logs, waiters queueing on the connection pool.\n1. Check pool saturation: pg_stat_activity count vs the configured ceiling in src/db/connection-pool.ts.\n2. If saturated, raise the ceiling and restart rolling. Do not restart all replicas.\n3. Identify the noisy upstream from per-caller acquire metrics and rate limit it.\n4. Add or verify the per-caller bulkhead so one upstream cannot take the whole pool.\nEscalate to Payments Platform if the ledger balance endpoint is affected.",
+          "citation": 6
+        },
+        "narration": {
+          "Triage": "Resolved to checkout-api. 11 services degrade with it, 3 customer-facing (mobile-bff, partner-api, web-bff). Closest prior incident is INC-2041, related but not conclusive.",
+          "Investigator": "Root cause is PR #4471 deployed to ledger-service 23 minutes ago, 2 hops upstream of the alert, touching src/db/connection-pool.ts. Author Ben Ortiz. Propagation proven: ledger-service -> payments-api -> checkout-api.",
+          "Comms": "Paging Priya Raghavan (47 commits on the file, 1 prior incident(s) on it) rather than the rotation default Marcus Webb. Postmortem written back to the graph."
+        },
+        "wrote": [
+          "CAUSED_BY",
+          "Postmortem",
+          "RESOLVED_BY"
+        ],
+        "citations": [
+          {
+            "n": 1,
+            "label": "Deploy of PR #4471 to ledger-service",
+            "nodes": [
+              "PR#4471",
+              "ledger-service"
+            ],
+            "tool": "recent_changes"
+          },
+          {
+            "n": 2,
+            "label": "11 dependent services",
+            "nodes": [
+              "mobile-bff",
+              "partner-api",
+              "web-bff"
+            ],
+            "tool": "blast_radius"
+          },
+          {
+            "n": 3,
+            "label": "Criticality-weighted dependency path",
+            "nodes": [
+              "ledger-service",
+              "payments-api",
+              "checkout-api"
+            ],
+            "tool": "causal_path"
+          },
+          {
+            "n": 4,
+            "label": "Priya Raghavan via WORKED_ON",
+            "nodes": [
+              "Priya Raghavan",
+              "src/db/connection-pool.ts"
+            ],
+            "tool": "who_knows"
+          },
+          {
+            "n": 5,
+            "label": "Postmortem PM-INC-2041",
+            "nodes": [
+              "PM-INC-2041"
+            ],
+            "tool": "similar_incidents"
+          },
+          {
+            "n": 6,
+            "label": "Connection pool exhaustion -- ledger-service",
+            "nodes": [
+              "Connection pool exhaustion -- ledger-service"
+            ],
+            "tool": "get_runbook"
+          }
+        ]
+      }
+    },
+    {
+      "type": "run_end",
+      "at": 1792203558385,
+      "run_id": "run-fcb9bc11",
+      "elapsed_ms": 215.6,
+      "tool_calls": 11,
+      "graph_latency_ms": 126.17,
+      "hops": 8,
+      "wrote": [
+        "CAUSED_BY",
+        "Postmortem",
+        "RESOLVED_BY"
+      ],
+      "recalled_memory": true,
+      "recalled_own_postmortem": false,
+      "mode": "deterministic-planner",
+      "memory": {
+        "self_authored_postmortems": 1,
+        "seeded_postmortems": 11,
+        "agent_steps": 11
+      }
+    }
+  ]
+}
