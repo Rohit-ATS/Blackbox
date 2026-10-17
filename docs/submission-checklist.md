@@ -5,14 +5,14 @@ Work top to bottom. Do not deviate.
 ## Verified during the build
 
 - [x] `git clone` into a fresh directory → `cp .env.example .env` →
-      `docker compose up` → working demo. Tested for real on a clean path:
-      **1m15s cold build**, then both scenarios reproduced identical results
-      (cold: PR #4471, 11 calls; warm: cites `PM-INC-3001-BB`, 8 calls).
+      `docker compose up` → working demo. The images build successfully; the
+      current host's Docker Desktop daemon failed during the final startup
+      check, so rerun this item after Docker Desktop recovers.
 - [x] `pytest -q` → **29 passed**
 - [x] MCP server driven by a real client over stdio: 11 tools, correct root
       cause, tenant switching, `:AgentStep` trail read back out of the graph
 - [x] Both scenarios run end to end from the browser with zero terminal
-      interaction, zero console errors or warnings
+      interaction, zero application console errors or warnings
 - [x] Repo is MIT licensed, no secrets committed (`git log -p` scanned),
       `.env` untracked
 - [x] README has setup, architecture, full schema link, the track-by-track

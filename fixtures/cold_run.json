@@ -3,11 +3,12 @@
   "recorded_with": "deterministic-planner",
   "metrics": {
     "type": "run_end",
-    "at": 1792207466954,
-    "run_id": "run-b78a3ca9",
-    "elapsed_ms": 194.7,
+    "at": 1792241907225,
+    "run_id": "run-9adc2366",
+    "elapsed_ms": 215.5,
     "tool_calls": 11,
-    "graph_latency_ms": 119.41,
+    "graph_latency_ms": 102.22,
+    "investigation_latency_ms": 61.24,
     "hops": 8,
     "wrote": [
       "CAUSED_BY",
@@ -149,8 +150,8 @@
   "events": [
     {
       "type": "run_start",
-      "at": 1792207466759,
-      "run_id": "run-b78a3ca9",
+      "at": 1792241907010,
+      "run_id": "run-9adc2366",
       "scenario": "cold",
       "tenant": "acme",
       "incident_id": "INC-3001",
@@ -174,7 +175,7 @@
     },
     {
       "type": "agent_start",
-      "at": 1792207466759,
+      "at": 1792241907010,
       "agent": "Triage",
       "tools": [
         "resolve_entity",
@@ -185,13 +186,13 @@
     },
     {
       "type": "thought",
-      "at": 1792207466759,
+      "at": 1792241907010,
       "agent": "Triage",
       "text": "Resolving the alert text to a node in the service graph."
     },
     {
       "type": "tool_call",
-      "at": 1792207466759,
+      "at": 1792241907010,
       "agent": "Triage",
       "tool": "resolve_entity",
       "args": {
@@ -201,13 +202,13 @@
     },
     {
       "type": "tool_result",
-      "at": 1792207466764,
+      "at": 1792241907018,
       "agent": "Triage",
       "tool": "resolve_entity",
       "step": 1,
       "summary": "checkout-api",
       "note": "",
-      "latency_ms": 2.914,
+      "latency_ms": 4.948,
       "data": {
         "resolved": true,
         "label": "Service",
@@ -246,17 +247,17 @@
         "edges": []
       },
       "cypher": "CALL db.idx.fulltext.queryNodes('Service', $q) YIELD node, score\n    RETURN node, score ORDER BY score DESC LIMIT 5",
-      "step_id": "step-INC-3001-466762638"
+      "step_id": "step-INC-3001-907015745"
     },
     {
       "type": "thought",
-      "at": 1792207466764,
+      "at": 1792241907018,
       "agent": "Triage",
       "text": "Checking whether this failure signature has been seen before."
     },
     {
       "type": "tool_call",
-      "at": 1792207466764,
+      "at": 1792241907018,
       "agent": "Triage",
       "tool": "similar_incidents",
       "args": {
@@ -267,13 +268,13 @@
     },
     {
       "type": "tool_result",
-      "at": 1792207466802,
+      "at": 1792241907067,
       "agent": "Triage",
       "tool": "similar_incidents",
       "step": 2,
       "summary": "3 results",
       "note": "3 incidents, 3 postmortems",
-      "latency_ms": 16.329,
+      "latency_ms": 19.427,
       "data": {
         "query": "checkout-api p99 latency 4200ms, threshold 1500ms, error rate climbing, payment intent creation slow, CPU flat across replicas",
         "count": 3,
@@ -283,7 +284,7 @@
             "title": "ledger-service connection pool exhaustion under checkout retry storm",
             "symptom": "ledger-service p99 latency 6100ms, connection pool exhausted, acquire timeouts, waiters queueing, checkout retries amplifying load",
             "severity": "SEV1",
-            "started_at": "2026-09-29T02:57:42Z",
+            "started_at": "2026-09-29T03:31:08Z",
             "similarity": 0.3473,
             "affected_services": [
               "inventory-service",
@@ -303,7 +304,7 @@
             "title": "payments-api capture timeouts after gRPC deadline change",
             "symptom": "payments-api capture calls timing out, gRPC DEADLINE_EXCEEDED to ledger-service, order completion rate down 12%",
             "severity": "SEV2",
-            "started_at": "2026-09-24T02:57:42Z",
+            "started_at": "2026-09-24T03:31:08Z",
             "similarity": 0.307,
             "affected_services": [
               "invoice-service",
@@ -323,7 +324,7 @@
             "title": "edge-gateway TLS session cache misconfiguration spiked handshake latency",
             "symptom": "edge-gateway handshake latency 900ms, TLS session resumption rate near zero, all customer-facing surfaces slower",
             "severity": "SEV2",
-            "started_at": "2026-10-06T02:57:42Z",
+            "started_at": "2026-10-06T03:31:08Z",
             "similarity": 0.3039,
             "affected_services": [
               "cart-service",
@@ -350,6 +351,13 @@
             "applies_to": [
               "ledger-service"
             ],
+            "cause_pr": null,
+            "cause_deploy_id": null,
+            "cause_service": null,
+            "cause_file": null,
+            "cause_hops": null,
+            "affected_count": null,
+            "customer_facing": [],
             "similarity": 0.4045
           },
           {
@@ -362,6 +370,13 @@
             "applies_to": [
               "postgres-primary"
             ],
+            "cause_pr": null,
+            "cause_deploy_id": null,
+            "cause_service": null,
+            "cause_file": null,
+            "cause_hops": null,
+            "affected_count": null,
+            "customer_facing": [],
             "similarity": 0.3604
           },
           {
@@ -374,14 +389,21 @@
             "applies_to": [
               "currency-oracle"
             ],
+            "cause_pr": null,
+            "cause_deploy_id": null,
+            "cause_service": null,
+            "cause_file": null,
+            "cause_hops": null,
+            "affected_count": null,
+            "customer_facing": [],
             "similarity": 0.2819
           }
         ],
         "self_authored_hits": 0,
         "recalled_own_postmortem": false,
         "index_latency_ms": {
-          "Incident": 9.341,
-          "Postmortem": 6.71
+          "Incident": 10.589,
+          "Postmortem": 8.531
         }
       },
       "path": {
@@ -389,7 +411,7 @@
           {
             "id": "PM-INC-2044",
             "lesson": "Scoring model rollouts had no shadow-mode gate. All model versions now run in shadow against production traffic for 24h before any live share.",
-            "created_at": 1791006282224,
+            "created_at": 1791008288126,
             "created_by": "Ingrid Vos",
             "_label": "Postmortem"
           },
@@ -397,9 +419,9 @@
             "id": "INC-2044",
             "title": "fraud-screen model rollout blocked checkout for low-risk customers",
             "symptom": "fraud-screen decline rate up 8x, checkout-api conversion dropped, model v7 rolled to 100% without shadow comparison",
-            "started_at": 1790996262224,
-            "started_iso": "2026-10-03T02:57:42Z",
-            "resolved_at": 1790999082224,
+            "started_at": 1790998268126,
+            "started_iso": "2026-10-03T03:31:08Z",
+            "resolved_at": 1791001088126,
             "severity": "SEV2",
             "status": "resolved",
             "_label": "Incident"
@@ -407,7 +429,7 @@
           {
             "id": "PM-INC-2033",
             "lesson": "A deadline reduction from 5s to 800ms in LedgerClient.java was shipped without measuring the ledger p99. Deadlines must be set from observed downstream p99 times 1.5, never from a round number.",
-            "created_at": 1790228142224,
+            "created_at": 1790230148126,
             "created_by": "Tomas Lindqvist",
             "_label": "Postmortem"
           },
@@ -415,9 +437,9 @@
             "id": "INC-2033",
             "title": "payments-api capture timeouts after gRPC deadline change",
             "symptom": "payments-api capture calls timing out, gRPC DEADLINE_EXCEEDED to ledger-service, order completion rate down 12%",
-            "started_at": 1790218662224,
-            "started_iso": "2026-09-24T02:57:42Z",
-            "resolved_at": 1790220942224,
+            "started_at": 1790220668126,
+            "started_iso": "2026-09-24T03:31:08Z",
+            "resolved_at": 1790222948126,
             "severity": "SEV2",
             "status": "resolved",
             "_label": "Incident"
@@ -425,7 +447,7 @@
           {
             "id": "PM-INC-2056",
             "lesson": "The rate refresher failed silently when the upstream returned 304. Staleness is now an alerting metric rather than a log line.",
-            "created_at": 1791783522224,
+            "created_at": 1791785528126,
             "created_by": "Liam Doyle",
             "_label": "Postmortem"
           },
@@ -433,9 +455,9 @@
             "id": "INC-2056",
             "title": "currency-oracle stale FX rates mispriced international carts",
             "symptom": "currency-oracle serving rates 6 hours stale, pricing-engine quoting wrong totals for non-USD carts",
-            "started_at": 1791773862224,
-            "started_iso": "2026-10-12T02:57:42Z",
-            "resolved_at": 1791776322224,
+            "started_at": 1791775868126,
+            "started_iso": "2026-10-12T03:31:08Z",
+            "resolved_at": 1791778328126,
             "severity": "SEV3",
             "status": "resolved",
             "_label": "Incident"
@@ -443,7 +465,7 @@
           {
             "id": "PM-INC-2048",
             "lesson": "A config rollout zeroed the TLS session cache size. Handshake cost is now a gated SLO on every edge-gateway config change.",
-            "created_at": 1791264402224,
+            "created_at": 1791266408126,
             "created_by": "Noor Haddad",
             "_label": "Postmortem"
           },
@@ -451,9 +473,9 @@
             "id": "INC-2048",
             "title": "edge-gateway TLS session cache misconfiguration spiked handshake latency",
             "symptom": "edge-gateway handshake latency 900ms, TLS session resumption rate near zero, all customer-facing surfaces slower",
-            "started_at": 1791255462224,
-            "started_iso": "2026-10-06T02:57:42Z",
-            "resolved_at": 1791257202224,
+            "started_at": 1791257468126,
+            "started_iso": "2026-10-06T03:31:08Z",
+            "resolved_at": 1791259208126,
             "severity": "SEV2",
             "status": "resolved",
             "_label": "Incident"
@@ -461,7 +483,7 @@
           {
             "id": "PM-INC-2037",
             "lesson": "Synchronous replication was configured on one replica only. Promotion picked an async replica. Quorum commit across two replicas is now required.",
-            "created_at": 1790407062224,
+            "created_at": 1790409068126,
             "created_by": "Marcus Webb",
             "_label": "Postmortem"
           },
@@ -469,9 +491,9 @@
             "id": "INC-2037",
             "title": "postgres-primary failover left replicas lagging 40 minutes",
             "symptom": "postgres-primary failover triggered, replica lag 40 minutes, read-after-write inconsistency across catalog-api and user-profile",
-            "started_at": 1790391462224,
-            "started_iso": "2026-09-26T02:57:42Z",
-            "resolved_at": 1790399862224,
+            "started_at": 1790393468126,
+            "started_iso": "2026-09-26T03:31:08Z",
+            "resolved_at": 1790401868126,
             "severity": "SEV1",
             "status": "resolved",
             "_label": "Incident"
@@ -479,7 +501,7 @@
           {
             "id": "PM-INC-2041",
             "lesson": "ledger-service ran a fixed Postgres pool of 20 connections. A retry storm from checkout-api saturated it and every caller queued on acquire, so p99 latency climbed while CPU stayed flat -- the signature of pool exhaustion rather than compute pressure. Fix was to raise the pool ceiling to 60 and add a per-caller bulkhead in src/db/connection-pool.ts so one noisy upstream cannot consume the whole pool. Check pool saturation before chasing CPU whenever latency rises with flat utilisation.",
-            "created_at": 1790662302224,
+            "created_at": 1790664308126,
             "created_by": "Priya Raghavan",
             "_label": "Postmortem"
           },
@@ -487,59 +509,59 @@
             "id": "INC-2041",
             "title": "ledger-service connection pool exhaustion under checkout retry storm",
             "symptom": "ledger-service p99 latency 6100ms, connection pool exhausted, acquire timeouts, waiters queueing, checkout retries amplifying load",
-            "started_at": 1790650662224,
-            "started_iso": "2026-09-29T02:57:42Z",
-            "resolved_at": 1790655102224,
+            "started_at": 1790652668126,
+            "started_iso": "2026-09-29T03:31:08Z",
+            "resolved_at": 1790657108126,
             "severity": "SEV1",
             "status": "resolved",
             "_label": "Incident"
           },
           {
-            "id": "PM-INC-2018",
-            "lesson": "Index rebuilds had no rate limit and ran on a cron that overlapped peak hours. Rebuilds are now token-bucket limited and scheduled off-peak.",
-            "created_at": 1789281162224,
-            "created_by": "Chen Wei",
-            "_label": "Postmortem"
-          },
-          {
             "id": "PM-INC-2044",
             "lesson": "Scoring model rollouts had no shadow-mode gate. All model versions now run in shadow against production traffic for 24h before any live share.",
-            "created_at": 1791006282224,
+            "created_at": 1791008288126,
             "created_by": "Ingrid Vos",
             "_label": "Postmortem"
           },
           {
             "id": "PM-INC-2051",
             "lesson": "template-renderer shipped a breaking template schema without a version negotiation. Renderer responses are now versioned and the fan-out worker falls back to the previous template on schema mismatch.",
-            "created_at": 1791437442224,
+            "created_at": 1791439448126,
             "created_by": "Mei Tanaka",
-            "_label": "Postmortem"
-          },
-          {
-            "id": "PM-INC-2029",
-            "lesson": "maxmemory-policy was allkeys-lru across shared cache namespaces, so a batch job filled redis-cache and evicted live session keys. Namespace isolation with per-prefix memory budgets prevented recurrence.",
-            "created_at": 1789969782224,
-            "created_by": "Grace Mbeki",
             "_label": "Postmortem"
           },
           {
             "id": "PM-INC-2041",
             "lesson": "ledger-service ran a fixed Postgres pool of 20 connections. A retry storm from checkout-api saturated it and every caller queued on acquire, so p99 latency climbed while CPU stayed flat -- the signature of pool exhaustion rather than compute pressure. Fix was to raise the pool ceiling to 60 and add a per-caller bulkhead in src/db/connection-pool.ts so one noisy upstream cannot consume the whole pool. Check pool saturation before chasing CPU whenever latency rises with flat utilisation.",
-            "created_at": 1790662302224,
+            "created_at": 1790664308126,
             "created_by": "Priya Raghavan",
+            "_label": "Postmortem"
+          },
+          {
+            "id": "PM-INC-2018",
+            "lesson": "Index rebuilds had no rate limit and ran on a cron that overlapped peak hours. Rebuilds are now token-bucket limited and scheduled off-peak.",
+            "created_at": 1789283168126,
+            "created_by": "Chen Wei",
             "_label": "Postmortem"
           },
           {
             "id": "PM-INC-2037",
             "lesson": "Synchronous replication was configured on one replica only. Promotion picked an async replica. Quorum commit across two replicas is now required.",
-            "created_at": 1790407062224,
+            "created_at": 1790409068126,
             "created_by": "Marcus Webb",
+            "_label": "Postmortem"
+          },
+          {
+            "id": "PM-INC-2029",
+            "lesson": "maxmemory-policy was allkeys-lru across shared cache namespaces, so a batch job filled redis-cache and evicted live session keys. Namespace isolation with per-prefix memory budgets prevented recurrence.",
+            "created_at": 1789971788126,
+            "created_by": "Grace Mbeki",
             "_label": "Postmortem"
           },
           {
             "id": "PM-INC-2056",
             "lesson": "The rate refresher failed silently when the upstream returned 304. Staleness is now an alerting metric rather than a log line.",
-            "created_at": 1791783522224,
+            "created_at": 1791785528126,
             "created_by": "Liam Doyle",
             "_label": "Postmortem"
           }
@@ -578,17 +600,17 @@
         ]
       },
       "cypher": "CALL db.idx.vector.queryNodes('Incident','embedding', $k, vecf32($v))\n    YIELD node, score\n    WHERE node.status = 'resolved'\n    OPTIONAL MATCH (node)-[:PRODUCED]->(pm:Postmortem)\n    OPTIONAL MATCH (node)-[:AFFECTED]->(s:Service)\n    OPTIONAL MATCH (node)-[:RESOLVED_BY]->(p:Person)\n    OPTIONAL MATCH (node)-[:CAUSED_BY]->(d:Deploy)-[:SHIPS]->(pr:PullRequest)\n    RETURN node, score, pm, collect(DISTINCT s.name) AS services,\n           collect(DISTINCT p.name) AS resolvers, pr.number AS pr_number",
-      "step_id": "step-INC-3001-466780546"
+      "step_id": "step-INC-3001-907037877"
     },
     {
       "type": "thought",
-      "at": 1792207466802,
+      "at": 1792241907067,
       "agent": "Triage",
       "text": "Walking dependents of checkout-api to size the impact."
     },
     {
       "type": "tool_call",
-      "at": 1792207466802,
+      "at": 1792241907067,
       "agent": "Triage",
       "tool": "affected_services",
       "args": {
@@ -599,13 +621,13 @@
     },
     {
       "type": "tool_result",
-      "at": 1792207466830,
+      "at": 1792241907108,
       "agent": "Triage",
       "tool": "affected_services",
       "step": 3,
       "summary": "11 results",
       "note": "11 impacted, 3 customer-facing",
-      "latency_ms": 16.337,
+      "latency_ms": 22.86,
       "data": {
         "source": "checkout-api",
         "count": 11,
@@ -633,7 +655,7 @@
               "order-orchestrator",
               "receipts-service"
             ],
-            "latency_ms": 3.098
+            "latency_ms": 4.425
           },
           {
             "hops": 2,
@@ -644,19 +666,19 @@
               "partner-api",
               "web-bff"
             ],
-            "latency_ms": 3.033
+            "latency_ms": 3.695
           },
           {
             "hops": 3,
             "new_services": [
               "edge-gateway"
             ],
-            "latency_ms": 2.989
+            "latency_ms": 4.515
           },
           {
             "hops": 4,
             "new_services": [],
-            "latency_ms": 2.932
+            "latency_ms": 4.606
           }
         ],
         "services": [
@@ -1008,17 +1030,17 @@
         ]
       },
       "cypher": "MATCH (s:Service {name:$name})\n    CALL algo.BFS(s, $level, 'IMPACTS') YIELD nodes\n    UNWIND nodes AS n\n    RETURN n",
-      "step_id": "step-INC-3001-466818530"
+      "step_id": "step-INC-3001-907090168"
     },
     {
       "type": "thought",
-      "at": 1792207466830,
+      "at": 1792241907108,
       "agent": "Triage",
       "text": "Nothing in memory names this. Ranking structural criticality to decide what matters."
     },
     {
       "type": "tool_call",
-      "at": 1792207466830,
+      "at": 1792241907108,
       "agent": "Triage",
       "tool": "criticality_rank",
       "args": {
@@ -1028,13 +1050,13 @@
     },
     {
       "type": "tool_result",
-      "at": 1792207466842,
+      "at": 1792241907126,
       "agent": "Triage",
       "tool": "criticality_rank",
       "step": 4,
       "summary": "8 results",
       "note": "redis-cache, postgres-primary, object-store",
-      "latency_ms": 3.704,
+      "latency_ms": 5.977,
       "data": {
         "count": 8,
         "ranking": [
@@ -1199,24 +1221,24 @@
         "edges": []
       },
       "cypher": "CALL algo.pageRank('Service','DEPENDS_ON') YIELD node, score\n    OPTIONAL MATCH (node)<-[:DEPENDS_ON]-(dependent:Service)\n    RETURN node, score, count(DISTINCT dependent) AS direct_dependents\n    ORDER BY score DESC\n    LIMIT $top",
-      "step_id": "step-INC-3001-466834215"
+      "step_id": "step-INC-3001-907114572"
     },
     {
       "type": "thought",
-      "at": 1792207466842,
+      "at": 1792241907126,
       "agent": "Triage",
       "text": "Resolved to checkout-api. 11 services degrade with it, 3 customer-facing (mobile-bff, partner-api, web-bff). Closest prior incident is INC-2041, related but not conclusive."
     },
     {
       "type": "handoff",
-      "at": 1792207466842,
+      "at": 1792241907126,
       "from": "Triage",
       "to": "Investigator",
-      "step_id": "step-INC-3001-466834215"
+      "step_id": "step-INC-3001-907114572"
     },
     {
       "type": "agent_start",
-      "at": 1792207466842,
+      "at": 1792241907126,
       "agent": "Investigator",
       "tools": [
         "recent_changes",
@@ -1228,13 +1250,13 @@
     },
     {
       "type": "thought",
-      "at": 1792207466842,
+      "at": 1792241907126,
       "agent": "Investigator",
       "text": "Looking for deploys within two hops of checkout-api -- the cause is rarely on the service that alerted."
     },
     {
       "type": "tool_call",
-      "at": 1792207466842,
+      "at": 1792241907126,
       "agent": "Investigator",
       "tool": "recent_changes",
       "args": {
@@ -1246,18 +1268,18 @@
     },
     {
       "type": "tool_result",
-      "at": 1792207466853,
+      "at": 1792241907146,
       "agent": "Investigator",
       "tool": "recent_changes",
       "step": 5,
-      "summary": "2 results",
-      "note": "2 deploys within 2 hops / 120min",
-      "latency_ms": 5.056,
+      "summary": "1 results",
+      "note": "1 deploys within 2 hops / 120min",
+      "latency_ms": 7.549,
       "data": {
         "service": "checkout-api",
         "window_minutes": 120,
         "hops_searched": 2,
-        "count": 2,
+        "count": 1,
         "deploys": [
           {
             "deploy_id": "dep-cause",
@@ -1265,7 +1287,7 @@
             "service": "ledger-service",
             "hops_from_symptom": 2,
             "minutes_ago": 23,
-            "at": "2026-10-17T02:34:42Z",
+            "at": "2026-10-17T03:08:08Z",
             "status": "success",
             "risk_score": 0.87,
             "pr_number": 4471,
@@ -1277,24 +1299,6 @@
               "src/db/connection-pool.ts",
               "src/ledger/post-entry.ts"
             ]
-          },
-          {
-            "deploy_id": "dep-decoy-2",
-            "sha": "7f6475699aef",
-            "service": "catalog-api",
-            "hops_from_symptom": 2,
-            "minutes_ago": 95,
-            "at": "2026-10-17T01:49:42Z",
-            "status": "success",
-            "risk_score": 0.33,
-            "pr_number": 4519,
-            "pr_title": "chore(catalog-api): regenerate openapi client",
-            "additions": 44,
-            "deletions": 24,
-            "author": "Chen Wei",
-            "files": [
-              "src/metrics/emit.java"
-            ]
           }
         ]
       },
@@ -1303,8 +1307,8 @@
           {
             "id": "dep-cause",
             "sha": "9f2c41ab77de",
-            "at": 1792206086753,
-            "at_iso": "2026-10-17T02:34:42Z",
+            "at": 1792240527002,
+            "at_iso": "2026-10-17T03:08:08Z",
             "status": "success",
             "pr_number": 4471,
             "risk_score": 0.87,
@@ -1314,28 +1318,9 @@
             "id": "pr-4471",
             "number": 4471,
             "title": "perf(ledger-service): reuse pooled client in post-entry hot path",
-            "merged_at": 1792205846753,
+            "merged_at": 1792240287002,
             "additions": 96,
             "deletions": 41,
-            "_label": "PullRequest"
-          },
-          {
-            "id": "dep-decoy-2",
-            "sha": "7f6475699aef",
-            "at": 1792201782224,
-            "at_iso": "2026-10-17T01:49:42Z",
-            "status": "success",
-            "pr_number": 4519,
-            "risk_score": 0.33,
-            "_label": "Deploy"
-          },
-          {
-            "id": "pr-4519",
-            "number": 4519,
-            "title": "chore(catalog-api): regenerate openapi client",
-            "merged_at": 1792201362224,
-            "additions": 44,
-            "deletions": 24,
             "_label": "PullRequest"
           }
         ],
@@ -1349,31 +1334,21 @@
             "source": "dep-cause",
             "target": "PR#4471",
             "rel": "SHIPS"
-          },
-          {
-            "source": "dep-decoy-2",
-            "target": "catalog-api",
-            "rel": "DEPLOYED_TO"
-          },
-          {
-            "source": "dep-decoy-2",
-            "target": "PR#4519",
-            "rel": "SHIPS"
           }
         ]
       },
       "cypher": "MATCH (t:Service {name:$name})-[:DEPENDS_ON*0..2]->(dep:Service)\n    MATCH (d:Deploy)-[:DEPLOYED_TO]->(dep)\n    WHERE d.at >= $cutoff\n    MATCH (d)-[:SHIPS]->(pr:PullRequest)\n    OPTIONAL MATCH (pr)-[:TOUCHES]->(f:File)\n    OPTIONAL MATCH (author:Person)-[:AUTHORED]->(pr)\n    RETURN DISTINCT d, dep.name AS service, pr, author.name AS author,\n           collect(DISTINCT f.path) AS files\n    ORDER BY d.risk_score DESC, d.at DESC\n    LIMIT 10",
-      "step_id": "step-INC-3001-466847638"
+      "step_id": "step-INC-3001-907134449"
     },
     {
       "type": "thought",
-      "at": 1792207466853,
+      "at": 1792241907146,
       "agent": "Investigator",
       "text": "Proving how a failure in ledger-service reaches checkout-api."
     },
     {
       "type": "tool_call",
-      "at": 1792207466853,
+      "at": 1792241907146,
       "agent": "Investigator",
       "tool": "causal_path",
       "args": {
@@ -1384,13 +1359,13 @@
     },
     {
       "type": "tool_result",
-      "at": 1792207466861,
+      "at": 1792241907161,
       "agent": "Investigator",
       "tool": "causal_path",
       "step": 6,
       "summary": "{'found': True, 'propagation': ['ledger-service', 'payments-api', 'checkout-api'",
       "note": "ledger-service -> payments-api -> checkout-api",
-      "latency_ms": 4.271,
+      "latency_ms": 7.479,
       "data": {
         "found": true,
         "propagation": [
@@ -1470,17 +1445,17 @@
         ]
       },
       "cypher": "MATCH (a:Service {name:$from}), (b:Service {name:$to})\n    CALL algo.SPpaths({sourceNode:a, targetNode:b, relTypes:['DEPENDS_ON'],\n                       weightProp:'cost', pathCount:1})\n    YIELD path, pathWeight, pathCost\n    RETURN path, pathWeight, pathCost",
-      "step_id": "step-INC-3001-466857312"
+      "step_id": "step-INC-3001-907154202"
     },
     {
       "type": "thought",
-      "at": 1792207466861,
+      "at": 1792241907161,
       "agent": "Investigator",
       "text": "Pulling the operational runbook."
     },
     {
       "type": "tool_call",
-      "at": 1792207466861,
+      "at": 1792241907161,
       "agent": "Investigator",
       "tool": "get_runbook",
       "args": {
@@ -1491,13 +1466,13 @@
     },
     {
       "type": "tool_result",
-      "at": 1792207466874,
+      "at": 1792241907181,
       "agent": "Investigator",
       "tool": "get_runbook",
       "step": 7,
       "summary": "5 results",
       "note": "Connection pool exhaustion -- ledger-service",
-      "latency_ms": 5.806,
+      "latency_ms": 8.748,
       "data": {
         "service": "ledger-service",
         "symptom": "connection pool exhausted acquire timeouts p99 latency",
@@ -1601,17 +1576,17 @@
         "edges": []
       },
       "cypher": "CALL db.idx.vector.queryNodes('Runbook','embedding', 5, vecf32($v))\n    YIELD node, score\n    OPTIONAL MATCH (node)-[:COVERS]->(s:Service)\n    RETURN node, score, collect(DISTINCT s.name) AS services",
-      "step_id": "step-INC-3001-466867744"
+      "step_id": "step-INC-3001-907169902"
     },
     {
       "type": "thought",
-      "at": 1792207466874,
+      "at": 1792241907181,
       "agent": "Investigator",
       "text": "Recording the causal edge in the graph."
     },
     {
       "type": "tool_call",
-      "at": 1792207466874,
+      "at": 1792241907181,
       "agent": "Investigator",
       "tool": "write_finding",
       "args": {
@@ -1622,13 +1597,13 @@
     },
     {
       "type": "tool_result",
-      "at": 1792207466881,
+      "at": 1792241907190,
       "agent": "Investigator",
       "tool": "write_finding",
       "step": 8,
       "summary": "{'written': 'CAUSED_BY', 'incident_id': 'INC-3001', 'deploy_id': 'dep-cause', 'd",
       "note": "CAUSED_BY",
-      "latency_ms": 3.338,
+      "latency_ms": 4.699,
       "data": {
         "written": "CAUSED_BY",
         "incident_id": "INC-3001",
@@ -1643,8 +1618,8 @@
           {
             "id": "dep-cause",
             "sha": "9f2c41ab77de",
-            "at": 1792206086753,
-            "at_iso": "2026-10-17T02:34:42Z",
+            "at": 1792240527002,
+            "at_iso": "2026-10-17T03:08:08Z",
             "status": "success",
             "pr_number": 4471,
             "risk_score": 0.87,
@@ -1654,7 +1629,7 @@
             "id": "pr-4471",
             "number": 4471,
             "title": "perf(ledger-service): reuse pooled client in post-entry hot path",
-            "merged_at": 1792205846753,
+            "merged_at": 1792240287002,
             "additions": 96,
             "deletions": 41,
             "_label": "PullRequest"
@@ -1669,11 +1644,11 @@
         ]
       },
       "cypher": "MATCH (i:Incident {id:$incident})\n        MATCH (d:Deploy)\n        WHERE d.id = $deploy_id OR d.pr_number = $pr_number\n        MERGE (i)-[:CAUSED_BY]->(d)\n        WITH i, d\n        OPTIONAL MATCH (d)-[:SHIPS]->(pr:PullRequest)\n        OPTIONAL MATCH (d)-[:DEPLOYED_TO]->(s:Service)\n        RETURN d, pr, s.name",
-      "step_id": "step-INC-3001-466878107"
+      "step_id": "step-INC-3001-907185762"
     },
     {
       "type": "write",
-      "at": 1792207466881,
+      "at": 1792241907190,
       "kind": "CAUSED_BY",
       "detail": {
         "written": "CAUSED_BY",
@@ -1689,8 +1664,8 @@
           {
             "id": "dep-cause",
             "sha": "9f2c41ab77de",
-            "at": 1792206086753,
-            "at_iso": "2026-10-17T02:34:42Z",
+            "at": 1792240527002,
+            "at_iso": "2026-10-17T03:08:08Z",
             "status": "success",
             "pr_number": 4471,
             "risk_score": 0.87,
@@ -1700,7 +1675,7 @@
             "id": "pr-4471",
             "number": 4471,
             "title": "perf(ledger-service): reuse pooled client in post-entry hot path",
-            "merged_at": 1792205846753,
+            "merged_at": 1792240287002,
             "additions": 96,
             "deletions": 41,
             "_label": "PullRequest"
@@ -1717,20 +1692,20 @@
     },
     {
       "type": "thought",
-      "at": 1792207466881,
+      "at": 1792241907190,
       "agent": "Investigator",
       "text": "Root cause is PR #4471 deployed to ledger-service 23 minutes ago, 2 hops upstream of the alert, touching src/db/connection-pool.ts. Author Ben Ortiz. Propagation proven: ledger-service -> payments-api -> checkout-api."
     },
     {
       "type": "handoff",
-      "at": 1792207466881,
+      "at": 1792241907190,
       "from": "Investigator",
       "to": "Comms",
-      "step_id": "step-INC-3001-466878107"
+      "step_id": "step-INC-3001-907185762"
     },
     {
       "type": "agent_start",
-      "at": 1792207466881,
+      "at": 1792241907190,
       "agent": "Comms",
       "tools": [
         "who_knows",
@@ -1740,13 +1715,13 @@
     },
     {
       "type": "thought",
-      "at": 1792207466881,
+      "at": 1792241907190,
       "agent": "Comms",
       "text": "Finding who actually knows src/db/connection-pool.ts."
     },
     {
       "type": "tool_call",
-      "at": 1792207466881,
+      "at": 1792241907190,
       "agent": "Comms",
       "tool": "who_knows",
       "args": {
@@ -1756,13 +1731,13 @@
     },
     {
       "type": "tool_result",
-      "at": 1792207466891,
+      "at": 1792241907203,
       "agent": "Comms",
       "tool": "who_knows",
       "step": 9,
       "summary": "2 results",
       "note": "Priya Raghavan (47 commits)",
-      "latency_ms": 6.261,
+      "latency_ms": 8.624,
       "data": {
         "target": "src/db/connection-pool.ts",
         "count": 2,
@@ -1851,35 +1826,46 @@
         "edges": []
       },
       "cypher": "MATCH (p:Person)-[w:WORKED_ON]->(f:File)-[:BELONGS_TO]->(owner:Service)\n    WHERE f.path = $target OR f.path CONTAINS $target OR owner.name = $target\n    OPTIONAL MATCH (i:Incident)-[:IMPLICATED]->(f)\n    OPTIONAL MATCH (i)-[:RESOLVED_BY]->(p)\n    OPTIONAL MATCH (p)-[:MEMBER_OF]->(t:Team)\n    RETURN p, t.name AS team,\n           sum(w.commits) AS commits,\n           max(w.last_at) AS last_at,\n           count(DISTINCT i) AS prior_incidents,\n           collect(DISTINCT f.path) AS files,\n           collect(DISTINCT owner.name) AS services\n    ORDER BY prior_incidents DESC, commits DESC\n    LIMIT 8",
-      "step_id": "step-INC-3001-466887791"
+      "step_id": "step-INC-3001-907199585"
     },
     {
       "type": "thought",
-      "at": 1792207466891,
+      "at": 1792241907203,
       "agent": "Comms",
       "text": "Writing the lesson back into the graph so the next run starts here."
     },
     {
       "type": "tool_call",
-      "at": 1792207466891,
+      "at": 1792241907203,
       "agent": "Comms",
       "tool": "write_finding",
       "args": {
         "kind": "postmortem",
         "lesson": "checkout-api p99 latency breached threshold with flat CPU: connection pool exhausted, acquire timeouts, waiters queueing. That is pool exhaustion, not compute pressure. Cause was PR #4471 deployed to ledger-service 2 hops upstream, touching src/db/connection-pool.ts. Pooled client reuse in the hot path reduced the effective pool ceiling, so callers queued on acquire and the latency surfaced at the customer-facing service rather than at the service that changed. Fix: raise the pool ceiling and add a per-caller bulkhead. For this signature, check pool saturation before CPU.",
-        "service": "ledger-service"
+        "service": "ledger-service",
+        "cause_pr": 4471,
+        "cause_deploy_id": "dep-cause",
+        "cause_service": "ledger-service",
+        "cause_file": "src/db/connection-pool.ts",
+        "cause_hops": 2,
+        "affected_count": 11,
+        "customer_facing": [
+          "mobile-bff",
+          "partner-api",
+          "web-bff"
+        ]
       },
       "step": 10
     },
     {
       "type": "tool_result",
-      "at": 1792207466945,
+      "at": 1792241907215,
       "agent": "Comms",
       "tool": "write_finding",
       "step": 10,
       "summary": "{'written': 'Postmortem', 'postmortem_id': 'PM-INC-3001-BB', 'incident_id': 'INC",
       "note": "Postmortem",
-      "latency_ms": 51.085,
+      "latency_ms": 7.275,
       "data": {
         "written": "Postmortem",
         "postmortem_id": "PM-INC-3001-BB",
@@ -1894,8 +1880,19 @@
           {
             "id": "PM-INC-3001-BB",
             "lesson": "checkout-api p99 latency breached threshold with flat CPU: connection pool exhausted, acquire timeouts, waiters queueing. That is pool exhaustion, not compute pressure. Cause was PR #4471 deployed to ledger-service 2 hops upstream, touching src/db/connection-pool.ts. Pooled client reuse in the hot path reduced the effective pool ceiling, so callers queued on acquire and the latency surfaced at the customer-facing service rather than at the service that changed. Fix: raise the pool ceiling and add a per-caller bulkhead. For this signature, check pool saturation before CPU.",
-            "created_at": 1792207466892,
+            "created_at": 1792241907204,
             "created_by": "blackbox",
+            "cause_pr": 4471,
+            "cause_deploy_id": "dep-cause",
+            "cause_service": "ledger-service",
+            "cause_file": "src/db/connection-pool.ts",
+            "cause_hops": 2,
+            "affected_count": 11,
+            "customer_facing": [
+              "mobile-bff",
+              "partner-api",
+              "web-bff"
+            ],
             "_label": "Postmortem"
           }
         ],
@@ -1907,12 +1904,12 @@
           }
         ]
       },
-      "cypher": "MATCH (i:Incident {id:$incident})\n        MERGE (pm:Postmortem {id:$pm_id})\n        SET pm.lesson = $lesson, pm.created_at = $now, pm.created_by = 'blackbox',\n            pm.embedding = vecf32($vec)\n        MERGE (i)-[:PRODUCED]->(pm)\n        WITH pm, i\n        OPTIONAL MATCH (s:Service {name:$service})\n        FOREACH (x IN CASE WHEN s IS NULL THEN [] ELSE [1] END |\n                 MERGE (pm)-[:APPLIES_TO]->(s))\n        RETURN pm, i.title",
-      "step_id": "step-INC-3001-466942493"
+      "cypher": "MATCH (i:Incident {id:$incident})\n        MERGE (pm:Postmortem {id:$pm_id})\n        SET pm.lesson = $lesson, pm.created_at = $now, pm.created_by = 'blackbox',\n            pm.embedding = vecf32($vec),\n            pm.cause_pr = $cause_pr, pm.cause_deploy_id = $cause_deploy_id,\n            pm.cause_service = $cause_service, pm.cause_file = $cause_file,\n            pm.cause_hops = $cause_hops, pm.affected_count = $affected_count,\n            pm.customer_facing = $customer_facing\n        MERGE (i)-[:PRODUCED]->(pm)\n        WITH pm, i\n        OPTIONAL MATCH (s:Service {name:$service})\n        FOREACH (x IN CASE WHEN s IS NULL THEN [] ELSE [1] END |\n                 MERGE (pm)-[:APPLIES_TO]->(s))\n        RETURN pm, i.title",
+      "step_id": "step-INC-3001-907211041"
     },
     {
       "type": "write",
-      "at": 1792207466945,
+      "at": 1792241907215,
       "kind": "Postmortem",
       "detail": {
         "written": "Postmortem",
@@ -1928,8 +1925,19 @@
           {
             "id": "PM-INC-3001-BB",
             "lesson": "checkout-api p99 latency breached threshold with flat CPU: connection pool exhausted, acquire timeouts, waiters queueing. That is pool exhaustion, not compute pressure. Cause was PR #4471 deployed to ledger-service 2 hops upstream, touching src/db/connection-pool.ts. Pooled client reuse in the hot path reduced the effective pool ceiling, so callers queued on acquire and the latency surfaced at the customer-facing service rather than at the service that changed. Fix: raise the pool ceiling and add a per-caller bulkhead. For this signature, check pool saturation before CPU.",
-            "created_at": 1792207466892,
+            "created_at": 1792241907204,
             "created_by": "blackbox",
+            "cause_pr": 4471,
+            "cause_deploy_id": "dep-cause",
+            "cause_service": "ledger-service",
+            "cause_file": "src/db/connection-pool.ts",
+            "cause_hops": 2,
+            "affected_count": 11,
+            "customer_facing": [
+              "mobile-bff",
+              "partner-api",
+              "web-bff"
+            ],
             "_label": "Postmortem"
           }
         ],
@@ -1944,13 +1952,13 @@
     },
     {
       "type": "thought",
-      "at": 1792207466945,
+      "at": 1792241907215,
       "agent": "Comms",
       "text": "Closing the incident against the owner."
     },
     {
       "type": "tool_call",
-      "at": 1792207466945,
+      "at": 1792241907215,
       "agent": "Comms",
       "tool": "write_finding",
       "args": {
@@ -1961,13 +1969,13 @@
     },
     {
       "type": "tool_result",
-      "at": 1792207466952,
+      "at": 1792241907223,
       "agent": "Comms",
       "tool": "write_finding",
       "step": 11,
       "summary": "{'written': 'RESOLVED_BY', 'incident_id': 'INC-3001', 'person': 'Priya Raghavan'",
       "note": "RESOLVED_BY",
-      "latency_ms": 4.307,
+      "latency_ms": 4.63,
       "data": {
         "written": "RESOLVED_BY",
         "incident_id": "INC-3001",
@@ -1994,11 +2002,11 @@
         ]
       },
       "cypher": "MATCH (i:Incident {id:$incident})\n        SET i.status = 'resolved', i.resolved_at = $now\n        WITH i\n        OPTIONAL MATCH (p:Person {name:$person})\n        FOREACH (x IN CASE WHEN p IS NULL THEN [] ELSE [1] END |\n                 MERGE (i)-[:RESOLVED_BY]->(p))\n        RETURN i, p",
-      "step_id": "step-INC-3001-466949857"
+      "step_id": "step-INC-3001-907220074"
     },
     {
       "type": "write",
-      "at": 1792207466952,
+      "at": 1792241907223,
       "kind": "RESOLVED_BY",
       "detail": {
         "written": "RESOLVED_BY",
@@ -2028,13 +2036,13 @@
     },
     {
       "type": "thought",
-      "at": 1792207466952,
+      "at": 1792241907223,
       "agent": "Comms",
       "text": "Paging Priya Raghavan (47 commits on the file, 1 prior incident(s) on it) rather than the rotation default Marcus Webb. Postmortem written back to the graph."
     },
     {
       "type": "answer",
-      "at": 1792207466952,
+      "at": 1792241907223,
       "answer": {
         "incident_id": "INC-3001",
         "title": "checkout-api p99 latency breach",
@@ -2161,11 +2169,12 @@
     },
     {
       "type": "run_end",
-      "at": 1792207466954,
-      "run_id": "run-b78a3ca9",
-      "elapsed_ms": 194.7,
+      "at": 1792241907225,
+      "run_id": "run-9adc2366",
+      "elapsed_ms": 215.5,
       "tool_calls": 11,
-      "graph_latency_ms": 119.41,
+      "graph_latency_ms": 102.22,
+      "investigation_latency_ms": 61.24,
       "hops": 8,
       "wrote": [
         "CAUSED_BY",

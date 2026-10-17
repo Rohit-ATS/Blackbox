@@ -389,7 +389,10 @@ def similar_incidents(tenant: str, symptom_text: str, k: int = 3) -> ToolResult:
     WITH node, score, i WHERE i IS NULL OR i.status = 'resolved'
     OPTIONAL MATCH (node)-[:APPLIES_TO]->(s:Service)
     RETURN node, score, i.id AS incident_id, i.title AS incident_title,
-           collect(DISTINCT s.name) AS services
+           collect(DISTINCT s.name) AS services,
+           node.cause_pr, node.cause_deploy_id, node.cause_service,
+           node.cause_file, node.cause_hops, node.affected_count,
+           node.customer_facing
     """
     pm_rows, pm_ms = db.run(tenant, pm_cypher, {"k": fetch, "v": vec})
 
@@ -417,7 +420,8 @@ def similar_incidents(tenant: str, symptom_text: str, k: int = 3) -> ToolResult:
     incidents = incidents[:k]
 
     postmortems = []
-    for node, score, inc_id, inc_title, services in pm_rows:
+    for (node, score, inc_id, inc_title, services, cause_pr, cause_deploy_id,
+         cause_service, cause_file, cause_hops, affected_count, customer_facing) in pm_rows:
         pmp = _node(node)
         postmortems.append({
             "postmortem_id": pmp.get("id"), "lesson": pmp.get("lesson"),
@@ -425,6 +429,13 @@ def similar_incidents(tenant: str, symptom_text: str, k: int = 3) -> ToolResult:
             "self_authored": pmp.get("created_by") == "blackbox",
             "incident_id": inc_id, "incident_title": inc_title,
             "applies_to": [s for s in services if s],
+            "cause_pr": cause_pr,
+            "cause_deploy_id": cause_deploy_id,
+            "cause_service": cause_service,
+            "cause_file": cause_file,
+            "cause_hops": cause_hops,
+            "affected_count": affected_count,
+            "customer_facing": customer_facing or [],
             "similarity": round(1 - float(score), 4),
         })
         nodes.append(pmp)
@@ -653,7 +664,11 @@ def write_finding(tenant: str, incident_id: str, kind: str,
         MATCH (i:Incident {id:$incident})
         MERGE (pm:Postmortem {id:$pm_id})
         SET pm.lesson = $lesson, pm.created_at = $now, pm.created_by = 'blackbox',
-            pm.embedding = vecf32($vec)
+            pm.embedding = vecf32($vec),
+            pm.cause_pr = $cause_pr, pm.cause_deploy_id = $cause_deploy_id,
+            pm.cause_service = $cause_service, pm.cause_file = $cause_file,
+            pm.cause_hops = $cause_hops, pm.affected_count = $affected_count,
+            pm.customer_facing = $customer_facing
         MERGE (i)-[:PRODUCED]->(pm)
         WITH pm, i
         OPTIONAL MATCH (s:Service {name:$service})
@@ -670,6 +685,13 @@ def write_finding(tenant: str, incident_id: str, kind: str,
             "incident": incident_id, "pm_id": pm_id, "lesson": lesson,
             "now": int(time.time() * 1000), "service": service,
             "vec": embed(f"{context} {lesson}"),
+            "cause_pr": payload.get("cause_pr"),
+            "cause_deploy_id": payload.get("cause_deploy_id"),
+            "cause_service": payload.get("cause_service"),
+            "cause_file": payload.get("cause_file"),
+            "cause_hops": payload.get("cause_hops"),
+            "affected_count": payload.get("affected_count"),
+            "customer_facing": payload.get("customer_facing") or [],
         })
         if rows:
             pmp = _node(rows[0][0])

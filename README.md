@@ -113,7 +113,7 @@ empty answer. The toolbar lets you force either one.
 | 10 | `write_finding` | **`Postmortem`** + embedding | 4.9ms |
 | 11 | `write_finding` | `RESOLVED_BY` | 2.9ms |
 
-11 tool calls, **58.7ms of actual graph work**.
+11 tool calls, **61.2ms of measured investigation work** in the recorded run.
 
 Two details worth noticing. The cause is not on the service that alerted — it
 is two hops upstream, and at `hops=1` the query misses it entirely. And the
@@ -129,8 +129,9 @@ ago** (cosine similarity 0.59), so the mechanism and the fix are already known:
 - the whole upstream search, the shortest-path proof and the runbook fetch
   collapse into **one single-hop lookup**
 - Triage skips the depth-4 traversal and PageRank entirely
-- **11 tool calls → 8**, **58.7ms → 39.1ms of graph work**, investigation
-  steps **4 → 2**
+- **11 tool calls → 7**, **61.2ms → 12.9ms of investigation work**, investigation
+  steps **4 → 2**. The shared entity lookup, vector recall, and write-back are
+  shown separately from the traversal work they do not eliminate.
 
 Press **forget** in the toolbar — it deletes only the postmortems BLACKBOX
 wrote, keeping the seeded history — and the warm run becomes a cold one again.
@@ -144,7 +145,8 @@ set, the cold run makes more model turns than the warm one and the wall clock
 separates accordingly. On the deterministic planner the entire run is
 ~250ms end to end, so wall-clock ratios are noise-dominated and the honest
 metrics are the ones above — tool calls, investigation steps, and measured
-graph time. The UI reports all four and labels them `measured`. **The LLM path
+graph time. The UI reports the total graph time and the investigation-work
+comparison, all labeled `measured`. **The LLM path
 could not be verified in the build environment** (the available credential was
 a Claude Code session token, not an API key, and the Messages API returned
 401), so the quoted numbers throughout this README are all from the

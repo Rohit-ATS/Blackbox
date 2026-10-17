@@ -59,10 +59,11 @@ export default function TimerBar({
               x={ratio(c!.tool_calls, w!.tool_calls)}
             />
             <Delta
-              label="graph time"
-              from={`${c!.graph_latency_ms.toFixed(0)}ms`}
-              to={`${w!.graph_latency_ms.toFixed(0)}ms`}
-              x={ratio(c!.graph_latency_ms, w!.graph_latency_ms)}
+              label="investigation"
+              from={`${(c!.investigation_latency_ms ?? c!.graph_latency_ms).toFixed(0)}ms`}
+              to={`${(w!.investigation_latency_ms ?? w!.graph_latency_ms).toFixed(0)}ms`}
+              x={ratio(c!.investigation_latency_ms ?? c!.graph_latency_ms,
+                       w!.investigation_latency_ms ?? w!.graph_latency_ms)}
             />
             <Delta
               label="wall clock"
@@ -126,7 +127,7 @@ function Run({
           {m ? `${m.tool_calls} tool calls` : ""}
         </span>
         <span className="tnum text-[11px] text-dim">
-          {m ? `${m.graph_latency_ms.toFixed(0)}ms in graph` : ""}
+          {m ? `${(m.investigation_latency_ms ?? m.graph_latency_ms).toFixed(0)}ms investigation` : ""}
         </span>
       </div>
 

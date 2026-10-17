@@ -89,6 +89,7 @@ export interface RunMetrics {
   elapsed_ms: number;
   tool_calls: number;
   graph_latency_ms: number;
+  investigation_latency_ms?: number;
   hops: number;
   wrote: string[];
   recalled_memory: boolean;

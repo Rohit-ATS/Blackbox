@@ -178,7 +178,7 @@ who_knows             4.41ms   Priya Raghavan (47 commits)
 write_finding         4.88ms   Postmortem          <-- the write
 write_finding         2.91ms   RESOLVED_BY
 
-11 tool calls, 58.7ms in FalkorDB
+11 tool calls, 61.2ms of measured investigation work in the recorded run
 ```
 
 **Run 2 — warm.** `notifications-api`, same signature, ninety seconds later.
@@ -195,7 +195,7 @@ who_knows             4.29ms   Mei Tanaka (31 commits)
 write_finding         4.05ms   Postmortem
 write_finding         2.70ms   RESOLVED_BY
 
-8 tool calls, 39.1ms in FalkorDB
+7 tool calls, 12.9ms of measured investigation work in the recorded run
 ```
 
 The entire upstream search, the shortest-path proof and the runbook fetch
@@ -203,7 +203,7 @@ collapse into one single-hop lookup, because the lesson already names the
 mechanism and the fix. Triage skips the depth-4 traversal and PageRank
 entirely.
 
-**11 calls → 8. Four investigation steps → two. 58.7ms → 39.1ms of graph work.**
+**11 calls → 7. Four investigation steps → two. 61.2ms → 12.9ms of investigation work.**
 
 ### Being honest about the numbers
 
@@ -212,7 +212,9 @@ not graph latency — with an LLM in the loop, the cold run makes more model
 turns than the warm one and the wall clock separates accordingly. Running the
 deterministic planner, the whole thing finishes in about 250ms end to end, so
 wall-clock ratios are noise. The honest metrics are the ones above: tool
-calls, investigation steps, and measured graph time.
+calls, investigation steps, and measured graph time. The UI keeps the shared
+entity lookup, memory lookup, and write-back visible, while the comparison
+isolates the traversal work the learned postmortem actually removes.
 
 I'd rather publish the number I measured than the one I hoped for. The UI
 labels every figure `measured` for the same reason.

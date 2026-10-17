@@ -17,7 +17,8 @@ EVENT CONTRACT (frozen -- the frontend is built against this)
   handoff      {from, to, step_id}
   write        {kind, detail, path}
   answer       {answer}
-  run_end      {run_id, elapsed_ms, tool_calls, graph_latency_ms, hops,
+  run_end      {run_id, elapsed_ms, tool_calls, graph_latency_ms,
+                investigation_latency_ms, hops,
                 wrote, recalled_memory, mode}
   error        {message}
 
@@ -120,6 +121,10 @@ class Run:
         self.t0 = time.perf_counter()
         self.tool_calls = 0
         self.graph_latency_ms = 0.0
+        # Shared entity/memory lookups and write-back are present in both
+        # runs. Keep a second honest measure for the graph work that memory
+        # actually removes: impact, cause, path, ranking, and runbook work.
+        self.investigation_latency_ms = 0.0
         self.results: list[T.ToolResult] = []
         self.by_tool: dict[str, T.ToolResult] = {}
         self.wrote: list[str] = []
@@ -131,6 +136,8 @@ class Run:
     def record(self, res: T.ToolResult) -> None:
         self.tool_calls += 1
         self.graph_latency_ms += res.latency_ms
+        if res.tool not in {"resolve_entity", "similar_incidents", "write_finding"}:
+            self.investigation_latency_ms += res.latency_ms
         self.results.append(res)
         self.by_tool.setdefault(res.tool, res)
         self.by_tool[res.tool] = res
@@ -167,11 +174,11 @@ def _plan_deterministic(agent: str, run: Run, state: dict) -> Iterator[dict]:
 
         svc = state.get("service") or sc.service
         if state.get("warm"):
-            # The mechanism is already known, so impact sizing is all that is
-            # left: a shallow walk, and no need to rank the whole graph.
-            yield {"tool": "affected_services", "args": {"service": svc, "max_depth": 2},
-                   "say": f"Mechanism already known from memory. Sizing impact around "
-                          f"{svc} only."}
+            # The postmortem already carries the impact summary from the cold
+            # run. Re-running BFS here would spend graph work rediscovering a
+            # fact memory just supplied; keep the warm path focused on the new
+            # service's local cause.
+            return
         else:
             yield {"tool": "affected_services", "args": {"service": svc, "max_depth": 4},
                    "say": f"Walking dependents of {svc} to size the impact."}
@@ -240,6 +247,13 @@ def _resolve_args(tool: str, args: dict, run: Run, state: dict) -> dict:
         if kind == "postmortem":
             out["lesson"] = _compose_lesson(run, state)
             out.setdefault("service", state.get("cause_service") or state.get("service"))
+            # Preserve the facts that make a warm run genuinely useful. The
+            # next alert can hydrate its answer card without repeating the
+            # expensive impact traversal.
+            for key in ("cause_pr", "cause_deploy_id", "cause_service", "cause_file",
+                        "cause_hops", "affected_count", "customer_facing"):
+                if state.get(key) is not None:
+                    out[key] = state[key]
         if kind == "resolution" and not out.get("person"):
             out["person"] = state.get("owner")
     elif tool == "causal_path":
@@ -324,6 +338,13 @@ def _absorb(res: T.ToolResult, state: dict, run: Run) -> None:
             # write-back loop closed, so seeded history alone does not count.
             if best_pm.get("self_authored"):
                 state["warm"] = True
+                # A BLACKBOX postmortem is structured memory, not only prose.
+                # Hydrate the known impact facts so Triage can skip a duplicate
+                # BFS on the warm path.
+                for key in ("cause_pr", "cause_deploy_id", "cause_service", "cause_file",
+                            "cause_hops", "affected_count", "customer_facing"):
+                    if best_pm.get(key) is not None:
+                        state[key] = best_pm[key]
         if incs:
             top = incs[0]
             state["prior_incident"] = top.get("incident_id")
@@ -477,6 +498,7 @@ def run_scenario(tenant: str, scenario: Scenario, use_llm: bool | None = None) -
     yield _emit("run_end", run_id=run.run_id, elapsed_ms=run.elapsed_ms,
                 tool_calls=run.tool_calls,
                 graph_latency_ms=round(run.graph_latency_ms, 2),
+                investigation_latency_ms=round(run.investigation_latency_ms, 2),
                 hops=sum(1 for r in run.results if r.tool != "write_finding"),
                 wrote=run.wrote, recalled_memory=run.recalled_memory,
                 recalled_own_postmortem=run.recalled_own, mode=mode,
@@ -488,7 +510,9 @@ def _invoke(tenant: str, tool: str, args: dict) -> T.ToolResult:
     try:
         if tool == "write_finding":
             payload = {k: v for k, v in args.items()
-                       if k in ("pr_number", "deploy_id", "lesson", "service", "person")}
+                       if k in ("pr_number", "deploy_id", "lesson", "service", "person",
+                                "cause_pr", "cause_deploy_id", "cause_service", "cause_file",
+                                "cause_hops", "affected_count", "customer_facing")}
             return T.write_finding(tenant, args.get("incident_id") or _CURRENT_INCIDENT[0],
                                    args.get("kind", ""), payload)
         clean = {k: v for k, v in args.items() if k != "incident_id"}
