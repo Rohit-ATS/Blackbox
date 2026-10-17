@@ -1,0 +1,39 @@
+services:
+  falkordb:
+    image: falkordb/falkordb:latest
+    container_name: blackbox-falkordb
+    ports:
+      - "6379:6379"
+      - "3100:3000"      # FalkorDB Browser
+    command: ["--requirepass", ""]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build: ./backend
+    container_name: blackbox-backend
+    environment:
+      FALKOR_HOST: falkordb
+      FALKOR_PORT: "6379"
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      BLACKBOX_MODEL: ${BLACKBOX_MODEL:-claude-sonnet-4-5}
+    ports:
+      - "8000:8000"
+    depends_on:
+      falkordb:
+        condition: service_healthy
+    command: ["bash", "-lc", "python -m blackbox.seed --all && uvicorn blackbox.api:app --host 0.0.0.0 --port 8000"]
+
+  frontend:
+    build: ./frontend
+    container_name: blackbox-frontend
+    environment:
+      BACKEND_URL: http://backend:8000
+      NEXT_PUBLIC_BACKEND_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
