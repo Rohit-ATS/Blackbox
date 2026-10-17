@@ -65,6 +65,84 @@
   --p-front: 0.235rem;
 
   --ease: cubic-bezier(0.22, 0.8, 0.26, 1);
+
+  /* ── easing, sampled from the exact GSAP curves ──
+     back.out(1.2) overshoots to 1.0529 at t≈0.64 — that slight past-the-mark
+     settle is what makes the headline land rather than glide. */
+  --e-back12: linear(
+    0, 0.15368 3.8%, 0.29213 7.7%, 0.4161 11.5%, 0.52635 15.4%, 0.62363 19.2%,
+    0.70869 23.1%, 0.78228 26.9%, 0.84515 30.8%, 0.89805 34.6%, 0.94174 38.5%,
+    0.97696 42.3%, 1.00446 46.2%, 1.025 50%, 1.03933 53.8%, 1.04819 57.7%,
+    1.05234 61.5%, 1.05254 65.4%, 1.04952 69.2%, 1.04405 73.1%, 1.03687 76.9%,
+    1.02873 80.8%, 1.02039 84.6%, 1.0126 88.5%, 1.0061 92.3%, 1.00165 96.2%, 1
+  );
+  --e-p2out: linear(
+    0, 0.10802 5.6%, 0.20988 11.1%, 0.30556 16.7%, 0.39506 22.2%, 0.4784 27.8%,
+    0.55556 33.3%, 0.62654 38.9%, 0.69136 44.4%, 0.75 50%, 0.80247 55.6%,
+    0.84877 61.1%, 0.88889 66.7%, 0.92284 72.2%, 0.95062 77.8%, 0.97222 83.3%,
+    0.98765 88.9%, 0.99691 94.4%, 1
+  );
+  --e-p3out: linear(
+    0, 0.15758 5.6%, 0.29767 11.1%, 0.4213 16.7%, 0.52949 22.2%, 0.62329 27.8%,
+    0.7037 33.3%, 0.77178 38.9%, 0.82853 44.4%, 0.875 50%, 0.91221 55.6%,
+    0.94119 61.1%, 0.96296 66.7%, 0.97857 72.2%, 0.98903 77.8%, 0.99537 83.3%,
+    0.99863 88.9%, 0.99983 94.4%, 1
+  );
+}
+
+/* ─────────────────────── split-text entrances ───────────────────────
+   Two presets, matching the motion vocabulary the design uses:
+   · chars  — slide in from the right, un-blur, and settle down out of a
+              1.2 scale with a back.out overshoot. This is the title zoom.
+   · lines  — rise from 50% down, un-blur, on a power2.out.
+   ------------------------------------------------------------------- */
+
+.sp { display: inline; }
+
+.sp-char {
+  display: inline-block;
+  white-space: pre;
+  opacity: 0;
+  transform: translateX(6rem) scale(1.2);
+  filter: blur(0.6rem);
+  transition:
+    opacity 1.5s var(--e-back12),
+    transform 1.5s var(--e-back12),
+    filter 1.5s var(--e-back12);
+  transition-delay: calc(var(--i, 0) * 50ms + var(--d0, 0ms));
+  will-change: transform, filter, opacity;
+}
+[data-in="true"] .sp-char {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  filter: blur(0);
+}
+
+.sp-line { display: block; }
+.sp-line > span {
+  display: block;
+  opacity: 0;
+  transform: translateY(50%);
+  filter: blur(0.2rem);
+  transition:
+    opacity 1.5s var(--e-p2out),
+    transform 1.5s var(--e-p2out),
+    filter 1.5s var(--e-p2out);
+  transition-delay: calc(var(--i, 0) * 200ms + var(--d0, 0ms));
+  will-change: transform, filter, opacity;
+}
+[data-in="true"] .sp-line > span {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* Char-splitting defeats background-clip:text, so the accent phrase takes a
+   solid lilac instead of the gradient when it is animated per character. */
+.serif.is-split {
+  background: none;
+  -webkit-text-fill-color: var(--lilac);
+  color: var(--lilac);
 }
 
 * { box-sizing: border-box; }
@@ -84,31 +162,22 @@ html, body {
 
 /* ─────────────────────────── intro / preloader ─────────────────────────── */
 
+/* The preloader holds for 4s, then the whole layer fades out over 1s —
+   an autoAlpha fade (opacity + visibility together), no curtain. */
 .intro {
   position: fixed; inset: 0; z-index: 999;
   display: grid; place-items: center;
   background: var(--black);
-  transition: opacity 0.7s var(--ease), visibility 0.7s;
+  opacity: 1; visibility: visible;
+  transition: opacity 1s linear, visibility 1s linear;
 }
 .intro[data-done="true"] { opacity: 0; visibility: hidden; pointer-events: none; }
-
-/* two halves part like a curtain */
-.intro-curtain {
-  position: absolute; left: 0; width: 100%; height: 50.5%;
-  background: var(--black);
-  transition: transform 1s cubic-bezier(0.76, 0, 0.24, 1) 0.15s;
-}
-.intro-curtain.top    { top: 0; }
-.intro-curtain.bottom { bottom: 0; }
-.intro[data-done="true"] .intro-curtain.top    { transform: translateY(-100%); }
-.intro[data-done="true"] .intro-curtain.bottom { transform: translateY(100%); }
+.intro[data-skip="true"] { display: none; }
 
 .intro-core {
   position: relative; z-index: 2;
   display: flex; flex-direction: column; align-items: center; gap: 30px;
-  transition: opacity 0.45s var(--ease), transform 0.6s var(--ease);
 }
-.intro[data-done="true"] .intro-core { opacity: 0; transform: scale(0.94); }
 
 /* the mark: concentric rings that spin up, a dot that ignites */
 .intro-mark { position: relative; width: 88px; height: 88px; }

@@ -1,11 +1,13 @@
 import Link from "next/link";
+import Hero from "@/components/Hero";
 import {
   BrandMark,
-  ClipLine,
   Intro,
   Nebula,
   Particles,
   Reveal,
+  SplitHeadline,
+  SplitLines,
 } from "@/components/Atmosphere";
 
 /* ───────────────────────────── content ───────────────────────────── */
@@ -83,7 +85,7 @@ export default function Landing() {
       <main className="shell">
         <Nav />
         <Hero />
-        <Marquee />
+        <MarqueeRow />
         <Statement />
         <Steps />
         <Features />
@@ -132,112 +134,9 @@ function Nav() {
   );
 }
 
-/* ───────────────────────────── hero ───────────────────────────── */
-
-function Hero() {
-  return (
-    <header className="hero grain">
-      <Nebula />
-      <Particles count={80} seed={11} />
-
-      <div className="wrap">
-        <Reveal className="hero-grid" variant="none">
-          <div className="hero-copy">
-            <Reveal delay={120}>
-              <span className="kicker">graph-native incident response</span>
-            </Reveal>
-
-            <h1 className="t-h1">
-              <ClipLine delay={240}>Production breaks.</ClipLine>
-              <ClipLine delay={360}>
-                <span className="serif">The graph already knows.</span>
-              </ClipLine>
-            </h1>
-
-            <Reveal delay={520}>
-              <p className="t-lead">
-                BLACKBOX is the on-call agent that reads your service graph,
-                finds the change that caused the outage two hops upstream, and
-                pages the human who actually knows.
-              </p>
-            </Reveal>
-
-            <Reveal delay={640} className="hero-actions">
-              <Link href="/console" className="btn btn-primary">
-                <span>Run the live console</span>
-                <span className="arr" aria-hidden="true">↗</span>
-              </Link>
-              <a href="#how" className="btn-text">
-                See how it works
-                <span className="arr" aria-hidden="true">↓</span>
-              </a>
-            </Reveal>
-
-            <Reveal delay={760} className="hero-trust">
-              <div>
-                <b>2 hops</b>
-                warm path to cause
-              </div>
-              <div>
-                <b>9</b>
-                typed graph tools
-              </div>
-              <div>
-                <b>FalkorDB</b>
-                graph engine
-              </div>
-            </Reveal>
-          </div>
-
-          <Reveal delay={420} variant="reveal-blur">
-            <div className="orb-stage" aria-label="BLACKBOX service graph, visualised">
-              <div className="orb-halo" />
-              <div className="orbit two" />
-              <div className="orbit" />
-              <div className="orbit three" />
-              <div className="orb">
-                <div className="orb-lat" />
-                <div className="orb-sheen" />
-              </div>
-              <div className="orb-core" />
-
-              <div className="chip a">
-                <span className="chip-ico ember" aria-hidden="true">!</span>
-                <span>
-                  <b>checkout-api</b>
-                  <small>p99 1840ms · threshold 800ms</small>
-                </span>
-              </div>
-              <div className="chip b">
-                <span className="chip-ico" aria-hidden="true">◈</span>
-                <span>
-                  <b>cause found · 2 hops</b>
-                  <small>deploy #4471 → payments-db</small>
-                </span>
-              </div>
-              <div className="chip c">
-                <span className="chip-ico lilac" aria-hidden="true">✦</span>
-                <span>
-                  <b>Priya owns this</b>
-                  <small>paged · prior incident attached</small>
-                </span>
-              </div>
-            </div>
-          </Reveal>
-        </Reveal>
-      </div>
-
-      <div className="scroll-cue" aria-hidden="true">
-        <span>Scroll</span>
-        <i />
-      </div>
-    </header>
-  );
-}
-
 /* ───────────────────────────── marquee ───────────────────────────── */
 
-function Marquee() {
+function MarqueeRow() {
   const row = (
     <span>
       {marquee.map((m) => (
@@ -265,33 +164,48 @@ function Statement() {
   return (
     <section className="sec">
       <div className="wrap split">
-        <Reveal>
+        <Reveal variant="none">
           <span className="kicker">the missing layer</span>
           <h2 className="t-h2" style={{ marginTop: 20 }}>
-            <ClipLine delay={100}>Alerts tell you</ClipLine>
-            <ClipLine delay={200}>what is loud.</ClipLine>
-            <ClipLine delay={300}>
-              <span className="serif">We tell you what matters.</span>
-            </ClipLine>
+            <SplitHeadline
+              lines={[
+                "Alerts tell you",
+                "what is loud.",
+                { text: "We tell you what matters.", accent: true },
+              ]}
+            />
           </h2>
         </Reveal>
-        <Reveal delay={240}>
+        <Reveal variant="none">
           <p className="t-body">
-            Production systems are a graph. Your incident tooling is a list of
-            metrics. That gap is why 3am takes four hours.
+            <SplitLines
+              lines={[
+                "Production systems are a graph. Your incident tooling is a list",
+                "of metrics. That gap is why 3am takes four hours.",
+              ]}
+            />
           </p>
           <p className="t-body" style={{ marginTop: 20 }}>
-            BLACKBOX puts topology, deploys, people and prior decisions into one
-            FalkorDB graph and lets an agent traverse it. Not a dashboard to
-            read — a surface to think on.
+            <SplitLines
+              startDelay={300}
+              lines={[
+                "BLACKBOX puts topology, deploys, people and prior decisions into",
+                "one FalkorDB graph and lets an agent traverse it. Not a dashboard",
+                "to read — a surface to think on.",
+              ]}
+            />
           </p>
           <p
             className="t-small"
             style={{ marginTop: 28, paddingLeft: 18, borderLeft: "1px solid var(--stroke)" }}
           >
-            The graph isn&apos;t where the agent looks things up.
-            <br />
-            It&apos;s where the agent thinks.
+            <SplitLines
+              startDelay={700}
+              lines={[
+                "The graph isn’t where the agent looks things up.",
+                "It’s where the agent thinks.",
+              ]}
+            />
           </p>
         </Reveal>
       </div>
@@ -305,19 +219,18 @@ function Steps() {
   return (
     <section id="how" className="sec" style={{ paddingTop: 0 }}>
       <div className="wrap">
-        <Reveal style={{ maxWidth: 620 }}>
+        <Reveal variant="none" style={{ maxWidth: 620 }}>
           <span className="kicker">how it works</span>
           <h2 className="t-h2" style={{ marginTop: 20 }}>
-            <ClipLine delay={100}>From one alert</ClipLine>
-            <ClipLine delay={200}>
-              to <span className="serif">the next move.</span>
-            </ClipLine>
+            <SplitHeadline
+              lines={["From one alert", { text: "to the next move.", accent: true }]}
+            />
           </h2>
         </Reveal>
 
         <div className="steps">
           {steps.map((s, i) => (
-            <Reveal key={s.n} className="step" delay={i * 110} variant="reveal">
+            <Reveal key={s.n} className="step" delay={i * 100}>
               <div className="step-n">{s.n}</div>
               <div className="step-ico" aria-hidden="true">
                 {s.icon}
@@ -338,28 +251,27 @@ function Features() {
   return (
     <section className="sec" style={{ paddingTop: 0 }}>
       <div className="wrap feat-grid">
-        <Reveal>
+        <Reveal variant="none">
           <span className="kicker">what it actually does</span>
           <h2 className="t-h2" style={{ marginTop: 20, marginBottom: 24 }}>
-            <ClipLine delay={100}>Three things,</ClipLine>
-            <ClipLine delay={200}>
-              <span className="serif">done properly.</span>
-            </ClipLine>
+            <SplitHeadline
+              lines={["Three things,", { text: "done properly.", accent: true }]}
+            />
           </h2>
           <p className="t-body">
-            One graph. Nine typed tools. Three agents in the loop — and a
-            shorter path from first alert to confident action.
+            <SplitLines
+              startDelay={400}
+              lines={[
+                "One graph. Nine typed tools. Three agents in the loop — and a",
+                "shorter path from first alert to confident action.",
+              ]}
+            />
           </p>
         </Reveal>
 
         <div className="feat-list">
           {features.map((f, i) => (
-            <Reveal
-              key={f.n}
-              delay={i * 120}
-              variant="reveal"
-              className={`feat${f.hot ? " hot" : ""}`}
-            >
+            <Reveal key={f.n} delay={i * 100} className={`feat${f.hot ? " hot" : ""}`}>
               <div className="feat-n">{f.n}</div>
               <div>
                 <h3>{f.title}</h3>
@@ -386,19 +298,23 @@ function Memory() {
       <hr className="rule" style={{ position: "absolute", top: 0, left: 0, right: 0 }} />
 
       <div className="wrap split" style={{ position: "relative", zIndex: 5 }}>
-        <Reveal>
+        <Reveal variant="none">
           <span className="kicker">the compounding advantage</span>
           <h2 className="t-h2" style={{ marginTop: 20, marginBottom: 24 }}>
-            <ClipLine delay={100}>The second incident</ClipLine>
-            <ClipLine delay={200}>
-              <span className="serif">starts ahead.</span>
-            </ClipLine>
+            <SplitHeadline
+              lines={["The second incident", { text: "starts ahead.", accent: true }]}
+            />
           </h2>
-          <p className="t-body" style={{ maxWidth: 420 }}>
-            Run the same class of incident twice. The cold run walks the graph
-            from nothing. The warm run finds the postmortem BLACKBOX wrote the
-            first time, attached to the services involved, and skips straight to
-            the cause.
+          <p className="t-body" style={{ maxWidth: 440 }}>
+            <SplitLines
+              startDelay={450}
+              lines={[
+                "Run the same class of incident twice. The cold run walks the",
+                "graph from nothing. The warm run finds the postmortem BLACKBOX",
+                "wrote the first time, attached to the services involved, and",
+                "skips straight to the cause.",
+              ]}
+            />
           </p>
           <div style={{ marginTop: 32 }}>
             <Link href="/console" className="btn-text">
@@ -500,22 +416,21 @@ function Cta() {
       <Nebula />
       <Particles count={56} seed={41} />
       <div className="wrap">
-        <Reveal>
+        <Reveal variant="none">
           <span className="kicker">your next incident is already connected</span>
           <h2 className="t-display" style={{ marginTop: 28 }}>
-            <ClipLine delay={120}>Let the graph</ClipLine>
-            <ClipLine delay={240}>
-              <span className="serif">do the thinking.</span>
-            </ClipLine>
+            <SplitHeadline
+              lines={["Let the graph", { text: "do the thinking.", accent: true }]}
+            />
           </h2>
         </Reveal>
-        <Reveal delay={420}>
+        <Reveal delay={700}>
           <p className="t-lead">
             Open the working console and watch BLACKBOX trace a real incident
             from alert to answer — then do it again, with memory.
           </p>
         </Reveal>
-        <Reveal delay={540} className="cta-actions">
+        <Reveal delay={850} className="cta-actions">
           <Link href="/console" className="btn btn-primary">
             <span>Open BLACKBOX console</span>
             <span className="arr" aria-hidden="true">↗</span>
