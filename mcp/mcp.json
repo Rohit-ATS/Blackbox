@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "blackbox": {
+      "command": "python",
+      "args": ["ABSOLUTE/PATH/TO/GraphHacks/mcp/server.py"],
+      "env": {
+        "FALKOR_HOST": "localhost",
+        "FALKOR_PORT": "6379",
+        "BLACKBOX_TENANT": "acme"
+      }
+    }
+  }
+}
