@@ -6,7 +6,7 @@
 
 Built on [FalkorDB](https://falkordb.com) for **Graph Hacks** (FalkorDB × WeMakeDevs).
 
-[Demo video](#demo) · [Quick start](#quick-start) · [How it works](#how-it-works) · [Schema](./schema.md) · [MCP](./mcp/README.md)
+[**Try it live**](https://rohit-ats.github.io/GraphHacks/console/) · [Demo video](#demo) · [Quick start](#quick-start) · [How it works](#how-it-works) · [Schema](./schema.md) · [MCP](./mcp/README.md)
 
 </div>
 
@@ -22,9 +22,19 @@ fraction of the hops.
 
 ## Demo
 
-*Video link goes here before submission.*
+**[rohit-ats.github.io/GraphHacks](https://rohit-ats.github.io/GraphHacks/console/)** —
+press *run cold*, then *run warm*.
 
-Run it yourself in about two minutes — see below.
+That page is served as static files, so there is no FalkorDB behind it. It
+replays [`fixtures/`](./fixtures) — real runs recorded against a real graph by
+`python -m blackbox.record_fixtures`, byte-identical to what the SSE endpoint
+streams. Every step, latency and answer on screen is genuine output; it just
+happened earlier. The page says so in a banner.
+
+For the live thing, with an agent actually querying FalkorDB, it is one
+command — see below. It takes about two minutes.
+
+*Video link goes here before submission.*
 
 ---
 

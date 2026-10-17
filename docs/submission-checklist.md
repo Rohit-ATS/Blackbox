@@ -30,6 +30,10 @@ Work top to bottom. Do not deviate.
       radius filling is the strongest few seconds you have
 - [x] Push to a **public** GitHub repo —
       [Rohit-ATS/GraphHacks](https://github.com/Rohit-ATS/GraphHacks)
+- [x] GitHub Pages deployment live at
+      [rohit-ats.github.io/GraphHacks](https://rohit-ats.github.io/GraphHacks/console/),
+      replaying the recorded runs (Pages is static, so there is no backend
+      behind it — the page says so)
 - [ ] Publish the blog post ([`blog-post.md`](./blog-post.md)) on dev.to and
       Hashnode, cross-link the repo, tag FalkorDB. Set `published: true` in
       the frontmatter and fill `canonical_url` on the second platform.
