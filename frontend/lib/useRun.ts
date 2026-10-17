@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Answer, Event, MemoryState, RunMetrics, Topology } from "./types";
-import { BACKEND } from "./types";
+import { BACKEND, REPLAY_BUILD, fixtureUrl } from "./types";
 
 export interface RunState {
   scenario: string | null;
@@ -28,6 +28,8 @@ export function useRuns() {
   const [memory, setMemory] = useState<MemoryState | null>(null);
   const [tenant, setTenant] = useState("acme");
   const [health, setHealth] = useState<any>(null);
+  /** true when runs come from recorded fixtures rather than a live backend */
+  const [replay, setReplay] = useState(REPLAY_BUILD);
   const abort = useRef<AbortController | null>(null);
   const ticker = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -35,8 +37,19 @@ export function useRuns() {
 
   /** The service topology. Fetched once per tenant -- never after a run. */
   const loadTopology = useCallback(async (t: string) => {
+    if (!REPLAY_BUILD) {
+      try {
+        setTopology(await fetch(`${BACKEND}/api/graph?tenant=${t}`).then((r) => r.json()));
+        setReplay(false);
+        return;
+      } catch {
+        /* fall through to the recorded snapshot */
+      }
+    }
     try {
-      setTopology(await fetch(`${BACKEND}/api/graph?tenant=${t}`).then((r) => r.json()));
+      const snap = await fetch(fixtureUrl("graph_acme.json")).then((r) => r.json());
+      setTopology({ tenant: "acme", latency_ms: 0, ...snap });
+      setReplay(true);
     } catch {
       setTopology(null);
     }
@@ -48,6 +61,7 @@ export function useRuns() {
    * Cytoscape instance and wipes the highlight the run just drew.
    */
   const refreshStats = useCallback(async (t: string) => {
+    if (REPLAY_BUILD) return;
     try {
       const s = await fetch(`${BACKEND}/api/stats?tenant=${t}`).then((r) => r.json());
       setMemory(s.memory);
@@ -85,6 +99,33 @@ export function useRuns() {
 
       const ctrl = new AbortController();
       abort.current = ctrl;
+
+      // ---- replay: re-emit a recorded run, same shape, same order ----------
+      if (replay || REPLAY_BUILD) {
+        try {
+          const rec = await fetch(fixtureUrl(`${scenario}_run.json`)).then((r) => {
+            if (!r.ok) throw new Error(`fixture ${scenario}_run.json: ${r.status}`);
+            return r.json();
+          });
+          const events: Event[] = rec.events ?? [];
+          for (const ev of events) {
+            if (ctrl.signal.aborted) return;
+            set((st) => apply(st, ev));
+            if (paceMs > 0 && PACED.has(ev.type)) {
+              await sleep(paceMs, ctrl.signal);
+            }
+          }
+        } catch (err: any) {
+          if (err?.name !== "AbortError") {
+            set((st) => ({ ...st, running: false, error: String(err?.message ?? err) }));
+          }
+        } finally {
+          if (ticker.current) clearInterval(ticker.current);
+          ticker.current = null;
+          set((st) => ({ ...st, running: false }));
+        }
+        return;
+      }
 
       const qs = new URLSearchParams({ scenario, tenant });
       if (useLlm !== null) qs.set("use_llm", String(useLlm));
@@ -138,12 +179,13 @@ export function useRuns() {
         void refreshStats(tenant);
       }
     },
-    [stop, tenant, refreshStats],
+    [stop, tenant, refreshStats, replay],
   );
 
   const resetMemory = useCallback(async () => {
     setCold(EMPTY);
     setWarm(EMPTY);
+    if (REPLAY_BUILD) return;      // nothing to forget; the runs are recorded
     try {
       const r = await fetch(`${BACKEND}/api/memory/reset?tenant=${tenant}`, { method: "POST" });
       const j = await r.json();
@@ -155,8 +197,23 @@ export function useRuns() {
 
   useEffect(() => () => stop(), [stop]);
 
-  return { cold, warm, topology, memory, tenant, setTenant, health,
+  return { cold, warm, topology, memory, tenant, setTenant, health, replay,
            run, resetMemory, stop };
+}
+
+/** Event kinds worth pausing on during replay. Mirrors PACED_EVENTS in api.py. */
+const PACED = new Set([
+  "tool_call", "tool_result", "thought", "handoff", "write", "answer",
+]);
+
+function sleep(ms: number, signal: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const t = setTimeout(resolve, ms);
+    signal.addEventListener("abort", () => {
+      clearTimeout(t);
+      reject(Object.assign(new Error("aborted"), { name: "AbortError" }));
+    }, { once: true });
+  });
 }
 
 function apply(s: RunState, ev: Event): RunState {

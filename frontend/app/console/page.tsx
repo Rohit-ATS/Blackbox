@@ -21,7 +21,7 @@ const GraphPane = dynamic(() => import("@/components/GraphPane"), {
 
 export default function Console() {
   const {
-    cold, warm, topology, memory, tenant, setTenant, health,
+    cold, warm, topology, memory, tenant, setTenant, health, replay,
     run, resetMemory, stop,
   } = useRuns();
 
@@ -162,7 +162,7 @@ export default function Console() {
 
           <button
             onClick={() => void resetMemory()}
-            disabled={busy}
+            disabled={busy || replay}
             className="hair px-2 py-1 text-dim hover:bg-panel2 disabled:opacity-40"
             title="delete the postmortems BLACKBOX wrote, keep the seeded history"
           >
@@ -172,10 +172,12 @@ export default function Console() {
           <div className="flex items-center gap-1.5 text-dim">
             <span
               className={`inline-block h-1.5 w-1.5 ${
-                health?.ok ? "bg-green" : "bg-red"
+                replay ? "bg-violet" : health?.ok ? "bg-green" : "bg-red"
               }`}
             />
-            {memory ? (
+            {replay ? (
+              <span className="text-violet">recorded run</span>
+            ) : memory ? (
               <span className="tnum">
                 {memory.self_authored_postmortems} learned ·{" "}
                 {memory.seeded_postmortems} seeded
@@ -186,6 +188,8 @@ export default function Console() {
           </div>
         </div>
       </header>
+
+      {replay && <ReplayBanner />}
 
       {/* ───────────────────────── alert strip ───────────────────────── */}
       <AlertStrip events={shown.events} mode={shown.mode} error={shown.error} />
@@ -213,6 +217,21 @@ export default function Console() {
 
       {/* ───────────────────────── cold / warm ───────────────────────── */}
       <TimerBar cold={cold} warm={warm} />
+    </div>
+  );
+}
+
+function ReplayBanner() {
+  return (
+    <div className="shrink-0 border-b border-violet/30 bg-violet/[0.07] px-4 py-1.5 text-[11px] text-violet">
+      <span className="font-bold">recorded run</span>
+      <span className="text-dim">
+        {" "}— this page is served as static files, so there is no FalkorDB
+        behind it. Every step, latency and answer below is real output from a
+        real run, replayed from{" "}
+        <span className="text-fg">fixtures/</span>. For the live thing:{" "}
+        <span className="text-fg">docker compose up</span>.
+      </span>
     </div>
   );
 }
