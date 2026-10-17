@@ -128,3 +128,22 @@ export const AGENT_BG: Record<AgentName, string> = {
 
 export const BACKEND =
   process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000";
+
+/** Set at build time for the GitHub Pages deployment (a project page). */
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+/**
+ * Replay mode.
+ *
+ * GitHub Pages serves static files, so there is no FastAPI backend and no
+ * FalkorDB behind the published site. Rather than ship a console that errors,
+ * the build flips this on and the UI replays `fixtures/*.json` -- the runs
+ * recorded by `python -m blackbox.record_fixtures`, which are byte-identical
+ * to what the SSE endpoint sends.
+ *
+ * Everything on screen is then real output from a real run against a real
+ * graph; it just happened earlier, on someone else's machine. The UI says so.
+ */
+export const REPLAY_BUILD = process.env.NEXT_PUBLIC_REPLAY === "1";
+
+export const fixtureUrl = (name: string) => `${BASE_PATH}/fixtures/${name}`;

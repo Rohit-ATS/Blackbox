@@ -11,3 +11,6 @@ out/
 *.log
 .gstack/
 *.tsbuildinfo
+frontend/out/
+frontend/public/fixtures/
+frontend/public/.nojekyll
