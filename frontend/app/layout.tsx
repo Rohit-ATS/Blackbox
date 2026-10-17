@@ -4,14 +4,14 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "BLACKBOX — the on-call agent that gets smarter every incident",
   description:
-    "Production breaks. BLACKBOX reads your service graph, traces the blast radius, " +
+    "Production breaks. BLACKBOX reads your service graph, traces the affected services, " +
     "finds the change that caused it, recalls the last time this happened, pages the " +
     "human who actually knows, and writes what it learned back into the graph. " +
     "Built on FalkorDB for Graph Hacks.",
   applicationName: "BLACKBOX",
   authors: [{ name: "Rohit Maruri", url: "https://github.com/Rohit-ATS" }],
   keywords: ["FalkorDB", "graph database", "incident response", "agent memory",
-             "Cypher", "blast radius", "Graph Hacks"],
+             "Cypher", "affected services", "Graph Hacks"],
   openGraph: {
     title: "BLACKBOX — an on-call agent with a graph for a memory",
     description:

@@ -48,8 +48,8 @@ export default function Landing() {
           </h1>
 
           <p className="mt-7 max-w-2xl text-[13.5px] leading-relaxed text-fg md:text-[15px]">
-            Production breaks. BLACKBOX reads your service graph, traces the blast
-            radius, finds the change that caused it two hops upstream, recalls the last
+            Production breaks. BLACKBOX reads your service graph, maps everything
+            degrading with it, finds the change that caused it two hops upstream, recalls the last
             time this happened, pages the human who actually knows — then{" "}
             <span className="text-bright">writes what it learned back into the graph</span>,
             so the next incident resolves in one hop instead of six.
@@ -139,7 +139,7 @@ export default function Landing() {
               steps={[
                 ["resolve_entity", "→ checkout-api"],
                 ["similar_incidents", "→ a related incident, not conclusive"],
-                ["blast_radius", "→ 11 services, 3 customer-facing"],
+                ["affected_services", "→ 11 services, 3 customer-facing"],
                 ["criticality_rank", "→ PageRank over 42 services"],
                 ["recent_changes hops=2", "→ PR #4471 on ledger-service"],
                 ["causal_path", "→ ledger → payments → checkout"],
@@ -176,7 +176,7 @@ export default function Landing() {
               steps={[
                 ["resolve_entity", "→ notifications-api"],
                 ["similar_incidents", "→ its own postmortem, 0.59"],
-                ["blast_radius depth=2", "→ impact only; mechanism known"],
+                ["affected_services depth=2", "→ impact only; mechanism known"],
                 ["recent_changes hops=1", "→ PR #4525, one hop"],
                 ["who_knows", "→ Mei Tanaka"],
                 ["write_finding ×3", "→ the lesson, extended"],
@@ -215,7 +215,7 @@ export default function Landing() {
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[
               ["resolve_entity", "fulltext", "an alert string becomes a node"],
-              ["blast_radius", "algo.BFS", "who degrades with it, by hop depth"],
+              ["affected_services", "algo.BFS", "who degrades with it, by hop depth"],
               ["recent_changes", "variable-length walk", "deploys up to N hops upstream"],
               ["causal_path", "algo.SPpaths", "weighted by criticality, not hop count"],
               ["similar_incidents", "vector / HNSW", "the memory tool"],
@@ -311,7 +311,7 @@ RETURN n`}</pre>
           <div className="mt-8 space-y-px border border-line bg-line">
             {[
               ["01", "Agents that act on connected data",
-               "Blast-radius BFS, criticality-weighted SPpaths, PageRank — called as agent tools, not reimplemented. Exposed over MCP so you can drive the same nine tools from your own Claude."],
+               "Impact BFS, criticality-weighted SPpaths, PageRank — called as agent tools, not reimplemented. Exposed over MCP so you can drive the same nine tools from your own Claude."],
               ["02", "Memory and coordination",
                "Three agents handing off through the graph. Episodic, semantic and procedural memory as nodes. Every tool call is an :AgentStep with provenance edges, and the write-back loop is measurable on screen."],
               ["03", "The company brain",

@@ -64,9 +64,9 @@ def render(event: dict) -> None:
                      else f"{hops} hop{'s' if hops != 1 else ''} upstream")
             print(f"  root cause   {rc['text']}  [{rc['citation']}]")
             print(f"               author {rc['author']}, {where}")
-        if a.get("blast_radius"):
-            b = a["blast_radius"]
-            print(f"  blast radius {b['count']} services, customer-facing: "
+        if a.get("affected_services"):
+            b = a["affected_services"]
+            print(f"  affected services {b['count']} services, customer-facing: "
                   f"{', '.join(b['customer_facing']) or 'none'}  [{b['citation']}]")
         if a.get("propagation"):
             print(f"  propagation  {' → '.join(a['propagation']['chain'])}  "

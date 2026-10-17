@@ -67,7 +67,7 @@ export interface Answer {
     text: string; pr_number: number; service: string; file?: string;
     author?: string; hops_upstream?: number; citation: number;
   } | null;
-  blast_radius?: { count: number; customer_facing: string[]; citation: number } | null;
+  affected_services?: { count: number; customer_facing: string[]; citation: number } | null;
   propagation?: { chain: string[]; citation: number } | null;
   page?: {
     name: string; handle?: string; role?: string; timezone?: string; team?: string;

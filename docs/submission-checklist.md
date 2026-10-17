@@ -26,8 +26,8 @@ Work top to bottom. Do not deviate.
       `BLACKBOX — an on-call agent that gets smarter every incident (FalkorDB Graph Hacks)`
 - [ ] Add the video link at the top of the README (there is a `## Demo`
       placeholder waiting for it)
-- [ ] Add a hero GIF to the README — a 6-second loop of the cold run's blast
-      radius filling is the strongest few seconds you have
+- [ ] Add a hero GIF to the README — a 6-second loop of the cold run's
+      impact set filling red is the strongest few seconds you have
 - [x] Push to a **public** GitHub repo —
       [Rohit-ATS/GraphHacks](https://github.com/Rohit-ATS/GraphHacks)
 - [x] GitHub Pages deployment live at

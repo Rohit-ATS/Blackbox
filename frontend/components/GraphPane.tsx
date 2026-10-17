@@ -8,7 +8,7 @@ import type { Event, Topology } from "@/lib/types";
  * The live service graph.
  *
  * All 42 services sit faint in the background. As the agent calls tools, the
- * subgraph each call touched is lit: blast radius fills red by hop depth, the
+ * subgraph each call touched is lit: affected services fills red by hop depth, the
  * causal path glows amber and draws in sequence, deploys and people appear as
  * satellites. Traversed edges carry the measured per-hop latency in ms, which
  * is the thing worth staring at -- those are real FalkorDB timings.
@@ -57,7 +57,7 @@ export default function GraphPane({
         .filter(Boolean),
       edges: (last.path?.edges ?? []) as Highlight["edges"],
       latencyMs: last.latency_ms,
-      byHop: last.tool === "blast_radius" ? last.data?.by_hop : undefined,
+      byHop: last.tool === "affected_services" ? last.data?.by_hop : undefined,
       chain: last.tool === "causal_path" ? last.data?.propagation : undefined,
     };
   }, [events]);
@@ -76,9 +76,9 @@ export default function GraphPane({
     return set;
   }, [events]);
 
-  const blast = useMemo(() => {
+  const affected = useMemo(() => {
     const r = [...events].reverse().find(
-      (e) => e.type === "tool_result" && e.tool === "blast_radius",
+      (e) => e.type === "tool_result" && e.tool === "affected_services",
     ) as Extract<Event, { type: "tool_result" }> | undefined;
     if (!r) return null;
     const byHop = new Map<string, number>();
@@ -191,7 +191,7 @@ export default function GraphPane({
               "text-valign": "bottom",
             } as any,
           },
-          // ---- blast radius, shaded by hop distance
+          // ---- affected services, shaded by hop distance
           { selector: "node.hop1", style: { "background-color": "#c62828", "border-color": "#ff6b6b", color: "#ffc9c9", "font-size": 9 } as any },
           { selector: "node.hop2", style: { "background-color": "#8e2626", "border-color": "#d35454", color: "#f0b4b4", "font-size": 8.5 } as any },
           { selector: "node.hop3", style: { "background-color": "#5c2222", "border-color": "#a94848", color: "#dba5a5" } as any },
@@ -332,30 +332,30 @@ export default function GraphPane({
       // drop satellites from the previous step
       cy.nodes(".satellite").remove();
 
-      if (blast) {
-        const origin = cy.getElementById(blast.source);
+      if (affected) {
+        const origin = cy.getElementById(affected.source);
         origin.addClass("origin");
-        blast.byHop.forEach((hops, name) => {
+        affected.byHop.forEach((hops, name) => {
           const n = cy.getElementById(name);
           if (n.nonempty()) {
             n.addClass(`hop${Math.min(hops, 4)}`);
-            const cf = (blast.data?.customer_facing ?? []) as string[];
+            const cf = (affected.data?.customer_facing ?? []) as string[];
             if (cf.includes(name)) n.addClass("customer-facing");
           }
         });
 
-        // label the IMPACTS edges inside the blast set with the per-hop time
+        // label the IMPACTS edges inside the affected set with the per-hop time
         const hopLatency = new Map<number, number>();
-        for (const lvl of (blast.data?.by_hop ?? []) as any[]) {
+        for (const lvl of (affected.data?.by_hop ?? []) as any[]) {
           hopLatency.set(lvl.hops, lvl.latency_ms);
         }
-        for (const [name, hops] of blast.byHop) {
+        for (const [name, hops] of affected.byHop) {
           const n = cy.getElementById(name);
           if (n.empty()) continue;
           n.connectedEdges().forEach((edge: any) => {
             const other =
               edge.source().id() === name ? edge.target().id() : edge.source().id();
-            if (other === blast.source || blast.byHop.has(other)) {
+            if (other === affected.source || affected.byHop.has(other)) {
               edge.addClass("traversed");
               const ms = hopLatency.get(hops);
               if (ms !== undefined && !edge.data("label")) {
@@ -383,7 +383,7 @@ export default function GraphPane({
 
       // satellites for the current step: deploys, PRs, people, postmortems
       if (highlight) {
-        const anchor = blast?.source ?? highlight.nodes[0];
+        const anchor = affected?.source ?? highlight.nodes[0];
         const sats = (events
           .filter((e) => e.type === "tool_result")
           .slice(-1)[0] as Extract<Event, { type: "tool_result" }> | undefined)
@@ -410,7 +410,7 @@ export default function GraphPane({
             classes: `satellite${isWrite ? " satellite-write" : ""}`,
             position: anchorPosition(cy, anchor),
           });
-          const near = nearestService(n, highlight, blast?.source);
+          const near = nearestService(n, highlight, affected?.source);
           if (near && cy.getElementById(near).nonempty()) {
             cy.add({
               group: "edges",
@@ -444,7 +444,7 @@ export default function GraphPane({
       cy.animate({ fit: { eles: lit.union(lit.connectedEdges()), padding: 70 } },
                  { duration: 420 });
     }
-  }, [highlight, blast, causal, touchedAll, events, ready, epoch]);
+  }, [highlight, affected, causal, touchedAll, events, ready, epoch]);
 
   // focus a node when a citation is hovered in the answer card
   useEffect(() => {
@@ -476,7 +476,7 @@ export default function GraphPane({
       <div className="absolute bottom-3 left-3 hair bg-panel/90 px-3 py-2 text-[10px] leading-relaxed backdrop-blur">
         <div className="mb-1 text-dim uppercase tracking-wider">legend</div>
         <Row color="#ff4d4d" label="alerting service" />
-        <Row color="#c62828" label="blast radius (shade = hops)" />
+        <Row color="#c62828" label="affected services (shade = hops)" />
         <Row color="#ffe08a" label="customer-facing" ring />
         <Row color="#f5a623" label="causal path" />
         <Row color="#9d7bff" label="deploy / PR / person" />

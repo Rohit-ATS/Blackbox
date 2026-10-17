@@ -61,7 +61,7 @@ retrieval path.
 critical. `checkout-api` depends hard and synchronously on `payments-api`
 (criticality 5) and softly on `feature-flags` (criticality 1). Putting a
 single "tier" on the service throws that away. With criticality on the edge,
-blast radius can be weighted and shortest-path can be made to prefer the route
+affected services can be weighted and shortest-path can be made to prefer the route
 a failure actually travels: there are two two-hop routes from `checkout-api`
 to `ledger-service`, and only the one through `payments-api` is a hard
 synchronous call. `cost = 6 - criticality` turns that into something
@@ -136,7 +136,7 @@ shapes being true:
   customer-facing;
 - the cheapest weighted path from `checkout-api` to `ledger-service` runs
   through `payments-api`, not through the equal-hop-count `fraud-screen`;
-- the deepest dependency chain is 8 hops, so blast radius has something to
+- the deepest dependency chain is 8 hops, so affected services has something to
   say.
 
 `tenant:globex` is a freight company with 16 services and no overlap, seeded

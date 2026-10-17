@@ -51,7 +51,7 @@ what it means.*
 > "Triage resolves the alert text to a node, then asks memory whether we've
 > seen this before. There's something related, but nothing conclusive."
 
-> "Blast radius. Eleven services degrade with it — three of them customer
+> "Affected services. Eleven services degrade with it — three of them customer
 > facing." *(let the red fill; point at the double-ringed nodes)*
 > "And those numbers on the edges are the actual traversal times. Single-digit
 > milliseconds, inside the agent loop."

@@ -144,9 +144,9 @@ def resolve_entity(tenant: str, text: str) -> ToolResult:
 
 
 # --------------------------------------------------------------------------- #
-# 2. blast_radius  -- the signature move
+# 2. affected_services  -- the signature move
 # --------------------------------------------------------------------------- #
-def blast_radius(tenant: str, service: str, max_depth: int = 4) -> ToolResult:
+def affected_services(tenant: str, service: str, max_depth: int = 4) -> ToolResult:
     """Everything that degrades if `service` degrades, by dependency depth.
 
     Walks IMPACTS -- the materialised inverse of DEPENDS_ON -- with algo.BFS.
@@ -212,7 +212,7 @@ def blast_radius(tenant: str, service: str, max_depth: int = 4) -> ToolResult:
             for p in impacted
         ],
     }
-    return ToolResult("blast_radius", data, cypher,
+    return ToolResult("affected_services", data, cypher,
                       round((time.perf_counter() - t0) * 1000, 3),
                       path={"nodes": nodes, "edges": edges},
                       note=f"{len(impacted)} impacted, {len(customer_facing)} customer-facing")
@@ -765,7 +765,7 @@ def trace(tenant: str, incident_id: str) -> list[dict]:
 # --------------------------------------------------------------------------- #
 REGISTRY = {
     "resolve_entity": resolve_entity,
-    "blast_radius": blast_radius,
+    "affected_services": affected_services,
     "recent_changes": recent_changes,
     "causal_path": causal_path,
     "similar_incidents": similar_incidents,

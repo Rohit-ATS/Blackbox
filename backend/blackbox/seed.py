@@ -161,7 +161,7 @@ DECISIONS = [
      "ledger-service rather than deriving them, so reconciliation has one authority."),
     ("ADR-021 Criticality on dependency edges, not on services", "checkout-api", "Dana Okonkwo",
      "A service is not uniformly critical. checkout-api depends hard on payments-api and "
-     "softly on feature-flags. Criticality belongs on the edge so blast radius can be weighted."),
+     "softly on feature-flags. Criticality belongs on the edge so affected services can be weighted."),
     ("ADR-008 Saga orchestration over two-phase commit", "order-orchestrator", "Chen Wei",
      "Order placement spans five services. We accept compensating transactions over "
      "distributed locks, with TTLs on every reservation."),

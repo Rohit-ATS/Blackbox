@@ -111,7 +111,7 @@ ORDER BY d.risk_score DESC
 
 I have a test that asserts this query finds nothing at `hops=1` and finds the
 true cause at `hops=2`. That test is the whole thesis in eleven lines. The
-blast radius is impressive on screen, but *this* is the query that does the
+affected services is impressive on screen, but *this* is the query that does the
 work a human on-call misses, because a human looks at the service that
 alerted.
 
@@ -168,7 +168,7 @@ Two runs, same class of failure, different services.
 ```
 resolve_entity        2.12ms
 similar_incidents    15.61ms   a related prior incident, not conclusive
-blast_radius         11.71ms   11 impacted, 3 customer-facing
+affected_services         11.71ms   11 impacted, 3 customer-facing
 criticality_rank      2.89ms   PageRank over 42 services
 recent_changes        3.80ms   PR #4471 on ledger-service, 2 hops upstream
 causal_path           2.92ms   ledger-service -> payments-api -> checkout-api
@@ -188,7 +188,7 @@ similarity **0.589**:
 ```
 resolve_entity        1.64ms
 similar_incidents    14.77ms   3 postmortems (incl. 1 written by BLACKBOX)
-blast_radius          6.56ms   depth 2 — mechanism already known
+affected_services          6.56ms   depth 2 — mechanism already known
 recent_changes        3.03ms   hops=1 — one hop is enough now
 write_finding         2.10ms   CAUSED_BY
 who_knows             4.29ms   Mei Tanaka (31 commits)

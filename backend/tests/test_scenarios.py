@@ -47,8 +47,8 @@ def test_cold_run_reaches_the_root_cause_within_eight_calls(runs):
     assert found_at <= 8, f"took {found_at} calls to see the cause"
 
 
-def test_cold_run_sizes_the_blast_radius(runs):
-    b = runs["cold"]["answer"]["blast_radius"]
+def test_cold_run_sizes_the_affected_services(runs):
+    b = runs["cold"]["answer"]["affected_services"]
     assert b["count"] == 11
     assert sorted(b["customer_facing"]) == ["mobile-bff", "partner-api", "web-bff"]
 
@@ -77,7 +77,7 @@ def test_cold_run_writes_back_to_the_graph(runs):
 def test_every_claim_on_the_answer_card_has_a_citation(runs):
     a = runs["cold"]["answer"]
     cited = {c["n"] for c in a["citations"]}
-    for key in ("root_cause", "blast_radius", "propagation", "page"):
+    for key in ("root_cause", "affected_services", "propagation", "page"):
         assert a[key]["citation"] in cited, key
 
 
@@ -108,7 +108,7 @@ def test_warm_run_still_produces_a_complete_answer(runs):
     a = runs["warm"]["answer"]
     assert a["root_cause"]["pr_number"] == 4525
     assert a["root_cause"]["file"] == "src/db/pool.ts"
-    assert a["blast_radius"]["count"] >= 1
+    assert a["affected_services"]["count"] >= 1
     assert a["page"]["name"] == "Mei Tanaka"
     assert "Postmortem" in runs["warm"]["metrics"]["wrote"]
 
@@ -147,7 +147,7 @@ def test_scenarios_are_replayable(seeded):
     a = agents.run_sync(TENANT, scenarios.SCENARIO_COLD, use_llm=False)["answer"]
     b = agents.run_sync(TENANT, scenarios.SCENARIO_COLD, use_llm=False)["answer"]
     assert a["root_cause"]["pr_number"] == b["root_cause"]["pr_number"]
-    assert a["blast_radius"]["count"] == b["blast_radius"]["count"]
+    assert a["affected_services"]["count"] == b["affected_services"]["count"]
     assert a["page"]["name"] == b["page"]["name"]
 
 

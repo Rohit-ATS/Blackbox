@@ -88,20 +88,20 @@ export default function AnswerCard({
           </Field>
         )}
 
-        {answer.blast_radius && (
-          <Field label="blast radius" tone="red">
+        {answer.affected_services && (
+          <Field label="affected services" tone="red">
             <div>
               <span className="tnum font-bold text-bright">
-                {answer.blast_radius.count}
+                {answer.affected_services.count}
               </span>{" "}
               <span className="text-dim">services degrade with it</span>
-              {cite(answer.blast_radius.citation)}
+              {cite(answer.affected_services.citation)}
             </div>
-            {answer.blast_radius.customer_facing.length > 0 && (
+            {answer.affected_services.customer_facing.length > 0 && (
               <div className="text-dim">
                 customer-facing:{" "}
                 <span className="text-amber">
-                  {answer.blast_radius.customer_facing.join(", ")}
+                  {answer.affected_services.customer_facing.join(", ")}
                 </span>
               </div>
             )}

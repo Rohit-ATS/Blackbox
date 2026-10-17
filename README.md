@@ -12,8 +12,8 @@ Built on [FalkorDB](https://falkordb.com) for **Graph Hacks** (FalkorDB × WeMak
 
 ---
 
-Production breaks. BLACKBOX reads your service graph, traces the blast radius,
-finds the change that caused it two hops upstream, recalls the last time this
+Production breaks. BLACKBOX reads your service graph, maps everything degrading
+with it, finds the change that caused it two hops upstream, recalls the last time this
 happened, pages the human who actually knows — then **writes what it learned
 back into the graph**, so the next incident of the same shape resolves in a
 fraction of the hops.
@@ -103,7 +103,7 @@ empty answer. The toolbar lets you force either one.
 |---|---|---|---|
 | 1 | `resolve_entity` | → `checkout-api` | 2.1ms |
 | 2 | `similar_incidents` | a related prior incident, not conclusive | 15.6ms |
-| 3 | `blast_radius` | **11 services degrade with it, 3 customer-facing** | 11.7ms |
+| 3 | `affected_services` | **11 services degrade with it, 3 customer-facing** | 11.7ms |
 | 4 | `criticality_rank` | PageRank over 42 services | 2.9ms |
 | 5 | `recent_changes` hops=2 | **PR #4471 on `ledger-service`, 2 hops upstream** | 3.8ms |
 | 6 | `causal_path` | `ledger-service → payments-api → checkout-api` | 2.9ms |
@@ -195,7 +195,7 @@ makes each claim on the answer card clickable back to its source nodes.
 | tool | mechanism | what it answers |
 |---|---|---|
 | `resolve_entity` | fulltext | an alert string becomes a node |
-| `blast_radius` | `algo.BFS` over the materialised inverse | who degrades with it, by hop depth |
+| `affected_services` | `algo.BFS` over the materialised inverse | who degrades with it, by hop depth |
 | `recent_changes` | variable-length walk, time-filtered | what changed up to N hops upstream |
 | `causal_path` | `algo.SPpaths`, criticality-weighted | how a failure there reaches here |
 | `similar_incidents` | vector (HNSW, cosine) | have we seen this before |
@@ -241,7 +241,7 @@ swaps a 42-service e-commerce company for a 16-service freight company.
 
 | Track | How BLACKBOX answers it |
 |---|---|
-| **01 — Agents that act on connected data** | Blast-radius `algo.BFS`, criticality-weighted `algo.SPpaths`, `algo.pageRank` — called as agent tools, not reimplemented. Nine typed tools, each returning the query it ran and its latency. Exposed over **MCP** so tool selection can be driven from any MCP client. |
+| **01 — Agents that act on connected data** | Impact `algo.BFS`, criticality-weighted `algo.SPpaths`, `algo.pageRank` — called as agent tools, not reimplemented. Nine typed tools, each returning the query it ran and its latency. Exposed over **MCP** so tool selection can be driven from any MCP client. |
 | **02 — Memory and coordination** | Three agents with separate prompts and tool subsets, handing off through `:AgentStep`/`:NEXT` nodes rather than process memory. Episodic, semantic and procedural memory as graph data. The write-back loop is measured on screen: run 2 cites the postmortem run 1 wrote. |
 | **03 — The company brain** | Services, deploys, PRs, files, people, teams, runbooks, Slack-style messages and ADRs in one graph with ownership and provenance. Every claim on the answer card carries a citation that highlights its source nodes. |
 
@@ -274,7 +274,7 @@ deployed in the last two hours broke checkout-api — what was it?"*
 cd backend && python -m pytest -q      # 29 passed
 ```
 
-The suite asserts the demo, not just the plumbing: that blast radius returns
+The suite asserts the demo, not just the plumbing: that the impact traversal returns
 exactly 11 services with 3 customer-facing, that the criticality-weighted path
 prefers `payments-api` over the equal-hop-count alternative, that
 `recent_changes` **misses** the cause at one hop and finds it at two, that the

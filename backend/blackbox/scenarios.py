@@ -58,7 +58,7 @@ SCENARIO_COLD = Scenario(
     severity="SEV1",
     narrative="Cold run. Nothing in memory names this deploy; the agent has to traverse.",
     expect={"root_cause_pr": 4471, "cause_service": "ledger-service",
-            "blast_radius": 11, "owner": "Priya Raghavan"},
+            "affected_services": 11, "owner": "Priya Raghavan"},
 )
 
 SCENARIO_WARM = Scenario(

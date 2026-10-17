@@ -152,8 +152,8 @@ def tool_schemas(names: list[str]) -> list[dict]:
                 "required": ["text"],
             },
         },
-        "blast_radius": {
-            "name": "blast_radius",
+        "affected_services": {
+            "name": "affected_services",
             "description": (
                 "Everything that degrades if this service degrades, by dependency depth. "
                 "Returns the impacted services with hop counts, which of them are "

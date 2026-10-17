@@ -2,11 +2,11 @@
 
 Hand-authored rather than random because the demo depends on specific graph
 shapes being true:
-  * blast_radius of checkout-api must reach exactly 11 dependents, 3 of them
+  * affected_services of checkout-api must reach exactly 11 dependents, 3 of them
     customer-facing;
   * the cheapest DEPENDS_ON path checkout-api -> ledger-service must run
     through payments-api (criticality-weighted, not merely hop count);
-  * there must be chains 5+ hops deep, or blast radius is not interesting.
+  * there must be chains 5+ hops deep, or affected services is not interesting.
 """
 
 # name: (tier, revenue_critical, customer_facing, language, description)

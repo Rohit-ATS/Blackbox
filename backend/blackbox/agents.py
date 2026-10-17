@@ -43,7 +43,7 @@ RECALL_FLOOR = 0.40
 
 AGENTS = {
     "Triage": {
-        "tools": ["resolve_entity", "similar_incidents", "blast_radius", "criticality_rank"],
+        "tools": ["resolve_entity", "similar_incidents", "affected_services", "criticality_rank"],
         "system": """You are TRIAGE, the first of three agents handling a production incident.
 
 Your job is to size the incident, not to solve it. In order:
@@ -51,8 +51,8 @@ Your job is to size the incident, not to solve it. In order:
 2. similar_incidents on the symptom -- do this EARLY. If this failure signature has
    been seen before, especially in a postmortem BLACKBOX wrote itself, say so
    loudly: it changes how much work the next agent has to do.
-3. blast_radius on the resolved service, to establish who else is degraded.
-4. criticality_rank only if the blast radius is ambiguous and you need to
+3. affected_services on the resolved service, to establish who else is degraded.
+4. criticality_rank only if the affected services is ambiguous and you need to
    prioritise.
 
 Then stop and write one short paragraph: the service, the severity you'd assign,
@@ -169,11 +169,11 @@ def _plan_deterministic(agent: str, run: Run, state: dict) -> Iterator[dict]:
         if state.get("warm"):
             # The mechanism is already known, so impact sizing is all that is
             # left: a shallow walk, and no need to rank the whole graph.
-            yield {"tool": "blast_radius", "args": {"service": svc, "max_depth": 2},
+            yield {"tool": "affected_services", "args": {"service": svc, "max_depth": 2},
                    "say": f"Mechanism already known from memory. Sizing impact around "
                           f"{svc} only."}
         else:
-            yield {"tool": "blast_radius", "args": {"service": svc, "max_depth": 4},
+            yield {"tool": "affected_services", "args": {"service": svc, "max_depth": 4},
                    "say": f"Walking dependents of {svc} to size the impact."}
             yield {"tool": "criticality_rank", "args": {"top": 8},
                    "say": "Nothing in memory names this. Ranking structural criticality "
@@ -306,8 +306,8 @@ def _absorb(res: T.ToolResult, state: dict, run: Run) -> None:
     if res.tool == "resolve_entity" and d.get("resolved"):
         state["service"] = d["name"]
 
-    elif res.tool == "blast_radius":
-        state["blast_count"] = d.get("count")
+    elif res.tool == "affected_services":
+        state["affected_count"] = d.get("count")
         state["customer_facing"] = d.get("customer_facing", [])
 
     elif res.tool == "similar_incidents":
@@ -523,7 +523,7 @@ def _run_agent_llm(brain, agent: str, spec: dict, run: Run, state: dict,
         "symptom": sc.symptom,
         "severity_reported": sc.severity,
         "handoff_state": {k: v for k, v in state.items()
-                          if k in ("service", "blast_count", "customer_facing",
+                          if k in ("service", "affected_count", "customer_facing",
                                    "cause_pr", "cause_service", "cause_file",
                                    "cause_hops", "cause_author", "propagation",
                                    "warm", "prior_incident")},
@@ -592,9 +592,9 @@ def _summarise(agent: str, run: Run, state: dict) -> str:
     """Narration for the deterministic brain: facts only, no invented prose."""
     if agent == "Triage":
         bits = [f"Resolved to {state.get('service')}."]
-        if state.get("blast_count") is not None:
+        if state.get("affected_count") is not None:
             cf = state.get("customer_facing") or []
-            bits.append(f"{state['blast_count']} services degrade with it, "
+            bits.append(f"{state['affected_count']} services degrade with it, "
                         f"{len(cf)} customer-facing ({', '.join(cf)}).")
         if state.get("warm"):
             pm = state.get("recalled_postmortem") or {}
@@ -658,11 +658,11 @@ def _build_answer(run: Run, state: dict) -> dict:
             "citation": n,
         }
 
-    blast = None
-    if state.get("blast_count") is not None:
-        n = cite(f"{state['blast_count']} dependent services",
-                 state.get("customer_facing") or [], "blast_radius")
-        blast = {"count": state["blast_count"],
+    affected = None
+    if state.get("affected_count") is not None:
+        n = cite(f"{state['affected_count']} dependent services",
+                 state.get("customer_facing") or [], "affected_services")
+        affected = {"count": state["affected_count"],
                  "customer_facing": state.get("customer_facing") or [],
                  "citation": n}
 
@@ -713,7 +713,7 @@ def _build_answer(run: Run, state: dict) -> dict:
         "service": state.get("service"),
         "severity": sc.severity,
         "root_cause": root_cause,
-        "blast_radius": blast,
+        "affected_services": affected,
         "propagation": propagation,
         "page": page,
         "memory": memory,

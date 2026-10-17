@@ -38,8 +38,8 @@ def test_resolve_entity_maps_an_alert_line_to_a_service():
     assert r.data["revenue_critical"] is True
 
 
-def test_blast_radius_finds_eleven_dependents_three_customer_facing():
-    r = tools.blast_radius(TENANT, "checkout-api", max_depth=4)
+def test_affected_services_finds_eleven_dependents_three_customer_facing():
+    r = tools.affected_services(TENANT, "checkout-api", max_depth=4)
     assert r.data["count"] == 11
     assert r.data["customer_facing_count"] == 3
     assert set(r.data["customer_facing"]) == {"web-bff", "mobile-bff", "partner-api"}

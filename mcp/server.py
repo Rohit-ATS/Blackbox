@@ -36,7 +36,7 @@ mcp = MCPServer(
         "their dependencies, deploys, pull requests, files, people, teams, runbooks, "
         "past incidents and the postmortems written about them.\n\n"
         "Start with graph_overview. For an incident investigation the useful order is "
-        "resolve_entity -> similar_incidents -> blast_radius -> recent_changes (use "
+        "resolve_entity -> similar_incidents -> affected_services -> recent_changes (use "
         "hops=2; the cause is usually not on the service that alerted) -> causal_path "
         "-> who_knows. Every tool returns the data, the subgraph it touched, the exact "
         "Cypher that ran and its latency in milliseconds.\n\n"
@@ -76,13 +76,13 @@ def resolve_entity(text: str, tenant: str = TENANT_DEFAULT) -> str:
 
 
 @mcp.tool()
-def blast_radius(service: str, max_depth: int = 4, tenant: str = TENANT_DEFAULT) -> str:
+def affected_services(service: str, max_depth: int = 4, tenant: str = TENANT_DEFAULT) -> str:
     """Everything that degrades if this service degrades, by dependency depth.
 
     Returns the impacted services with hop counts, which are customer-facing and
     which are revenue-critical. Walks the dependency graph with algo.BFS.
     """
-    return _out(T.blast_radius(tenant, service, max_depth).to_dict())
+    return _out(T.affected_services(tenant, service, max_depth).to_dict())
 
 
 @mcp.tool()
