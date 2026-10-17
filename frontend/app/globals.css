@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+
+html, body {
+  background: #05070a;
+  color: #c9d4df;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The instrument look: a faint grid, like a scope. */
+.grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(39,51,63,.22) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(39,51,63,.22) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.scanline::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 0%, rgba(53,200,240,.045) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: #0a0e14; }
+::-webkit-scrollbar-thumb { background: #27333f; border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: #3a4654; }
+
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* Hairline dividers everywhere; no rounded SaaS cards. */
+.hair { border: 1px solid #1b2430; }
+
+.glow-amber { box-shadow: 0 0 0 1px rgba(245,166,35,.5), 0 0 22px -6px rgba(245,166,35,.45); }
+.glow-red   { box-shadow: 0 0 0 1px rgba(255,77,77,.5), 0 0 22px -6px rgba(255,77,77,.45); }
+.glow-green { box-shadow: 0 0 0 1px rgba(46,230,168,.5), 0 0 22px -6px rgba(46,230,168,.4); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
