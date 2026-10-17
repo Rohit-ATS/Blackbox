@@ -143,13 +143,13 @@ export default function GraphPane({
           {
             selector: "node",
             style: {
-              "background-color": "#141c26",
+              "background-color": "#1c1b1c",
               "border-width": 1,
-              "border-color": "#27333f",
+              "border-color": "#3a373a",
               width: (el: any) => TIER_SIZE[el.data("tier")] ?? 16,
               height: (el: any) => TIER_SIZE[el.data("tier")] ?? 16,
               label: "data(label)",
-              color: "#4a5968",
+              color: "#6e6a6e",
               "font-family": "ui-monospace, Menlo, Consolas, monospace",
               "font-size": 7.5,
               "text-valign": "bottom",
@@ -161,16 +161,16 @@ export default function GraphPane({
           },
           {
             selector: 'node[rc = 1]',
-            style: { "border-color": "#3b4a5a" } as any,
+            style: { "border-color": "#4a494b" } as any,
           },
           {
             selector: "edge",
             style: {
               width: (el: any) => 0.4 + (el.data("criticality") ?? 1) * 0.18,
-              "line-color": "#1b2430",
+              "line-color": "#2a2729",
               "curve-style": "bezier",
               "target-arrow-shape": "triangle",
-              "target-arrow-color": "#1b2430",
+              "target-arrow-color": "#2a2729",
               "arrow-scale": 0.5,
               opacity: 0.55,
               "transition-property": "line-color, width, opacity, target-arrow-color",
@@ -181,10 +181,10 @@ export default function GraphPane({
           {
             selector: "node.origin",
             style: {
-              "background-color": "#ff4d4d",
-              "border-color": "#ff9a9a",
+              "background-color": "#ff1900",
+              "border-color": "#ff9b8d",
               "border-width": 2.5,
-              color: "#ffd9d9",
+              color: "#ffd8d2",
               "font-size": 10,
               "font-weight": "bold",
               width: 34, height: 34,
@@ -192,22 +192,22 @@ export default function GraphPane({
             } as any,
           },
           // ---- affected services, shaded by hop distance
-          { selector: "node.hop1", style: { "background-color": "#c62828", "border-color": "#ff6b6b", color: "#ffc9c9", "font-size": 9 } as any },
-          { selector: "node.hop2", style: { "background-color": "#8e2626", "border-color": "#d35454", color: "#f0b4b4", "font-size": 8.5 } as any },
-          { selector: "node.hop3", style: { "background-color": "#5c2222", "border-color": "#a94848", color: "#dba5a5" } as any },
-          { selector: "node.hop4", style: { "background-color": "#3d1d1d", "border-color": "#7d3a3a", color: "#c59595" } as any },
+          { selector: "node.hop1", style: { "background-color": "#e73825", "border-color": "#f0836f", color: "#f5c0b6", "font-size": 9 } as any },
+          { selector: "node.hop2", style: { "background-color": "#a82a18", "border-color": "#c9705f", color: "#dfa89c", "font-size": 8.5 } as any },
+          { selector: "node.hop3", style: { "background-color": "#6e2616", "border-color": "#a05c4c", color: "#c59a8f" } as any },
+          { selector: "node.hop4", style: { "background-color": "#482013", "border-color": "#7a483c", color: "#ab8a81" } as any },
           {
             selector: "node.customer-facing",
-            style: { "border-width": 3, "border-color": "#ffe08a", "border-style": "double" } as any,
+            style: { "border-width": 3, "border-color": "#fafafa", "border-style": "double" } as any,
           },
           // ---- causal chain
           {
             selector: "node.causal",
             style: {
-              "background-color": "#f5a623",
-              "border-color": "#ffd793",
+              "background-color": "#9780ff",
+              "border-color": "#c8c8c8",
               "border-width": 2.5,
-              color: "#ffe9c4",
+              color: "#ded4ff",
               "font-size": 10,
               "font-weight": "bold",
               width: 30, height: 30,
@@ -216,14 +216,14 @@ export default function GraphPane({
           {
             selector: "edge.causal",
             style: {
-              "line-color": "#f5a623",
-              "target-arrow-color": "#f5a623",
+              "line-color": "#9780ff",
+              "target-arrow-color": "#9780ff",
               width: 3,
               opacity: 1,
               label: "data(label)",
-              color: "#f5c87a",
+              color: "#b9a6ff",
               "font-size": 8,
-              "text-background-color": "#05070a",
+              "text-background-color": "#0c0b0c",
               "text-background-opacity": 0.95,
               "text-background-padding": 2,
               "text-rotation": "autorotate",
@@ -233,14 +233,14 @@ export default function GraphPane({
           {
             selector: "edge.traversed",
             style: {
-              "line-color": "#c62828",
-              "target-arrow-color": "#c62828",
+              "line-color": "#e73825",
+              "target-arrow-color": "#e73825",
               width: 1.9,
               opacity: 0.95,
               label: "data(label)",
-              color: "#ff9a9a",
+              color: "#ff9b8d",
               "font-size": 7,
-              "text-background-color": "#05070a",
+              "text-background-color": "#0c0b0c",
               "text-background-opacity": 0.92,
               "text-background-padding": 2,
               "text-rotation": "autorotate",
@@ -252,16 +252,16 @@ export default function GraphPane({
             // oversized blob, so the width is computed from the text instead.
             selector: "node.satellite",
             style: {
-              "background-color": "#0b0f16",
+              "background-color": "#141314",
               "background-opacity": 0.95,
-              "border-color": "#9d7bff",
+              "border-color": "#4a494b",
               "border-width": 1.5,
               shape: "round-rectangle",
               width: (el: any) =>
                 Math.max(44, String(el.data("label") ?? "").length * 5.1 + 12),
               height: 16,
               label: "data(label)",
-              color: "#c3b0ff",
+              color: "#c8c8c8",
               "font-size": 7.5,
               "text-valign": "center",
               "text-halign": "center",
@@ -269,13 +269,13 @@ export default function GraphPane({
           },
           {
             selector: "node.satellite-write",
-            style: { "border-color": "#2ee6a8", color: "#9ff2d4" } as any,
+            style: { "border-color": "#edc5fc", color: "#edc5fc" } as any,
           },
           {
             selector: "edge.satellite",
             style: {
-              "line-color": "#3c3160",
-              "target-arrow-color": "#3c3160",
+              "line-color": "#3a373a",
+              "target-arrow-color": "#3a373a",
               "line-style": "dashed",
               width: 1,
               opacity: 0.8,
@@ -475,12 +475,12 @@ export default function GraphPane({
       {/* legend */}
       <div className="absolute bottom-3 left-3 hair bg-panel/90 px-3 py-2 text-[10px] leading-relaxed backdrop-blur">
         <div className="mb-1 text-dim uppercase tracking-wider">legend</div>
-        <Row color="#ff4d4d" label="alerting service" />
-        <Row color="#c62828" label="affected services (shade = hops)" />
-        <Row color="#ffe08a" label="customer-facing" ring />
-        <Row color="#f5a623" label="causal path" />
-        <Row color="#9d7bff" label="deploy / PR / person" />
-        <Row color="#2ee6a8" label="written back by BLACKBOX" />
+        <Row color="#ff1900" label="alerting service" />
+        <Row color="#e73825" label="affected services (shade = hops)" />
+        <Row color="#fafafa" label="customer-facing" ring />
+        <Row color="#9780ff" label="causal path" />
+        <Row color="#4a494b" label="deploy / PR / person" />
+        <Row color="#edc5fc" label="written back by BLACKBOX" />
       </div>
 
       {/* hovered node inspector */}

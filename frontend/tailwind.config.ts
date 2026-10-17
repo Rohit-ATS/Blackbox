@@ -1,25 +1,32 @@
 import type { Config } from "tailwindcss";
 
+/* Console tokens, mapped onto the landing page's material: near-black stage,
+   warm-grey panels, lilac/violet as the live colour, ember for the alarm. */
 export default {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        ink:    "#080510",
-        panel:  "#110b20",
-        panel2: "#1b1032",
-        line:   "#2b1d48",
-        line2:  "#4a3470",
-        dim:    "#8d81a5",
-        fg:     "#c8bddc",
-        bright: "#f5f1ff",
-        amber:  "#e9bd77",
-        red:    "#ee8aa8",
-        green:  "#b9a2ff",
-        cyan:   "#bda1ff",
-        violet: "#9d7bff",
+        ink:    "#0c0b0c",
+        panel:  "#171515",
+        panel2: "#1c1b1c",
+        line:   "#2a2729",
+        line2:  "#4a494b",
+        dim:    "#8a8589",
+        fg:     "#c8c8c8",
+        bright: "#fafafa",
+        amber:  "#e8a06a",
+        red:    "#e73825",
+        green:  "#edc5fc",
+        cyan:   "#edc5fc",
+        violet: "#9780ff",
+        lilac:  "#edc5fc",
+        ember:  "#e73825",
       },
       fontFamily: {
+        sans: ["Wix Madefor Display", "-apple-system", "BlinkMacSystemFont",
+               "Segoe UI", "Helvetica", "Arial", "sans-serif"],
+        serif: ["Tiro Kannada", "Georgia", "Times New Roman", "serif"],
         mono: ["ui-monospace", "SFMono-Regular", "SF Mono", "Menlo", "Consolas",
                "Liberation Mono", "monospace"],
       },

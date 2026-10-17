@@ -6,6 +6,7 @@ import { useState } from "react";
 import AgentStream from "@/components/AgentStream";
 import AnswerCard from "@/components/AnswerCard";
 import TimerBar from "@/components/TimerBar";
+import { BrandMark } from "@/components/Atmosphere";
 import { useRuns } from "@/lib/useRun";
 import type { Event } from "@/lib/types";
 
@@ -37,20 +38,19 @@ export default function Console() {
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-ink">
       {/* ───────────────────────── top bar ───────────────────────── */}
-      <header className="flex shrink-0 items-center gap-4 border-b border-line bg-panel px-4 py-2">
-        <Link href="/" className="group flex items-baseline gap-2">
-          <span className="text-sm font-bold tracking-[0.2em] text-bright group-hover:text-cyan">
-            BLACKBOX
-          </span>
-          <span className="hidden text-[10px] text-dim sm:inline">
-            on-call agent · FalkorDB
-          </span>
+      <header className="console-bar flex shrink-0 items-center gap-4 px-4 py-2">
+        <Link href="/" className="brand group" title="back to the landing page">
+          <BrandMark size={22} />
+          <span className="console-brand group-hover:text-lilac">BLACKBOX</span>
         </Link>
+        <span className="hidden text-[10px] text-dim lg:inline">
+          on-call agent · FalkorDB
+        </span>
 
-        <div className="ml-2 flex items-center gap-1.5">
+        <div className="ml-2 flex items-center gap-2">
           <ScenarioButton
             label="run cold"
-            hint="checkout-api latency"
+            hint="checkout-api latency — no prior memory"
             disabled={busy}
             active={active === "cold"}
             onClick={() => {
@@ -60,7 +60,7 @@ export default function Console() {
           />
           <ScenarioButton
             label="run warm"
-            hint="same signature, new service"
+            hint="same signature, new service — memory in play"
             disabled={busy}
             active={active === "warm"}
             onClick={() => {
@@ -71,50 +71,35 @@ export default function Console() {
           {busy && (
             <button
               onClick={stop}
-              className="hair px-2 py-1 text-[10px] text-amber hover:bg-amber/10"
+              className="rounded-full border border-amber/40 px-3 py-1 text-[10px] text-amber transition-colors hover:bg-amber/10"
             >
               stop
             </button>
           )}
         </div>
 
-        <div className="ml-auto flex items-center gap-3 text-[10px]">
+        <div className="ml-auto flex items-center gap-2.5 text-[10px]">
           {/* which run the panes are showing */}
-          <div className="hair flex overflow-hidden">
-            {(["cold", "warm"] as const).map((k) => (
-              <button
-                key={k}
-                onClick={() => setActive(k)}
-                className={`px-2 py-1 ${
-                  active === k ? "bg-line2 text-bright" : "text-dim hover:bg-panel2"
-                }`}
-              >
-                {k}
-              </button>
-            ))}
-          </div>
+          <Seg
+            title="which run the panes are showing"
+            options={[["cold", "cold"], ["warm", "warm"]]}
+            value={active}
+            onChange={(v) => setActive(v as "cold" | "warm")}
+          />
 
           {/* brain selector */}
-          <div className="hair flex overflow-hidden">
+          <div className="seg" title="what drives tool selection">
             {([
-              [null, "auto"],
-              [true, "model"],
-              [false, "planner"],
-            ] as const).map(([v, label]) => (
+              [null, "auto", "use the model if a key is configured"],
+              [true, "model", "drive tool selection with Claude"],
+              [false, "planner", "deterministic planner: no API calls, same nine tools"],
+            ] as const).map(([v, label, tip]) => (
               <button
                 key={label}
                 onClick={() => setUseLlm(v)}
                 disabled={busy}
-                className={`px-2 py-1 ${
-                  useLlm === v ? "bg-line2 text-bright" : "text-dim hover:bg-panel2"
-                } disabled:opacity-40`}
-                title={
-                  label === "planner"
-                    ? "deterministic planner: no API calls, same nine tools"
-                    : label === "model"
-                      ? "drive tool selection with Claude"
-                      : "use the model if a key is configured"
-                }
+                data-on={useLlm === v}
+                title={tip}
               >
                 {label}
               </button>
@@ -123,7 +108,7 @@ export default function Console() {
 
           {/* playback speed: how fast the stream is drawn, not how fast it runs */}
           <div
-            className="hair flex overflow-hidden"
+            className="seg"
             title="Playback speed. The agent always runs at full speed; this only spaces out how the steps are drawn."
           >
             {([
@@ -135,9 +120,7 @@ export default function Console() {
                 key={label}
                 onClick={() => setPace(v)}
                 disabled={busy}
-                className={`px-2 py-1 ${
-                  pace === v ? "bg-line2 text-bright" : "text-dim hover:bg-panel2"
-                } disabled:opacity-40`}
+                data-on={pace === v}
               >
                 {label}
               </button>
@@ -145,15 +128,13 @@ export default function Console() {
           </div>
 
           {/* tenant switcher: separate graph on the same FalkorDB instance */}
-          <div className="hair flex overflow-hidden" title="separate graph per tenant">
+          <div className="seg" title="separate graph per tenant">
             {(["acme", "globex"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTenant(t)}
                 disabled={busy}
-                className={`px-2 py-1 ${
-                  tenant === t ? "bg-line2 text-bright" : "text-dim hover:bg-panel2"
-                } disabled:opacity-40`}
+                data-on={tenant === t}
               >
                 tenant:{t}
               </button>
@@ -163,20 +144,20 @@ export default function Console() {
           <button
             onClick={() => void resetMemory()}
             disabled={busy || replay}
-            className="hair px-2 py-1 text-dim hover:bg-panel2 disabled:opacity-40"
+            className="rounded-full border border-line px-3 py-1 text-dim transition-colors hover:border-line2 hover:text-fg disabled:opacity-40"
             title="delete the postmortems BLACKBOX wrote, keep the seeded history"
           >
             forget
           </button>
 
-          <div className="flex items-center gap-1.5 text-dim">
-            <span
-              className={`inline-block h-1.5 w-1.5 ${
-                replay ? "bg-violet" : health?.ok ? "bg-green" : "bg-red"
-              }`}
-            />
+          <span
+            className={`pill ${
+              replay ? "violet" : health?.ok ? "live" : "ember"
+            }`}
+          >
+            <i />
             {replay ? (
-              <span className="text-violet">recorded run</span>
+              "recorded run"
             ) : memory ? (
               <span className="tnum">
                 {memory.self_authored_postmortems} learned ·{" "}
@@ -185,7 +166,7 @@ export default function Console() {
             ) : (
               <span>{health?.ok ? "connected" : "offline"}</span>
             )}
-          </div>
+          </span>
         </div>
       </header>
 
@@ -221,10 +202,40 @@ export default function Console() {
   );
 }
 
+/** Generic segmented control, styled by `.seg` in globals.css. */
+function Seg({
+  options,
+  value,
+  onChange,
+  title,
+  disabled,
+}: {
+  options: readonly (readonly [string, string])[];
+  value: string;
+  onChange: (v: string) => void;
+  title?: string;
+  disabled?: boolean;
+}) {
+  return (
+    <div className="seg" title={title}>
+      {options.map(([v, label]) => (
+        <button
+          key={v}
+          onClick={() => onChange(v)}
+          disabled={disabled}
+          data-on={value === v}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function ReplayBanner() {
   return (
-    <div className="shrink-0 border-b border-violet/30 bg-violet/[0.07] px-4 py-1.5 text-[11px] text-violet">
-      <span className="font-bold">recorded run</span>
+    <div className="shrink-0 border-b border-violet/25 bg-violet/[0.07] px-4 py-1.5 text-[11px] text-violet">
+      <span className="font-semibold">recorded run</span>
       <span className="text-dim">
         {" "}— this page is served as static files, so there is no FalkorDB
         behind it. Every step, latency and answer below is real output from a
@@ -254,13 +265,11 @@ function ScenarioButton({
       onClick={onClick}
       disabled={disabled}
       title={hint}
-      className={`hair px-2.5 py-1 text-[11px] transition-colors disabled:opacity-40 ${
-        active
-          ? "border-cyan/50 bg-cyan/10 text-cyan"
-          : "text-fg hover:bg-panel2"
-      }`}
+      data-on={active}
+      className="runbtn"
     >
-      ▸ {label}
+      <i aria-hidden="true">▸</i>
+      {label}
     </button>
   );
 }
@@ -280,17 +289,17 @@ function AlertStrip({
 
   if (!start) {
     return (
-      <div className="shrink-0 border-b border-line bg-panel2 px-4 py-1.5 text-[11px] text-dim">
+      <div className="shrink-0 border-b border-line bg-panel px-4 py-1.5 text-[11px] text-dim">
         no incident running — press{" "}
-        <span className="text-fg">run cold</span> to fire the first alert
+        <span className="text-lilac">run cold</span> to fire the first alert
       </div>
     );
   }
 
   return (
-    <div className="relative shrink-0 overflow-hidden border-b border-line bg-panel2 px-4 py-1.5">
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 text-[11px]">
-        <span className="font-bold text-red">ALERT</span>
+    <div className="alert-strip shrink-0 px-4 py-1.5">
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 pl-1.5 text-[11px]">
+        <span className="font-semibold tracking-[0.14em] text-ember">ALERT</span>
         <span className="text-bright">{start.alert.service}</span>
         <span className="tnum text-dim">
           {start.alert.metric} = {start.alert.value.toFixed(0)}
@@ -300,12 +309,10 @@ function AlertStrip({
         <span className="min-w-0 flex-1 truncate text-dim">{start.symptom}</span>
         <span className="text-line2">│</span>
         <span className="text-dim">{start.incident_id}</span>
-        <span className="hair border-line2 px-1.5 text-[10px] text-violet">
-          {mode ?? start.mode}
-        </span>
+        <span className="pill violet">{mode ?? start.mode}</span>
       </div>
       {error && (
-        <div className="mt-0.5 truncate text-[10px] text-amber" title={error}>
+        <div className="mt-0.5 truncate pl-1.5 text-[10px] text-amber" title={error}>
           {error}
         </div>
       )}
