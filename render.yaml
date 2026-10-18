@@ -22,15 +22,9 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: FALKOR_HOST
-        fromService:
-          type: pserv
-          name: blackbox-falkordb
-          property: host
+        value: blackbox-falkordb
       - key: FALKOR_PORT
-        fromService:
-          type: pserv
-          name: blackbox-falkordb
-          property: port
+        value: "6379"
       - key: BLACKBOX_MODEL
         value: claude-sonnet-4-6
       - key: ANTHROPIC_API_KEY
