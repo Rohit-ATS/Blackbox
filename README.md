@@ -58,14 +58,12 @@ a fraction of the hops.
 
 <div align="center">
 
-<video src="https://github.com/Rohit-ATS/Blackbox/releases/download/v1.0.0/BLACKBOX-demo.mp4" controls width="100%"></video>
+**▶ [Play the demo — BLACKBOX-demo.mp4, 43 MB, 1080p, 2:54](https://github.com/Rohit-ATS/Blackbox/releases/download/v1.0.0/BLACKBOX-demo.mp4)**
+
+<sub>Hosted on this repo's [v1.0.0 release](https://github.com/Rohit-ATS/Blackbox/releases/tag/v1.0.0) — no sign-in, no player wall.
+Rather not watch a video? [Drive the live console instead.](https://rohit-ats.github.io/Blackbox/console/)</sub>
 
 </div>
-
-<sub>If the inline player doesn't load in your browser,
-**[download or stream the MP4 directly](https://github.com/Rohit-ATS/Blackbox/releases/download/v1.0.0/BLACKBOX-demo.mp4)**
-(43 MB, 1080p, 2:54) — or skip the video entirely and
-[drive the live console](https://rohit-ats.github.io/Blackbox/console/).</sub>
 
 It is screen capture of the product, not slides: the SSE stream arriving, each
 tool call naming the traversal it is about to run, the subgraph animating as it
