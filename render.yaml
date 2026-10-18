@@ -16,9 +16,7 @@ services:
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
-    dockerCommand: >-
-      python -m blackbox.seed --all &&
-      uvicorn blackbox.api:app --host 0.0.0.0 --port $PORT
+    dockerCommand: bash start.sh
     plan: starter
     region: oregon
     healthCheckPath: /api/health
