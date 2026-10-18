@@ -7,6 +7,7 @@
 <br>
 
 [![Try it live](https://img.shields.io/badge/▶_try_it_live-rohit--ats.github.io%2FBlackbox-edc5fc?style=for-the-badge&labelColor=0c0b0c&color=171515)](https://rohit-ats.github.io/Blackbox/console/)
+[![Watch the demo](https://img.shields.io/badge/🎥_watch_the_demo-2%3A54_·_1080p-9780ff?style=for-the-badge&labelColor=0c0b0c&color=171515)](https://github.com/Rohit-ATS/Blackbox/releases/download/v1.0.0/BLACKBOX-demo.mp4)
 [![Graph Hacks](https://img.shields.io/badge/Graph_Hacks-FalkorDB_×_WeMakeDevs-9780ff?style=for-the-badge&labelColor=0c0b0c&color=171515)](https://falkordb.com)
 
 ![FalkorDB](https://img.shields.io/badge/FalkorDB-graph_per_tenant-edc5fc?style=flat-square&labelColor=0c0b0c&color=1c1b1c)
@@ -17,7 +18,7 @@
 ![Tests](https://img.shields.io/badge/pytest-29_passed-9780ff?style=flat-square&labelColor=0c0b0c&color=1c1b1c)
 ![License](https://img.shields.io/badge/license-MIT-8a8589?style=flat-square&labelColor=0c0b0c&color=1c1b1c)
 
-**[Live demo](https://rohit-ats.github.io/Blackbox/console/)** · [Quick start](#-quick-start) · [How it works](#-how-it-works) · [The two runs](#-the-demo-in-two-runs) · [Schema](./schema.md) · [MCP](./mcp/README.md)
+**[Live demo](https://rohit-ats.github.io/Blackbox/console/)** · [Watch the demo](#-watch-it-run) · [Quick start](#-quick-start) · [**The graph**](#-the-graph) · [Where every answer comes from](#-the-graph-does-the-work) · [The two runs](#-the-demo-in-two-runs) · [How it works](#-how-it-works) · [Schema](./schema.md) · [MCP](./mcp/README.md)
 
 </div>
 
@@ -33,7 +34,48 @@ a fraction of the hops.
 
 <img src="docs/assets/divider.svg" width="100%" alt="">
 
-## ▶ Demo
+## ⚖ For judges — the 60-second path
+
+| | | |
+|:--|:--|:--|
+| 🎥 | **See the agent actually run** | [Demo video, 2:54, 1080p](https://github.com/Rohit-ATS/Blackbox/releases/download/v1.0.0/BLACKBOX-demo.mp4) · [or press *run cold* then *run warm*, live](https://rohit-ats.github.io/Blackbox/console/) |
+| 🗺 | **The graph — nodes, edges, queries** | [The graph map](#-the-graph) · [full schema with index definitions](./schema.md) |
+| 🛡 | **Where each answer comes from** | [Five decisions, five traversals](#-the-graph-does-the-work) — no claim on the answer card is the model's prior |
+| 🧠 | **The part a cache can't fake** | [The agent writes a node in run 1 and retrieves it in run 2](#-the-demo-in-two-runs) — press **forget** and run 2 becomes run 1 again |
+| ⚡ | **Run it yourself** | `docker compose up` — [one command, no API key, no auth](#-quick-start) |
+
+<img src="docs/assets/divider.svg" width="100%" alt="">
+
+## 🎥 Watch it run
+
+<div align="center">
+
+<a href="https://github.com/Rohit-ATS/Blackbox/releases/download/v1.0.0/BLACKBOX-demo.mp4">
+  <img src="docs/assets/demo-poster.svg" alt="Watch the demo — 2:54, 1080p: the cold run, the write-back, the warm run" width="100%">
+</a>
+
+</div>
+
+<div align="center">
+
+<video src="https://github.com/Rohit-ATS/Blackbox/releases/download/v1.0.0/BLACKBOX-demo.mp4" controls width="100%"></video>
+
+</div>
+
+<sub>If the inline player doesn't load in your browser,
+**[download or stream the MP4 directly](https://github.com/Rohit-ATS/Blackbox/releases/download/v1.0.0/BLACKBOX-demo.mp4)**
+(43 MB, 1080p, 2:54) — or skip the video entirely and
+[drive the live console](https://rohit-ats.github.io/Blackbox/console/).</sub>
+
+It is screen capture of the product, not slides: the SSE stream arriving, each
+tool call naming the traversal it is about to run, the subgraph animating as it
+is touched, the answer card assembling with a citation per claim, and then the
+same failure signature arriving on a different service and being resolved from
+memory.
+
+<img src="docs/assets/divider.svg" width="100%" alt="">
+
+## ▶ Three ways to see it
 
 <table>
 <tr>
@@ -63,7 +105,8 @@ minutes — see [Quick start](#-quick-start).
 docker compose up
 ```
 
-*Video link goes here before submission.*
+That is the version the demo video records: a real agent, real traversals
+against a real FalkorDB, real latencies.
 
 </td>
 </tr>
@@ -135,6 +178,104 @@ The toolbar lets you force either one.
 
 <img src="docs/assets/divider.svg" width="100%" alt="">
 
+## 🗺 The graph
+
+<img src="docs/assets/graph-map.svg" width="100%" alt="The BLACKBOX graph: 13 node labels, 24 relationship types, the three edges the agent writes, the AgentStep trace chain, and the three FalkorDB algorithms the agent traverses with">
+
+### The nodes
+
+Thirteen labels, one graph per tenant. The three with a 384-dim `embedding` are
+the three the agent searches by meaning rather than by key.
+
+| | Label | What it is | Key properties |
+|:--|:--|:--|:--|
+| 🧩 | `Service` | a running service | `name, tier, language, repo, revenue_critical, customer_facing` |
+| 🚀 | `Deploy` | **a node, not a property** — so you can traverse to it | `sha, at, status, pr_number, risk_score` |
+| 🔀 | `PullRequest` | the change itself | `number, title, merged_at, additions, deletions` |
+| 📄 | `File` | the unit people actually have expertise in | `path, repo` |
+| 👤 | `Person` | an engineer | `name, handle, role, timezone, on_call` |
+| 👥 | `Team` | ownership | `name` |
+| 🔔 | `Alert` | what fired | `metric, value, threshold, fired_at` |
+| 🔥 | `Incident` | **episodic memory** — what happened | `symptom, severity, started_at, embedding(384)` |
+| 🧠 | `Postmortem` | **semantic memory** — what it means | `lesson, created_by, embedding(384)` |
+| 📕 | `Runbook` | **procedural memory** — what to do | `title, body, embedding(384)` |
+| 💬 | `Message` | Slack-style chatter around an incident | `channel, text, author, embedding(384)` |
+| 🧱 | `Decision` | an ADR | `title, rationale, at` |
+| 🤖 | `AgentStep` | one tool call the agent made | `agent, tool, args, latency_ms, incident_id` |
+
+### The relationships
+
+```cypher
+// topology — criticality lives on the edge, because a service is not uniformly critical
+(:Service)-[:DEPENDS_ON {criticality, protocol, cost}]->(:Service)
+(:Service)-[:IMPACTS    {criticality, protocol, cost}]->(:Service)   // materialised inverse
+(:Service)-[:OWNED_BY]->(:Team)
+
+// change — a deploy you can reach from two hops away
+(:Deploy)-[:DEPLOYED_TO]->(:Service)      (:Deploy)-[:SHIPS]->(:PullRequest)
+(:PullRequest)-[:TOUCHES]->(:File)        (:File)-[:BELONGS_TO]->(:Service)
+
+// people — expertise is commits on files, not a name on a rotation
+(:Person)-[:AUTHORED]->(:PullRequest)     (:Person)-[:WORKED_ON {commits, last_at}]->(:File)
+(:Person)-[:MEMBER_OF]->(:Team)
+
+// incident + memory
+(:Alert)-[:FIRED_ON]->(:Service)          (:Incident)-[:TRIGGERED_BY]->(:Alert)
+(:Incident)-[:AFFECTED]->(:Service)       (:Incident)-[:IMPLICATED]->(:File)
+(:Postmortem)-[:APPLIES_TO]->(:Service)   (:Runbook)-[:COVERS]->(:Service)
+(:Message)-[:ABOUT]->(:Incident)          (:Decision)-[:CONCERNS]->(:Service)
+(:Decision)-[:MADE_BY]->(:Person)
+
+// ↓ the three the agent writes at runtime — this is the write-back loop
+(:Incident)-[:CAUSED_BY]->(:Deploy)
+(:Incident)-[:RESOLVED_BY]->(:Person)
+(:Incident)-[:PRODUCED]->(:Postmortem)
+
+// ↓ and the trace: handoff state in the graph instead of in process memory
+(:AgentStep)-[:NEXT]->(:AgentStep)        (:AgentStep)-[:TOUCHED]->()   // any node
+```
+
+### How the agent queries them
+
+Every row below is a typed tool, not a prompt. The model picks *which* one to
+call; it never writes Cypher, and each call returns `{data, path, cypher, latency_ms}`
+so the query that produced the answer ships with the answer.
+
+| The agent's question | The traversal | FalkorDB feature |
+|:--|:--|:--|
+| *which node is this alert even about?* | `db.idx.fulltext.queryNodes('Service', $q)` | fulltext index |
+| *what else is breaking?* | `algo.BFS(s, $level, 'IMPACTS')`, one hop level at a time | **graph algorithm** |
+| *what changed near here?* | `(:Service)-[:DEPENDS_ON*0..2]->(dep)<-[:DEPLOYED_TO]-(:Deploy)`, time-filtered | variable-length walk + range index |
+| *how does a failure there reach here?* | `algo.SPpaths(weightProp:'cost', relTypes:['DEPENDS_ON'])` | **weighted shortest path** |
+| *have we seen this before?* | `db.idx.vector.queryNodes('Postmortem','embedding', $k, vecf32($v))` | **vector index** (HNSW, cosine) |
+| *who actually knows this code?* | `(:Person)-[:WORKED_ON]->(:File)-[:BELONGS_TO]->(:Service)`, ranked | pattern match + aggregation |
+| *what do we do about it?* | fulltext + vector hybrid over `:Runbook` | two indexes, one answer |
+| *what does the system lean on?* | `algo.pageRank('Service','DEPENDS_ON')` | **graph algorithm** |
+| *remember this.* | `MERGE (pm:Postmortem) SET pm.embedding = vecf32($v)` | write + vector index |
+
+Three modelling decisions carry the whole demo, and
+[`schema.md`](./schema.md) argues each one in full: **criticality on the edge**
+(so shortest-path can prefer the hard synchronous route), **`IMPACTS` as a
+materialised inverse** (so `algo.BFS` can walk dependencies backwards), and
+**deploys as first-class nodes** (so "what changed near here" can mean graph
+distance rather than the same service).
+
+Read the graph yourself while it runs — the FalkorDB Browser is at
+<http://localhost:3100>:
+
+```cypher
+// the subgraph the agent built for the cold run, in one query
+MATCH (a:AgentStep {incident_id:'INC-3001'})-[:TOUCHED]->(n)
+RETURN a.agent, a.tool, a.latency_ms, labels(n), coalesce(n.name, n.id)
+ORDER BY a.at;
+
+// everything the agent wrote, and nothing a human did
+MATCH (i:Incident)-[:PRODUCED]->(pm:Postmortem {created_by:'blackbox'})
+RETURN i.id, pm.id, pm.cause_pr, pm.cause_hops, pm.lesson;
+```
+
+<img src="docs/assets/divider.svg" width="100%" alt="">
+
 ## 🔁 The demo, in two runs
 
 <img src="docs/assets/cold-warm.svg" width="100%" alt="Cold run versus warm run: 11 tool calls to 7, 61.2ms to 12.9ms of measured graph work, 4 investigation steps to 2">
@@ -143,21 +284,25 @@ The toolbar lets you force either one.
 
 `checkout-api` p99 latency hits 4200ms against a 1500ms threshold, CPU flat.
 
-| # | tool | result | FalkorDB |
-|:--|:--|:--|--:|
-| 1 | `resolve_entity` | → `checkout-api` | 2.1ms |
-| 2 | `similar_incidents` | a related prior incident, not conclusive | 15.6ms |
-| 3 | `affected_services` | **11 services degrade with it, 3 customer-facing** | 11.7ms |
-| 4 | `criticality_rank` | PageRank over 42 services | 2.9ms |
-| 5 | `recent_changes` hops=2 | **PR #4471 on `ledger-service`, 2 hops upstream** | 3.8ms |
-| 6 | `causal_path` | `ledger-service → payments-api → checkout-api` | 2.9ms |
-| 7 | `get_runbook` | connection pool exhaustion | 5.2ms |
-| 8 | `write_finding` | **`CAUSED_BY`** | 2.3ms |
-| 9 | `who_knows` | **Priya Raghavan**, not the rotation default | 4.4ms |
-| 10 | `write_finding` | **`Postmortem`** + embedding | 4.9ms |
-| 11 | `write_finding` | `RESOLVED_BY` | 2.9ms |
+| # | agent | tool | result | FalkorDB |
+|:--|:--|:--|:--|--:|
+| 1 | Triage | `resolve_entity` | → `checkout-api` | 5.0ms |
+| 2 | Triage | `similar_incidents` | a related prior incident, not conclusive | 19.4ms |
+| 3 | Triage | `affected_services` | **11 services degrade with it, 3 customer-facing** | 22.9ms |
+| 4 | Triage | `criticality_rank` | PageRank over 42 services | 6.0ms |
+| 5 | Investigator | `recent_changes` hops=2 | **PR #4471 on `ledger-service`, 2 hops upstream** | 7.5ms |
+| 6 | Investigator | `causal_path` | `ledger-service → payments-api → checkout-api` | 7.5ms |
+| 7 | Investigator | `get_runbook` | connection pool exhaustion | 8.7ms |
+| 8 | Investigator | `write_finding` | **`CAUSED_BY`** | 4.7ms |
+| 9 | Comms | `who_knows` | **Priya Raghavan**, not the rotation default | 8.6ms |
+| 10 | Comms | `write_finding` | **`Postmortem`** + embedding | 7.3ms |
+| 11 | Comms | `write_finding` | `RESOLVED_BY` | 4.6ms |
 
-11 tool calls, **61.2ms of measured investigation work** in the recorded run.
+11 tool calls · **102.2ms of total measured graph work**, of which
+**61.2ms is investigation work** — the traversals that memory can actually
+eliminate, i.e. everything except the entity lookup, the memory lookup and the
+write-back, which both runs pay for. Every figure here is read straight out of
+[`fixtures/cold_run.json`](./fixtures/cold_run.json).
 
 Two details worth noticing. **The cause is not on the service that alerted** — it
 is two hops upstream, and at `hops=1` the query misses it entirely. And the
@@ -176,6 +321,23 @@ first memory lookup now returns **the postmortem BLACKBOX wrote 90 seconds ago**
 - **11 tool calls → 7**, **61.2ms → 12.9ms of investigation work**, investigation
   steps **4 → 2**. The shared entity lookup, vector recall, and write-back are
   shown separately from the traversal work they do not eliminate.
+
+| # | agent | tool | result | FalkorDB |
+|:--|:--|:--|:--|--:|
+| 1 | Triage | `resolve_entity` | → `notifications-api` | 3.8ms |
+| 2 | Triage | `similar_incidents` | **`PM-INC-3001-BB`, `created_by: 'blackbox'`, cos 0.59** | 20.6ms |
+| 3 | Investigator | `recent_changes` hops=1 | PR #4525, same `src/db/pool.ts` signature | 6.4ms |
+| 4 | Investigator | `write_finding` | `CAUSED_BY` | 4.1ms |
+| 5 | Comms | `who_knows` | **Mei Tanaka** | 6.5ms |
+| 6 | Comms | `write_finding` | `Postmortem` + embedding | 6.5ms |
+| 7 | Comms | `write_finding` | `RESOLVED_BY` | 4.3ms |
+
+Four tools never get called: `affected_services`, `criticality_rank`,
+`causal_path`, `get_runbook`. Their answers were already in the node the agent
+wrote 90 seconds earlier — the cause PR, the hop count, the blast radius and the
+fix are all properties on that postmortem, so the depth-4 BFS, the PageRank, the
+shortest-path proof and the runbook fetch have nothing left to establish.
+Numbers from [`fixtures/warm_run.json`](./fixtures/warm_run.json).
 
 Press **forget** in the toolbar — it deletes only the postmortems BLACKBOX wrote,
 keeping the seeded history — and the warm run becomes a cold one again. That is
@@ -205,6 +367,37 @@ runs at full speed on its own thread and every reported number is measured there
 before pacing.
 
 </details>
+
+<img src="docs/assets/divider.svg" width="100%" alt="">
+
+## 🛡 The graph does the work
+
+<img src="docs/assets/decisions.svg" width="100%" alt="Five decisions in the cold run, each traced to the FalkorDB query that produced it, the evidence it returned, and what a system without the graph would have said instead">
+
+Every number on the answer card is a value FalkorDB returned. The model's job is
+to choose the next traversal and write the sentence around the result — it is
+never the source of a fact. The honest test of that is subtraction: **take
+FalkorDB out and there is no product left.**
+
+| Remove this | And the agent loses |
+|:--|:--|
+| `IMPACTS` edges + `algo.BFS` | the blast radius. One alert on one service, and no idea that 3 customer-facing services are already degraded. |
+| `:Deploy` as a traversable node | the cause. The change is two hops upstream on a service that never alerted; at `hops=1` the query returns nothing — [asserted in the test suite](#-tests). |
+| `cost` on the edge + `algo.SPpaths` | the proof. There are two two-hop routes to `ledger-service`; only the one through `payments-api` is a hard synchronous call. |
+| the vector index on `:Postmortem` | the memory. Run 2 becomes run 1 again — which you can do on demand by pressing **forget**. |
+| `WORKED_ON` → `BELONGS_TO` | the right human. It pages Marcus Webb off the rotation instead of Priya Raghavan, who wrote that file 47 times and resolved the last incident on it. |
+| `:AgentStep`/`:NEXT`/`:TOUCHED` | the provenance. The trace becomes a log tail, and no claim is clickable back to its source nodes. |
+
+And the claim is auditable, not just stated — ask the API for the subgraph the
+run actually built:
+
+```bash
+curl -s "http://localhost:8000/api/trace?incident_id=INC-3001" | jq '.steps[] | {agent, tool, latency_ms, touched}'
+```
+
+Each step on screen carries the Cypher it ran and the node ids it touched, so a
+judge can take any sentence on the answer card and walk it back to the rows that
+produced it.
 
 <img src="docs/assets/divider.svg" width="100%" alt="">
 

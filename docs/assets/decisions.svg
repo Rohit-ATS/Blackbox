@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 740" width="1280" height="740" role="img" aria-label="Every decision the agent makes, and the graph query it came from">
+  <title>Five decisions in the cold run, each traced to the FalkorDB query that produced it and the evidence it returned, next to what a system without the graph would have said instead</title>
+  <defs>
+    <linearGradient id="dp" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="#272226"/>
+      <stop offset="100%" stop-color="#171515"/>
+    </linearGradient>
+    <linearGradient id="dpa" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="#2b2333"/>
+      <stop offset="100%" stop-color="#1a1620"/>
+    </linearGradient>
+    <radialGradient id="dw" cx="50%" cy="0%" r="68%">
+      <stop offset="0%" stop-color="#4700d6" stop-opacity=".2"/>
+      <stop offset="72%" stop-color="#4700d6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1280" height="740" fill="#0c0b0c"/>
+  <rect width="1280" height="740" fill="url(#dw)"/>
+
+  <text x="64" y="54" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="700" letter-spacing="2.6" fill="#edc5fc">THE GRAPH DOES THE WORK</text>
+  <text x="64" y="92" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="30" font-weight="600" fill="#fafafa">Five decisions. <tspan font-family="Georgia, Times New Roman, serif" font-style="italic" font-weight="400" fill="#edc5fc">Five traversals. No priors.</tspan></text>
+  <text x="64" y="122" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" fill="#8a8589">Nothing on this page comes from the model's knowledge. Every value is returned by a FalkorDB query that the run reports with its own Cypher and latency.</text>
+
+  <text x="90" y="152" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="9.5" font-weight="700" letter-spacing="1.8" fill="#5d5a5e">THE DECISION</text>
+  <text x="356" y="152" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="9.5" font-weight="700" letter-spacing="1.8" fill="#5d5a5e">THE QUERY THAT MADE IT</text>
+  <text x="770" y="152" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="9.5" font-weight="700" letter-spacing="1.8" fill="#5d5a5e">WHAT THE GRAPH RETURNED</text>
+  <text x="1010" y="152" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="9.5" font-weight="700" letter-spacing="1.8" fill="#5d5a5e">WITHOUT THE GRAPH</text>
+
+  <!-- ROW 1 -->
+  <rect x="64" y="164" width="1152" height="90" rx="12" fill="url(#dp)" stroke="#ffffff1a"/>
+  <text x="90" y="196" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14.5" fill="#fafafa">How wide is this?</text>
+  <text x="90" y="218" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#5d5a5e">one alert fired; what degrades with it</text>
+  <text x="356" y="190" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#c8c8c8">MATCH (s:Service {name:$name})</text>
+  <text x="356" y="207" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#c8c8c8">CALL algo.BFS(s, $level, 'IMPACTS') YIELD nodes</text>
+  <text x="356" y="230" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10" fill="#9780ff">affected_services · 22.9ms · one BFS call per hop level</text>
+  <text x="770" y="196" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="600" fill="#edc5fc">11 services, 3 customer-facing</text>
+  <text x="770" y="218" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#8a8589">by hop depth, with per-hop latency</text>
+  <text x="1010" y="196" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#6f6a6e">one alert, on one service,</text>
+  <text x="1010" y="212" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#6f6a6e">and no blast radius at all.</text>
+
+  <!-- ROW 2 -->
+  <rect x="64" y="262" width="1152" height="90" rx="12" fill="url(#dp)" stroke="#ffffff1a"/>
+  <text x="90" y="294" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14.5" fill="#fafafa">What caused it?</text>
+  <text x="90" y="316" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#5d5a5e">what changed near here — near means hops</text>
+  <text x="356" y="288" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#c8c8c8">MATCH (t:Service {name:$n})-[:DEPENDS_ON*0..2]->(dep)</text>
+  <text x="356" y="305" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#c8c8c8">MATCH (d:Deploy)-[:DEPLOYED_TO]->(dep) WHERE d.at &gt;= $cut</text>
+  <text x="356" y="328" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10" fill="#9780ff">recent_changes · 7.5ms · hops=2, 120-minute window</text>
+  <text x="770" y="294" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="600" fill="#edc5fc">PR #4471, two hops upstream</text>
+  <text x="770" y="316" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#8a8589">on ledger-service, not on the alerting one</text>
+  <text x="1010" y="294" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#6f6a6e">the newest deploy on the</text>
+  <text x="1010" y="310" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#6f6a6e">service that alerted — wrong.</text>
+
+  <!-- ROW 3 -->
+  <rect x="64" y="360" width="1152" height="90" rx="12" fill="url(#dp)" stroke="#ffffff1a"/>
+  <text x="90" y="392" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14.5" fill="#fafafa">Prove the link.</text>
+  <text x="90" y="414" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#5d5a5e">how a failure there reaches here</text>
+  <text x="356" y="386" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#c8c8c8">CALL algo.SPpaths({sourceNode:a, targetNode:b,</text>
+  <text x="356" y="403" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#c8c8c8">  relTypes:['DEPENDS_ON'], weightProp:'cost'})</text>
+  <text x="356" y="426" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10" fill="#9780ff">causal_path · 7.5ms · cost = 6 - criticality</text>
+  <text x="770" y="392" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#edc5fc">ledger → payments → checkout</text>
+  <text x="770" y="414" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#8a8589">the synchronous route, not the equal-hop one</text>
+  <text x="1010" y="392" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#6f6a6e">a correlation, asserted,</text>
+  <text x="1010" y="408" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#6f6a6e">with no mechanism shown.</text>
+
+  <!-- ROW 4 -->
+  <rect x="64" y="458" width="1152" height="90" rx="12" fill="url(#dpa)" stroke="#ffffff26"/>
+  <text x="90" y="490" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14.5" fill="#fafafa">Have we seen this?</text>
+  <text x="90" y="512" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#5d5a5e">the same question, run twice, 90s apart</text>
+  <text x="356" y="484" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#c8c8c8">CALL db.idx.vector.queryNodes('Postmortem',</text>
+  <text x="356" y="501" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#c8c8c8">  'embedding', $k, vecf32($v)) YIELD node, score</text>
+  <text x="356" y="524" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10" fill="#edc5fc">similar_incidents · 20.6ms · top hit of 13 postmortems</text>
+  <text x="770" y="490" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#edc5fc">its own postmortem, cos 0.59</text>
+  <text x="770" y="512" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#8a8589">created_by: 'blackbox' — written in run 1</text>
+  <text x="1010" y="490" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#6f6a6e">nothing. The session that</text>
+  <text x="1010" y="506" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#6f6a6e">knew it already ended.</text>
+
+  <!-- ROW 5 -->
+  <rect x="64" y="556" width="1152" height="90" rx="12" fill="url(#dp)" stroke="#ffffff1a"/>
+  <text x="90" y="588" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14.5" fill="#fafafa">Who do we page?</text>
+  <text x="90" y="610" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#5d5a5e">who actually knows this code</text>
+  <text x="356" y="582" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#c8c8c8">MATCH (p:Person)-[w:WORKED_ON]->(f:File)-[:BELONGS_TO]->(s)</text>
+  <text x="356" y="599" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#c8c8c8">OPTIONAL MATCH (i:Incident)-[:IMPLICATED]->(f)</text>
+  <text x="356" y="622" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10" fill="#9780ff">who_knows · 8.6ms · ranked by prior incidents, then commits</text>
+  <text x="770" y="588" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="600" fill="#edc5fc">Priya Raghavan</text>
+  <text x="770" y="610" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#8a8589">47 commits on the file, 1 prior incident on it</text>
+  <text x="1010" y="588" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#6f6a6e">Marcus Webb, the on-call</text>
+  <text x="1010" y="604" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#6f6a6e">rotation, who never touched it.</text>
+
+  <!-- FOOTER -->
+  <rect x="64" y="664" width="1152" height="52" rx="12" fill="#141314" stroke="#2a2729"/>
+  <text x="90" y="688" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" fill="#8a8589">Each row is one <tspan font-family="ui-monospace, Menlo, Consolas, monospace" fill="#c8c8c8">:AgentStep</tspan> node with <tspan font-family="ui-monospace, Menlo, Consolas, monospace" fill="#c8c8c8">:TOUCHED</tspan> edges to the nodes it read — so every claim on the answer card is clickable back to its source.</text>
+  <text x="90" y="706" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" fill="#5d5a5e">Remove FalkorDB and there is no product left: no blast radius, no upstream cause, no proof path, no recall, no owner. The model only narrates what the traversals return.</text>
+</svg>

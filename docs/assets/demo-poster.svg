@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 480" width="1280" height="480" role="img" aria-label="Watch the demo — 2 minutes 54 seconds, 1080p">
+  <title>Watch the BLACKBOX demo: the agent running end to end, cold run then warm run, 2:54 at 1080p</title>
+  <defs>
+    <linearGradient id="vp" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%" stop-color="#272226"/>
+      <stop offset="100%" stop-color="#141314"/>
+    </linearGradient>
+    <radialGradient id="vw" cx="22%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#7b5ce0" stop-opacity=".26"/>
+      <stop offset="74%" stop-color="#7b5ce0" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="vg" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="480" rx="16" fill="#0c0b0c"/>
+  <rect width="1280" height="480" rx="16" fill="url(#vw)"/>
+  <rect x="0.5" y="0.5" width="1279" height="479" rx="16" fill="none" stroke="#2a2729"/>
+
+  <!-- play -->
+  <circle cx="190" cy="240" r="62" fill="#edc5fc" opacity=".16" filter="url(#vg)">
+    <animate attributeName="opacity" values=".10;.30;.10" dur="2.8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="190" cy="240" r="52" fill="#171515" stroke="#edc5fc" stroke-width="1.6"/>
+  <path d="M174 216 L218 240 L174 264 z" fill="#edc5fc"/>
+
+  <text x="300" y="186" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="700" letter-spacing="2.6" fill="#edc5fc">WATCH THE DEMO · 2:54 · 1080p</text>
+  <text x="300" y="232" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="34" font-weight="600" fill="#fafafa">The agent running, <tspan font-family="Georgia, Times New Roman, serif" font-style="italic" font-weight="400" fill="#edc5fc">start to finish.</tspan></text>
+  <text x="300" y="266" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14.5" fill="#8a8589">No slides. Every tool call, every traversal animating on the graph, and the answer card with each claim cited back to its nodes.</text>
+
+  <g>
+    <rect x="300" y="300" width="280" height="88" rx="11" fill="url(#vp)" stroke="#ffffff1a"/>
+    <text x="320" y="326" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="1.8" fill="#5d5a5e">ACT 1</text>
+    <text x="320" y="350" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14.5" fill="#fafafa">The cold run</text>
+    <text x="320" y="372" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" fill="#8a8589">11 tool calls, cause 2 hops upstream</text>
+
+    <rect x="596" y="300" width="280" height="88" rx="11" fill="url(#vp)" stroke="#ffffff1a"/>
+    <text x="616" y="326" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="1.8" fill="#5d5a5e">ACT 2</text>
+    <text x="616" y="350" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14.5" fill="#edc5fc">The write-back</text>
+    <text x="616" y="372" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" fill="#8a8589">a postmortem node, with an embedding</text>
+
+    <rect x="892" y="300" width="280" height="88" rx="11" fill="url(#vp)" stroke="#ffffff1a"/>
+    <text x="912" y="326" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="1.8" fill="#5d5a5e">ACT 3</text>
+    <text x="912" y="350" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14.5" fill="#fafafa">The warm run</text>
+    <text x="912" y="372" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" fill="#8a8589">7 calls — it recalls what it wrote</text>
+  </g>
+
+  <text x="300" y="424" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11.5" fill="#5d5a5e">Prefer to drive it yourself? <tspan fill="#8a8589">docker compose up</tspan> — one command, no API key, no auth.</text>
+</svg>
