@@ -31,6 +31,7 @@ export default function Console() {
   // playback pacing: delivery only, never the measured work
   const [pace, setPace] = useState(450);
   const [focus, setFocus] = useState<string[]>([]);
+  const [mobilePane, setMobilePane] = useState<"graph" | "trace" | "answer">("graph");
 
   const shown = active === "cold" ? cold : warm;
   const busy = cold.running || warm.running;
@@ -38,7 +39,7 @@ export default function Console() {
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-ink">
       {/* ───────────────────────── top bar ───────────────────────── */}
-      <header className="console-bar flex shrink-0 items-center gap-4 px-4 py-2">
+      <header className="console-bar console-topbar flex shrink-0 items-center gap-4 px-4 py-2">
         <Link href="/" className="brand group" title="back to the landing page">
           <BrandMark size={22} />
           <span className="console-brand group-hover:text-lilac">BLACKBOX</span>
@@ -175,9 +176,22 @@ export default function Console() {
       {/* ───────────────────────── alert strip ───────────────────────── */}
       <AlertStrip events={shown.events} mode={shown.mode} error={shown.error} />
 
+      <nav className="console-mobile-tabs" aria-label="Investigation view">
+        {(["graph", "trace", "answer"] as const).map((pane) => (
+          <button
+            key={pane}
+            type="button"
+            aria-selected={mobilePane === pane}
+            onClick={() => setMobilePane(pane)}
+          >
+            {pane === "trace" ? "agent stream" : pane}
+          </button>
+        ))}
+      </nav>
+
       {/* ───────────────────────── three panes ───────────────────────── */}
-      <main className="flex min-h-0 flex-1">
-        <section className="relative min-w-0 flex-[55] border-r border-line">
+      <main className="console-main flex min-h-0 flex-1" data-pane={mobilePane}>
+        <section className="console-graph relative min-w-0 flex-[55] border-r border-line">
           <GraphPane
             topology={topology}
             events={shown.events}
@@ -186,12 +200,12 @@ export default function Console() {
           />
         </section>
 
-        <aside className="flex min-h-0 w-[clamp(340px,42%,560px)] flex-col">
-          <div className="min-h-0 flex-[60] border-b border-line">
+        <aside className="console-insights flex min-h-0 w-[clamp(340px,42%,560px)] flex-col">
+          <div className="console-trace min-h-0 flex-[60] border-b border-line">
             <AgentStream events={shown.events} running={shown.running} />
           </div>
-          <div className="min-h-0 flex-[40]">
-            <AnswerCard answer={shown.answer} onFocus={setFocus} />
+          <div className="console-answer min-h-0 flex-[40]">
+            <AnswerCard answer={shown.answer} metrics={shown.metrics} onFocus={setFocus} />
           </div>
         </aside>
       </main>
