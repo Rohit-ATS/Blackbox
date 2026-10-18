@@ -559,6 +559,7 @@ def _run_agent_llm(brain, agent: str, spec: dict, run: Run, state: dict,
                  + json.dumps(context, default=str, indent=2)}]
 
     guard = 0
+    model_tool_calls = 0
     while guard < 8:
         guard += 1
         try:
@@ -582,6 +583,14 @@ def _run_agent_llm(brain, agent: str, spec: dict, run: Run, state: dict,
         results_block = []
 
         for tc in turn.tool_calls:
+            if model_tool_calls >= 12:
+                yield _emit("error", message=(
+                    f"{agent}: model exceeded the per-agent tool-call budget; "
+                    "finishing with the deterministic planner."))
+                outcome["failed"] = True
+                outcome["step_no"] = step_no
+                return
+            model_tool_calls += 1
             tool, args = tc["name"], dict(tc["input"] or {})
             step_no += 1
             yield _emit("tool_call", agent=agent, tool=tool, args=args, step=step_no)

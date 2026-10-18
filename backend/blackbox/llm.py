@@ -77,7 +77,11 @@ class AnthropicBrain:
         import anthropic
 
         self.model = model or model_name()
-        self.client = anthropic.Anthropic(api_key=api_key())
+        # Keep the browser stream responsive: a stalled model request should
+        # fall back to the deterministic planner instead of holding the SSE
+        # connection open for the SDK's default retry/timeout window.
+        self.client = anthropic.Anthropic(
+            api_key=api_key(), timeout=45.0, max_retries=0)
 
     def probe(self) -> None:
         """Cheapest possible call, to fail fast on a bad key or no network."""
@@ -99,13 +103,11 @@ class AnthropicBrain:
         try:
             resp = self.client.messages.create(
                 model=self.model,
-                max_tokens=8000,
+                max_tokens=2048,
                 system=system,
                 messages=messages,
                 tools=[{**t, "strict": True} for t in tools],
                 # tool_choice stays auto: forcing a call is a 400 on current models
-                thinking={"type": "adaptive", "display": "summarized"},
-                output_config={"effort": "medium"},
             )
         except anthropic.APIStatusError as exc:
             raise RuntimeError(f"Anthropic API error {exc.status_code}: {exc.message}") from exc
@@ -162,7 +164,7 @@ def tool_schemas(names: list[str]) -> list[dict]:
                 "type": "object", "additionalProperties": False,
                 "properties": {
                     "service": {"type": "string"},
-                    "max_depth": {"type": "integer", "minimum": 1, "maximum": 6,
+                    "max_depth": {"type": "integer",
                                   "description": "Dependency hops to walk. 4 is usually right."},
                 },
                 "required": ["service"],
@@ -179,8 +181,8 @@ def tool_schemas(names: list[str]) -> list[dict]:
                 "type": "object", "additionalProperties": False,
                 "properties": {
                     "service": {"type": "string"},
-                    "window_minutes": {"type": "integer", "minimum": 5, "maximum": 1440},
-                    "hops": {"type": "integer", "minimum": 1, "maximum": 4},
+                    "window_minutes": {"type": "integer"},
+                    "hops": {"type": "integer"},
                 },
                 "required": ["service"],
             },
@@ -208,7 +210,7 @@ def tool_schemas(names: list[str]) -> list[dict]:
             "input_schema": {
                 "type": "object", "additionalProperties": False,
                 "properties": {"symptom_text": {"type": "string"},
-                               "k": {"type": "integer", "minimum": 1, "maximum": 10}},
+                               "k": {"type": "integer"}},
                 "required": ["symptom_text"],
             },
         },
@@ -241,7 +243,7 @@ def tool_schemas(names: list[str]) -> list[dict]:
                 "structurally leans on. Use to prioritise when several things look broken."),
             "input_schema": {
                 "type": "object", "additionalProperties": False,
-                "properties": {"top": {"type": "integer", "minimum": 1, "maximum": 42}},
+                "properties": {"top": {"type": "integer"}},
                 "required": [],
             },
         },
