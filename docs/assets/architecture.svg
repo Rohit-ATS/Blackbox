@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="52 0 1228 720" width="1228" height="720" role="img" aria-label="BLACKBOX architecture">
+  <title>Architecture — Next.js console over SSE, FastAPI orchestrator with three agents and nine graph tools, FalkorDB graph per tenant, plus an MCP stdio server</title>
+  <defs>
+    <linearGradient id="panel" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="#272226"/>
+      <stop offset="100%" stop-color="#171515"/>
+    </linearGradient>
+    <linearGradient id="raised" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#282629"/>
+      <stop offset="100%" stop-color="#1c1b1c"/>
+    </linearGradient>
+    <radialGradient id="wash" cx="50%" cy="0%" r="70%">
+      <stop offset="0%" stop-color="#7b5ce0" stop-opacity=".16"/>
+      <stop offset="70%" stop-color="#7b5ce0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="wash2" cx="50%" cy="100%" r="60%">
+      <stop offset="0%" stop-color="#4700d6" stop-opacity=".20"/>
+      <stop offset="72%" stop-color="#4700d6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#edc5fc"/>
+      <stop offset="100%" stop-color="#9780ff"/>
+    </linearGradient>
+    <filter id="g2" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+    <filter id="grain2">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#9780ff"/>
+    </marker>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#8a8589"/>
+    </marker>
+  </defs>
+
+  <rect width="1280" height="720" fill="#0c0b0c"/>
+  <rect width="1280" height="720" fill="url(#wash)"/>
+  <rect width="1280" height="720" fill="url(#wash2)"/>
+
+  <!-- ─────────── layer 1: frontend ─────────── -->
+  <g>
+    <rect x="150" y="48" width="820" height="128" rx="16" fill="url(#panel)" stroke="#ffffff1a"/>
+    <text x="178" y="80" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="700" letter-spacing="2.4" fill="#edc5fc">CONSOLE</text>
+    <text x="178" y="110" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="21" font-weight="600" fill="#fafafa">Next.js 14 · Cytoscape live graph · trace · answer card</text>
+    <text x="178" y="140" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" fill="#8a8589">Streams agent steps over SSE, animates the touched subgraph,</text>
+    <text x="178" y="160" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" fill="#8a8589">prints per-hop latency on the edges.</text>
+
+    <!-- mini graph motif -->
+    <g transform="translate(828 72)">
+      <g stroke="#4a494b" stroke-width="1" fill="none">
+        <path d="M22 52 L58 20 L94 48 M58 20 L62 78 M62 78 L22 52"/>
+      </g>
+      <circle cx="22" cy="52" r="4" fill="#8a8589"/>
+      <circle cx="94" cy="48" r="4" fill="#8a8589"/>
+      <circle cx="58" cy="20" r="5.4" fill="#e73825"/>
+      <circle cx="58" cy="20" r="10" fill="#e73825" opacity=".3" filter="url(#g2)">
+        <animate attributeName="opacity" values=".12;.45;.12" dur="2.4s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="62" cy="78" r="5.4" fill="#edc5fc"/>
+    </g>
+  </g>
+
+  <!-- connector 1 -->
+  <line x1="560" y1="176" x2="560" y2="222" stroke="#9780ff" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="470" y="186" width="180" height="24" rx="12" fill="#171515" stroke="#ffffff1a"/>
+  <text x="560" y="202" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#edc5fc">GET /api/incident/stream</text>
+
+  <!-- ─────────── layer 2: orchestrator ─────────── -->
+  <g>
+    <rect x="150" y="222" width="820" height="246" rx="16" fill="url(#panel)" stroke="#ffffff1a"/>
+    <text x="178" y="254" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="700" letter-spacing="2.4" fill="#edc5fc">ORCHESTRATOR</text>
+    <text x="178" y="284" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="21" font-weight="600" fill="#fafafa">FastAPI · Python 3.11</text>
+
+    <!-- three agents -->
+    <g>
+      <rect x="178" y="304" width="236" height="62" rx="11" fill="url(#raised)" stroke="#ffffff1a"/>
+      <text x="196" y="330" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#fafafa">Triage</text>
+      <text x="196" y="350" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#8a8589">scope · impact · criticality</text>
+
+      <rect x="430" y="304" width="236" height="62" rx="11" fill="url(#raised)" stroke="#ffffff1a"/>
+      <text x="448" y="330" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#fafafa">Investigator</text>
+      <text x="448" y="350" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#8a8589">cause · path · runbook</text>
+
+      <rect x="682" y="304" width="236" height="62" rx="11" fill="url(#raised)" stroke="#ffffff1a"/>
+      <text x="700" y="330" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#fafafa">Comms</text>
+      <text x="700" y="350" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#8a8589">who to page · write-back</text>
+
+      <path d="M414 335 L430 335" stroke="#9780ff" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <path d="M666 335 L682 335" stroke="#9780ff" stroke-width="1.5" marker-end="url(#arrow)"/>
+    </g>
+
+    <rect x="178" y="382" width="740" height="30" rx="8" fill="#1c1b1c" stroke="#2a2729"/>
+    <text x="194" y="402" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" fill="#c8c8c8">Handoff state is written to the graph as <tspan font-family="ui-monospace, Menlo, Consolas, monospace" fill="#edc5fc">:AgentStep</tspan> nodes chained with <tspan font-family="ui-monospace, Menlo, Consolas, monospace" fill="#edc5fc">:NEXT</tspan> — never process memory.</text>
+
+    <rect x="178" y="422" width="740" height="30" rx="8" fill="#1c1b1c" stroke="#2a2729"/>
+    <text x="194" y="442" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" fill="#c8c8c8">Tool layer: <tspan font-weight="700" fill="#fafafa">9 typed graph tools</tspan> — the model never writes Cypher.</text>
+  </g>
+
+  <!-- connector 2 -->
+  <line x1="560" y1="468" x2="560" y2="514" stroke="#9780ff" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="502" y="478" width="116" height="24" rx="12" fill="#171515" stroke="#ffffff1a"/>
+  <text x="560" y="494" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#edc5fc">falkordb-py</text>
+
+  <!-- ─────────── layer 3: FalkorDB ─────────── -->
+  <g>
+    <rect x="150" y="514" width="820" height="132" rx="16" fill="url(#panel)" stroke="#ffffff26"/>
+    <rect x="150" y="514" width="820" height="3" rx="1.5" fill="url(#edge)"/>
+    <text x="178" y="548" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="700" letter-spacing="2.4" fill="#edc5fc">SUBSTRATE</text>
+    <text x="178" y="578" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="21" font-weight="600" fill="#fafafa">FalkorDB — one graph per tenant</text>
+
+    <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5">
+      <rect x="178" y="596" width="104" height="28" rx="14" fill="#1c1b1c" stroke="#2a2729"/>
+      <text x="230" y="615" text-anchor="middle" fill="#c8c8c8">range</text>
+      <rect x="292" y="596" width="104" height="28" rx="14" fill="#1c1b1c" stroke="#2a2729"/>
+      <text x="344" y="615" text-anchor="middle" fill="#c8c8c8">fulltext</text>
+      <rect x="406" y="596" width="128" height="28" rx="14" fill="#1c1b1c" stroke="#2a2729"/>
+      <text x="470" y="615" text-anchor="middle" fill="#c8c8c8">vector (HNSW)</text>
+      <rect x="544" y="596" width="112" height="28" rx="14" fill="#1c1b1c" stroke="#2a2729"/>
+      <text x="600" y="615" text-anchor="middle" fill="#c8c8c8">algo.BFS</text>
+      <rect x="666" y="596" width="128" height="28" rx="14" fill="#1c1b1c" stroke="#2a2729"/>
+      <text x="730" y="615" text-anchor="middle" fill="#c8c8c8">algo.SPpaths</text>
+      <rect x="804" y="596" width="126" height="28" rx="14" fill="#1c1b1c" stroke="#2a2729"/>
+      <text x="867" y="615" text-anchor="middle" fill="#c8c8c8">algo.pageRank</text>
+    </g>
+  </g>
+
+  <!-- ─────────── MCP side car ─────────── -->
+  <g>
+    <rect x="1008" y="304" width="224" height="132" rx="16" fill="url(#panel)" stroke="#ffffff1a" stroke-dasharray="5 4"/>
+    <text x="1032" y="336" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="700" letter-spacing="2.4" fill="#9780ff">MCP · STDIO</text>
+    <text x="1032" y="364" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#fafafa">blackbox server</text>
+    <text x="1032" y="388" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" fill="#8a8589">The same nine tools,</text>
+    <text x="1032" y="406" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" fill="#8a8589">driven from your own</text>
+    <text x="1032" y="424" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" fill="#8a8589">MCP client.</text>
+    <path d="M1120 436 L1120 560 L978 560" fill="none" stroke="#8a8589" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arrow2)"/>
+  </g>
+
+  <rect width="1280" height="720" filter="url(#grain2)" opacity=".035"/>
+</svg>

@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 620" width="1280" height="620" role="img" aria-label="The nine typed graph tools">
+  <title>Nine typed graph tools: resolve_entity, affected_services, recent_changes, causal_path, similar_incidents, who_knows, get_runbook, criticality_rank, write_finding</title>
+  <defs>
+    <linearGradient id="tp" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="#272226"/>
+      <stop offset="100%" stop-color="#171515"/>
+    </linearGradient>
+    <linearGradient id="tpw" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="#2b2333"/>
+      <stop offset="100%" stop-color="#1a1620"/>
+    </linearGradient>
+    <radialGradient id="tw" cx="50%" cy="110%" r="60%">
+      <stop offset="0%" stop-color="#4700d6" stop-opacity=".22"/>
+      <stop offset="72%" stop-color="#4700d6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="tedge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#edc5fc"/>
+      <stop offset="100%" stop-color="#9780ff"/>
+    </linearGradient>
+    <filter id="grain4">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3"/>
+    </filter>
+    <filter id="g4" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="620" fill="#0c0b0c"/>
+  <rect width="1280" height="620" fill="url(#tw)"/>
+
+  <text x="64" y="58" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="700" letter-spacing="2.6" fill="#edc5fc">THE TOOL LAYER</text>
+  <text x="64" y="96" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="30" font-weight="600" fill="#fafafa">Nine typed tools. <tspan font-family="Georgia, Times New Roman, serif" font-style="italic" font-weight="400" fill="#edc5fc">The model never writes Cypher.</tspan></text>
+  <text x="64" y="126" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" fill="#8a8589">Every call returns <tspan font-family="ui-monospace, Menlo, Consolas, monospace" fill="#c8c8c8">{data, path, cypher, latency_ms}</tspan> — so each claim on the answer card is clickable back to the nodes it came from.</text>
+
+  <!-- row 1 -->
+  <g>
+    <rect x="64" y="160" width="376" height="128" rx="14" fill="url(#tp)" stroke="#ffffff1a"/>
+    <text x="90" y="194" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15.5" fill="#fafafa">resolve_entity</text>
+    <rect x="90" y="206" width="78" height="20" rx="10" fill="#1c1b1c" stroke="#2a2729"/>
+    <text x="129" y="220" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#edc5fc">fulltext</text>
+    <text x="90" y="252" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" fill="#8a8589">An alert string becomes a node.</text>
+    <text x="90" y="272" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#5d5a5e">2.1ms in the recorded run</text>
+
+    <rect x="452" y="160" width="376" height="128" rx="14" fill="url(#tp)" stroke="#ffffff1a"/>
+    <text x="478" y="194" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15.5" fill="#fafafa">affected_services</text>
+    <rect x="478" y="206" width="90" height="20" rx="10" fill="#1c1b1c" stroke="#2a2729"/>
+    <text x="523" y="220" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#edc5fc">algo.BFS</text>
+    <text x="478" y="252" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" fill="#8a8589">Who degrades with it, by hop depth.</text>
+    <text x="478" y="272" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#5d5a5e">11 services, 3 customer-facing</text>
+
+    <rect x="840" y="160" width="376" height="128" rx="14" fill="url(#tp)" stroke="#ffffff1a"/>
+    <text x="866" y="194" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15.5" fill="#fafafa">recent_changes</text>
+    <rect x="866" y="206" width="152" height="20" rx="10" fill="#1c1b1c" stroke="#2a2729"/>
+    <text x="942" y="220" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#edc5fc">var-length walk</text>
+    <text x="866" y="252" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" fill="#8a8589">What changed N hops upstream.</text>
+    <text x="866" y="272" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#5d5a5e">misses at hops=1, finds it at hops=2</text>
+  </g>
+
+  <!-- row 2 -->
+  <g>
+    <rect x="64" y="304" width="376" height="128" rx="14" fill="url(#tp)" stroke="#ffffff1a"/>
+    <text x="90" y="338" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15.5" fill="#fafafa">causal_path</text>
+    <rect x="90" y="350" width="118" height="20" rx="10" fill="#1c1b1c" stroke="#2a2729"/>
+    <text x="149" y="364" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#edc5fc">algo.SPpaths</text>
+    <text x="90" y="396" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" fill="#8a8589">How a failure there reaches here.</text>
+    <text x="90" y="416" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#5d5a5e">criticality-weighted, not hop-count</text>
+
+    <rect x="452" y="304" width="376" height="128" rx="14" fill="url(#tp)" stroke="#ffffff1a"/>
+    <text x="478" y="338" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15.5" fill="#fafafa">similar_incidents</text>
+    <rect x="478" y="350" width="146" height="20" rx="10" fill="#1c1b1c" stroke="#2a2729"/>
+    <text x="551" y="364" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#edc5fc">vector · HNSW</text>
+    <text x="478" y="396" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" fill="#8a8589">Have we seen this before?</text>
+    <text x="478" y="416" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#5d5a5e">this is what goes warm in run 2</text>
+
+    <rect x="840" y="304" width="376" height="128" rx="14" fill="url(#tp)" stroke="#ffffff1a"/>
+    <text x="866" y="338" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15.5" fill="#fafafa">who_knows</text>
+    <rect x="866" y="350" width="178" height="20" rx="10" fill="#1c1b1c" stroke="#2a2729"/>
+    <text x="955" y="364" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#edc5fc">WORKED_ON → BELONGS_TO</text>
+    <text x="866" y="396" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" fill="#8a8589">Who actually knows this code.</text>
+    <text x="866" y="416" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#5d5a5e">not the rotation default</text>
+  </g>
+
+  <!-- row 3 -->
+  <g>
+    <rect x="64" y="448" width="376" height="128" rx="14" fill="url(#tp)" stroke="#ffffff1a"/>
+    <text x="90" y="482" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15.5" fill="#fafafa">get_runbook</text>
+    <rect x="90" y="494" width="150" height="20" rx="10" fill="#1c1b1c" stroke="#2a2729"/>
+    <text x="165" y="508" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#edc5fc">fulltext + vector</text>
+    <text x="90" y="540" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" fill="#8a8589">The operational fix.</text>
+    <text x="90" y="560" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#5d5a5e">connection pool exhaustion</text>
+
+    <rect x="452" y="448" width="376" height="128" rx="14" fill="url(#tp)" stroke="#ffffff1a"/>
+    <text x="478" y="482" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15.5" fill="#fafafa">criticality_rank</text>
+    <rect x="478" y="494" width="126" height="20" rx="10" fill="#1c1b1c" stroke="#2a2729"/>
+    <text x="541" y="508" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#edc5fc">algo.pageRank</text>
+    <text x="478" y="540" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" fill="#8a8589">What the system structurally leans on.</text>
+    <text x="478" y="560" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#5d5a5e">over 42 services</text>
+
+    <!-- the write-back tool, highlighted -->
+    <rect x="840" y="448" width="376" height="128" rx="14" fill="url(#tpw)" stroke="#ffffff26"/>
+    <rect x="840" y="448" width="376" height="3" rx="1.5" fill="url(#tedge)"/>
+    <circle cx="1196" cy="474" r="4" fill="#edc5fc"/>
+    <circle cx="1196" cy="474" r="9" fill="#edc5fc" opacity=".3" filter="url(#g4)">
+      <animate attributeName="opacity" values=".16;.55;.16" dur="2.2s" repeatCount="indefinite"/>
+    </circle>
+    <text x="866" y="482" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15.5" font-weight="700" fill="#fafafa">write_finding</text>
+    <rect x="866" y="494" width="132" height="20" rx="10" fill="#241d2b" stroke="#4a494b"/>
+    <text x="932" y="508" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10.5" fill="#edc5fc">MERGE + vecf32</text>
+    <text x="866" y="540" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" fill="#c8c8c8">The write-back loop.</text>
+    <text x="866" y="560" font-family="Georgia, Times New Roman, serif" font-style="italic" font-size="13" fill="#edc5fc">the one that makes run 2 cheap</text>
+  </g>
+
+  <rect width="1280" height="620" filter="url(#grain4)" opacity=".035"/>
+</svg>

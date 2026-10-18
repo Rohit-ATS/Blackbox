@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 600" width="1280" height="600" role="img" aria-label="Cold run versus warm run">
+  <title>Run 1 cold versus Run 2 warm — 11 tool calls to 7, 61.2ms to 12.9ms of measured graph work, 4 investigation steps to 2</title>
+  <defs>
+    <linearGradient id="p" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="#272226"/>
+      <stop offset="100%" stop-color="#171515"/>
+    </linearGradient>
+    <linearGradient id="barCold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#e73825"/>
+      <stop offset="100%" stop-color="#ff1900"/>
+    </linearGradient>
+    <linearGradient id="barWarm" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#9780ff"/>
+      <stop offset="100%" stop-color="#edc5fc"/>
+    </linearGradient>
+    <radialGradient id="wl" cx="18%" cy="20%" r="55%">
+      <stop offset="0%" stop-color="#e73825" stop-opacity=".12"/>
+      <stop offset="72%" stop-color="#e73825" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="wr" cx="82%" cy="24%" r="55%">
+      <stop offset="0%" stop-color="#7b5ce0" stop-opacity=".22"/>
+      <stop offset="72%" stop-color="#7b5ce0" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="g3" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <filter id="grain3">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3"/>
+    </filter>
+    <marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#edc5fc"/>
+    </marker>
+  </defs>
+
+  <rect width="1280" height="600" fill="#0c0b0c"/>
+  <rect width="1280" height="600" fill="url(#wl)"/>
+  <rect width="1280" height="600" fill="url(#wr)"/>
+
+  <!-- header -->
+  <text x="64" y="58" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="700" letter-spacing="2.6" fill="#edc5fc">THE DEMONSTRATION</text>
+  <text x="64" y="96" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="30" font-weight="600" fill="#fafafa">The same class of incident, twice. <tspan font-family="Georgia, Times New Roman, serif" font-style="italic" font-weight="400" fill="#edc5fc">The second time it remembers.</tspan></text>
+
+  <!-- ── cold card ── -->
+  <g>
+    <rect x="64" y="128" width="560" height="196" rx="16" fill="url(#p)" stroke="#ffffff1a"/>
+    <circle cx="94" cy="162" r="4.6" fill="#e73825"/>
+    <circle cx="94" cy="162" r="10" fill="#e73825" opacity=".3" filter="url(#g3)">
+      <animate attributeName="opacity" values=".14;.5;.14" dur="2.2s" repeatCount="indefinite"/>
+    </circle>
+    <text x="112" y="167" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="2.2" fill="#e73825">RUN 1 — COLD</text>
+    <text x="94" y="204" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#fafafa">checkout-api · p99 4200ms vs 1500ms</text>
+    <text x="94" y="230" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" fill="#8a8589">CPU flat. Nothing deployed on the service that alerted.</text>
+    <text x="94" y="254" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" fill="#8a8589">The agent searches: impact, criticality, upstream changes,</text>
+    <text x="94" y="274" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" fill="#8a8589">shortest path, runbook, ownership — then writes it down.</text>
+    <text x="94" y="302" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#edc5fc">cause: PR #4471 on ledger-service — 2 hops upstream</text>
+  </g>
+
+  <!-- ── warm card ── -->
+  <g>
+    <rect x="656" y="128" width="560" height="196" rx="16" fill="url(#p)" stroke="#ffffff26"/>
+    <circle cx="686" cy="162" r="4.6" fill="#edc5fc"/>
+    <circle cx="686" cy="162" r="10" fill="#edc5fc" opacity=".3" filter="url(#g3)">
+      <animate attributeName="opacity" values=".5;.14;.5" dur="2.2s" repeatCount="indefinite"/>
+    </circle>
+    <text x="704" y="167" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="2.2" fill="#edc5fc">RUN 2 — WARM</text>
+    <text x="686" y="204" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#fafafa">notifications-api · same failure signature</text>
+    <text x="686" y="230" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" fill="#8a8589">The first memory lookup returns the postmortem BLACKBOX</text>
+    <text x="686" y="250" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" fill="#8a8589">wrote 90 seconds ago (cosine 0.59), so the mechanism and the</text>
+    <text x="686" y="270" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13.5" fill="#8a8589">fix are already known. Depth-4 traversal and PageRank: skipped.</text>
+    <text x="686" y="302" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#edc5fc">upstream search + path proof + runbook → one single-hop lookup</text>
+  </g>
+
+  <!-- ── metric bars ── -->
+  <g>
+    <!-- tool calls -->
+    <text x="64" y="380" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="2" fill="#5d5a5e">TOOL CALLS</text>
+    <rect x="240" y="364" width="560" height="22" rx="11" fill="url(#barCold)" opacity=".9"/>
+    <text x="256" y="380" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#0c0b0c">11</text>
+    <rect x="240" y="392" width="356" height="22" rx="11" fill="url(#barWarm)"/>
+    <text x="256" y="408" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#0c0b0c">7</text>
+    <text x="820" y="394" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#fafafa">−36%</text>
+
+    <!-- graph work -->
+    <text x="64" y="452" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="2" fill="#5d5a5e">INVESTIGATION WORK</text>
+    <rect x="240" y="436" width="560" height="22" rx="11" fill="url(#barCold)" opacity=".9"/>
+    <text x="256" y="452" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#0c0b0c">61.2ms</text>
+    <rect x="240" y="464" width="118" height="22" rx="11" fill="url(#barWarm)"/>
+    <text x="256" y="480" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#0c0b0c">12.9ms</text>
+    <text x="820" y="466" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#fafafa">4.7× faster</text>
+
+    <!-- steps -->
+    <text x="64" y="524" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="2" fill="#5d5a5e">INVESTIGATION STEPS</text>
+    <rect x="240" y="508" width="560" height="22" rx="11" fill="url(#barCold)" opacity=".9"/>
+    <text x="256" y="524" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#0c0b0c">4</text>
+    <rect x="240" y="536" width="280" height="22" rx="11" fill="url(#barWarm)"/>
+    <text x="256" y="552" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#0c0b0c">2</text>
+    <text x="820" y="538" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#fafafa">halved</text>
+  </g>
+
+  <!-- write-back loop annotation -->
+  <g>
+    <text x="952" y="432" font-family="Georgia, Times New Roman, serif" font-style="italic" font-size="16" fill="#c8c8c8">Nothing is cached.</text>
+    <text x="952" y="458" font-family="Georgia, Times New Roman, serif" font-style="italic" font-size="16" fill="#c8c8c8">The speed-up is a node that exists</text>
+    <text x="952" y="484" font-family="Georgia, Times New Roman, serif" font-style="italic" font-size="16" fill="#c8c8c8">because the agent put it there.</text>
+    <text x="952" y="520" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#5d5a5e">Press <tspan font-family="ui-monospace, Menlo, Consolas, monospace" fill="#edc5fc">forget</tspan> and the warm run</text>
+    <text x="952" y="540" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#5d5a5e">becomes a cold one again.</text>
+  </g>
+
+  <rect width="1280" height="600" filter="url(#grain3)" opacity=".035"/>
+</svg>
