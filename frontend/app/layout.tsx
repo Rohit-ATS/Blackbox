@@ -7,11 +7,11 @@ export const metadata: Metadata = {
     "Production breaks. BLACKBOX reads your service graph, traces the affected services, " +
     "finds the change that caused it, recalls the last time this happened, pages the " +
     "human who actually knows, and writes what it learned back into the graph. " +
-    "Built on FalkorDB for Graph Hacks.",
+    "Built on FalkorDB for Blackbox.",
   applicationName: "BLACKBOX",
   authors: [{ name: "Rohit Maruri", url: "https://github.com/Rohit-ATS" }],
   keywords: ["FalkorDB", "graph database", "incident response", "agent memory",
-             "Cypher", "affected services", "Graph Hacks"],
+             "Cypher", "affected services", "incident response"],
   openGraph: {
     title: "BLACKBOX — an on-call agent with a graph for a memory",
     description:

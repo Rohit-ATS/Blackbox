@@ -2,7 +2,7 @@
   "mcpServers": {
     "blackbox": {
       "command": "python",
-      "args": ["ABSOLUTE/PATH/TO/GraphHacks/mcp/server.py"],
+      "args": ["ABSOLUTE/PATH/TO/Blackbox/mcp/server.py"],
       "env": {
         "FALKOR_HOST": "localhost",
         "FALKOR_PORT": "6379",

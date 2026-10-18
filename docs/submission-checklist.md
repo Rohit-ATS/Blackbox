@@ -29,9 +29,9 @@ Work top to bottom. Do not deviate.
 - [ ] Add a hero GIF to the README — a 6-second loop of the cold run's
       impact set filling red is the strongest few seconds you have
 - [x] Push to a **public** GitHub repo —
-      [Rohit-ATS/GraphHacks](https://github.com/Rohit-ATS/GraphHacks)
+      [Rohit-ATS/Blackbox](https://github.com/Rohit-ATS/Blackbox)
 - [x] GitHub Pages deployment live at
-      [rohit-ats.github.io/GraphHacks](https://rohit-ats.github.io/GraphHacks/console/),
+      [rohit-ats.github.io/Blackbox](https://rohit-ats.github.io/Blackbox/console/),
       replaying the recorded runs (Pages is static, so there is no backend
       behind it — the page says so)
 - [ ] Publish the blog post ([`blog-post.md`](./blog-post.md)) on dev.to and

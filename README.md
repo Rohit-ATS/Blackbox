@@ -6,7 +6,7 @@
 
 Built on [FalkorDB](https://falkordb.com) for **Graph Hacks** (FalkorDB × WeMakeDevs).
 
-[**Try it live**](https://rohit-ats.github.io/GraphHacks/console/) · [Demo video](#demo) · [Quick start](#quick-start) · [How it works](#how-it-works) · [Schema](./schema.md) · [MCP](./mcp/README.md)
+[**Try it live**](https://rohit-ats.github.io/Blackbox/console/) · [Demo video](#demo) · [Quick start](#quick-start) · [How it works](#how-it-works) · [Schema](./schema.md) · [MCP](./mcp/README.md)
 
 </div>
 
@@ -22,7 +22,7 @@ fraction of the hops.
 
 ## Demo
 
-**[rohit-ats.github.io/GraphHacks](https://rohit-ats.github.io/GraphHacks/console/)** —
+**[rohit-ats.github.io/Blackbox](https://rohit-ats.github.io/Blackbox/console/)** —
 press *run cold*, then *run warm*.
 
 That page is served as static files, so there is no FalkorDB behind it. It
@@ -43,8 +43,8 @@ command — see below. It takes about two minutes.
 Requires Docker. Nothing else. No API key, no sign-up, **no auth anywhere**.
 
 ```bash
-git clone https://github.com/Rohit-ATS/GraphHacks
-cd GraphHacks
+git clone https://github.com/Rohit-ATS/Blackbox
+cd Blackbox
 cp .env.example .env          # optional: add an Anthropic key
 docker compose up
 ```
@@ -258,7 +258,7 @@ The same nine tools over MCP stdio — see [`mcp/README.md`](./mcp/README.md).
   "mcpServers": {
     "blackbox": {
       "command": "python",
-      "args": ["/absolute/path/to/GraphHacks/mcp/server.py"],
+      "args": ["/absolute/path/to/Blackbox/mcp/server.py"],
       "env": { "FALKOR_HOST": "localhost", "FALKOR_PORT": "6379" }
     }
   }

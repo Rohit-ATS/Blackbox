@@ -255,7 +255,7 @@ where it stopped. That's a demo I'd like to film.
 
 ---
 
-**Code:** https://github.com/Rohit-ATS/GraphHacks — MIT, `docker compose up`,
+**Code:** https://github.com/Rohit-ATS/Blackbox — MIT, `docker compose up`,
 no auth, no API key required.
 
 Built on [FalkorDB](https://falkordb.com) for Graph Hacks.

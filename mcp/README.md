@@ -22,7 +22,7 @@ replacing the path with where you cloned the repo:
   "mcpServers": {
     "blackbox": {
       "command": "python",
-      "args": ["/absolute/path/to/GraphHacks/mcp/server.py"],
+      "args": ["/absolute/path/to/Blackbox/mcp/server.py"],
       "env": { "FALKOR_HOST": "localhost", "FALKOR_PORT": "6379" }
     }
   }

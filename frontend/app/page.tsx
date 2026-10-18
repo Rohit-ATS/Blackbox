@@ -118,7 +118,7 @@ function Nav() {
         </a>
         <a
           className="masklink"
-          href="https://github.com/Rohit-ATS/GraphHacks"
+          href="https://github.com/Rohit-ATS/Blackbox"
           target="_blank"
           rel="noreferrer"
         >
@@ -436,7 +436,7 @@ function Cta() {
             <span className="arr" aria-hidden="true">↗</span>
           </Link>
           <a
-            href="https://github.com/Rohit-ATS/GraphHacks"
+            href="https://github.com/Rohit-ATS/Blackbox"
             target="_blank"
             rel="noreferrer"
             className="btn btn-ghost"
@@ -487,21 +487,21 @@ function Footer() {
           <div className="foot-col">
             <strong>Source</strong>
             <a
-              href="https://github.com/Rohit-ATS/GraphHacks"
+              href="https://github.com/Rohit-ATS/Blackbox"
               target="_blank"
               rel="noreferrer"
             >
               GitHub
             </a>
             <a
-              href="https://github.com/Rohit-ATS/GraphHacks/blob/main/schema.md"
+              href="https://github.com/Rohit-ATS/Blackbox/blob/main/schema.md"
               target="_blank"
               rel="noreferrer"
             >
               Graph schema
             </a>
             <a
-              href="https://github.com/Rohit-ATS/GraphHacks/tree/main/mcp"
+              href="https://github.com/Rohit-ATS/Blackbox/tree/main/mcp"
               target="_blank"
               rel="noreferrer"
             >
