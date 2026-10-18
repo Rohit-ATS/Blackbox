@@ -1,6 +1,7 @@
 "use client";
 
-import type { Answer } from "@/lib/types";
+import type { Answer, RunMetrics } from "@/lib/types";
+import { buildIncidentReport, downloadText } from "@/lib/report";
 import { PaneHeader } from "./AgentStream";
 
 /**
@@ -10,9 +11,11 @@ import { PaneHeader } from "./AgentStream";
  */
 export default function AnswerCard({
   answer,
+  metrics,
   onFocus,
 }: {
   answer: Answer | null;
+  metrics?: RunMetrics | null;
   onFocus: (nodes: string[]) => void;
 }) {
   if (!answer) {
@@ -44,15 +47,31 @@ export default function AnswerCard({
   const rc = answer.root_cause;
   const page = answer.page;
   const mem = answer.memory;
+  const report = buildIncidentReport(answer, metrics);
+  const copyReport = async () => {
+    await navigator.clipboard?.writeText(report);
+  };
 
   return (
     <div className="flex h-full min-h-0 flex-col">
       <PaneHeader
         title="answer"
         right={
-          <span className="text-[10px] text-dim">
-            {answer.incident_id} · {answer.severity}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="hidden text-[10px] text-dim sm:inline">
+              {answer.incident_id} · {answer.severity}
+            </span>
+            <button className="answer-action" onClick={() => void copyReport()} title="copy an incident handoff">
+              copy
+            </button>
+            <button
+              className="answer-action"
+              onClick={() => downloadText(`${answer.incident_id.toLowerCase()}-report.md`, report)}
+              title="download the incident handoff as Markdown"
+            >
+              export
+            </button>
+          </div>
         }
       />
       <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto px-3 py-2.5 text-[11.5px] leading-relaxed">
