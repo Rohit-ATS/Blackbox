@@ -56,7 +56,7 @@ Your job is to size the incident, not to solve it. In order:
 4. criticality_rank only if the affected services is ambiguous and you need to
    prioritise.
 
-Then stop and write one short paragraph: the service, the severity you'd assign,
+Call each tool at most once. Then stop and write one short paragraph: the service, the severity you'd assign,
 how many services are impacted and how many of those are customer-facing, and
 whether memory already recognises this failure. Do not speculate about the cause
 -- that is the Investigator's job. Be terse and factual. Cite numbers the tools
@@ -81,7 +81,8 @@ hops=2 so you can see deploys on the services it depends on. Then:
 
 If Triage found a highly similar prior incident whose lesson already names this
 failure mode, trust it and converge fast -- that is the point of having memory.
-Be terse. Name the PR, the file, the service, and the hop distance.""",
+Call each tool at most once and call write_finding exactly once. Never retry a
+successful write. Be terse. Name the PR, the file, the service, and the hop distance.""",
     },
     "Comms": {
         "tools": ["who_knows", "get_runbook", "write_finding"],
@@ -148,7 +149,9 @@ class Run:
             if data.get("recalled_own_postmortem"):
                 self.recalled_own = True
         if res.tool == "write_finding" and (res.data or {}).get("written"):
-            self.wrote.append(res.data["written"])
+            written = res.data["written"]
+            if written not in self.wrote:
+                self.wrote.append(written)
 
     @property
     def elapsed_ms(self) -> float:
@@ -592,6 +595,19 @@ def _run_agent_llm(brain, agent: str, spec: dict, run: Run, state: dict,
                 return
             model_tool_calls += 1
             tool, args = tc["name"], dict(tc["input"] or {})
+            if tool == "write_finding":
+                kind_to_label = {
+                    "root_cause": "CAUSED_BY",
+                    "postmortem": "Postmortem",
+                    "resolution": "RESOLVED_BY",
+                }
+                if kind_to_label.get(str(args.get("kind", "")).lower()) in run.wrote:
+                    yield _emit("error", message=(
+                        f"{agent}: {args.get('kind')} was already written; "
+                        "switching to the deterministic planner."))
+                    outcome["failed"] = True
+                    outcome["step_no"] = step_no
+                    return
             step_no += 1
             yield _emit("tool_call", agent=agent, tool=tool, args=args, step=step_no)
 
