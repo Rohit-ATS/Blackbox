@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="BLACKBOX mark">
+  <defs>
+    <filter id="mg" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+  </defs>
+  <circle cx="32" cy="32" r="31" fill="#0c0b0c"/>
+  <circle cx="32" cy="32" r="25" fill="none" stroke="#2a2729" stroke-width="1.2"/>
+  <path d="M32 7 A25 25 0 0 1 57 32" fill="none" stroke="#edc5fc" stroke-width="1.6" stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate" from="0 32 32" to="360 32 32" dur="6s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="32" cy="32" r="16" fill="none" stroke="#2a2729" stroke-width="1.2"/>
+  <path d="M16 32 A16 16 0 0 1 32 16" fill="none" stroke="#9780ff" stroke-width="1.6" stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate" from="360 32 32" to="0 32 32" dur="8s" repeatCount="indefinite"/>
+  </path>
+  <circle cx="32" cy="32" r="8" fill="none" stroke="#2a2729" stroke-width="1.2"/>
+  <circle cx="32" cy="32" r="4.4" fill="#edc5fc"/>
+  <circle cx="32" cy="32" r="9" fill="#edc5fc" opacity=".3" filter="url(#mg)">
+    <animate attributeName="opacity" values=".18;.6;.18" dur="2.2s" repeatCount="indefinite"/>
+  </circle>
+</svg>
