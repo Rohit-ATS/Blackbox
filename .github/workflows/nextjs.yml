@@ -1,12 +1,7 @@
 # Publishes the BLACKBOX console to GitHub Pages as a static site.
 #
-# Pages serves files, not servers: there is no FastAPI backend and no FalkorDB
-# behind the published page. So this build sets NEXT_PUBLIC_REPLAY=1, which
-# makes the UI replay fixtures/*.json -- real runs recorded against a real
-# graph by `python -m blackbox.record_fixtures`, byte-identical to what the
-# SSE endpoint streams. The page says so in a banner.
-#
-# For the live thing, with an agent actually querying FalkorDB: docker compose up.
+# Pages serves the static frontend. The live FastAPI/FalkorDB backend runs on
+# Render and is injected as a public build-time URL.
 name: Deploy Next.js site to Pages
 
 on:
@@ -52,7 +47,9 @@ jobs:
         env:
           # A project page is served from /<repo>, so every asset URL needs it.
           NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
-          NEXT_PUBLIC_REPLAY: "1"
+          NEXT_PUBLIC_BACKEND_URL: ${{ vars.BLACKBOX_BACKEND_URL }}
+          NEXT_PUBLIC_REPLAY: "0"
+          NEXT_PUBLIC_PAGES: "1"
         run: npm run build:pages
 
       - name: Upload artifact
