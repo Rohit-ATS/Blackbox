@@ -344,6 +344,28 @@ don't change.
 
 <img src="docs/assets/divider.svg" width="100%" alt="">
 
+## 🔍 The queries and algorithms
+
+Every graph call the product depends on lives in one file —
+[`backend/blackbox/tools.py`](./backend/blackbox/tools.py) — and each one returns the exact
+Cypher it ran in its `cypher` field, so you can read any query straight off the console or
+out of the API response. The node and relationship model, the three non-obvious modelling
+decisions, and the index definitions are in [`schema.md`](./schema.md).
+
+FalkorDB algorithms used: `algo.BFS` (impact), `algo.SPpaths` (criticality-weighted causal
+path), `algo.pageRank` (structural criticality), plus vector (HNSW/cosine), fulltext, and
+range indexes.
+
+## 🤖 AI assistance — disclosure
+
+This project was built with **Claude Code** as a coding assistant: it contributed code,
+tests, the README and the demo video's motion graphics. Every design decision — the graph
+model, the nine-tool boundary, the write-back loop, the handoff-through-the-graph
+architecture — was directed and reviewed by me, and I can explain any query, traversal or
+architectural choice in the repo. The demo video's narration is AI-synthesized speech.
+
+<img src="docs/assets/divider.svg" width="100%" alt="">
+
 <div align="center">
 
 <img src="docs/assets/mark.svg" width="48" alt="">

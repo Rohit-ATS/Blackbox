@@ -14,3 +14,6 @@ out/
 frontend/out/
 frontend/public/fixtures/
 frontend/public/.nojekyll
+
+# demo video render (43MB) — upload to YouTube, do not commit
+BLACKBOX-demo.mp4
