@@ -19,7 +19,7 @@ services:
       FALKOR_HOST: falkordb
       FALKOR_PORT: "6379"
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      BLACKBOX_MODEL: ${BLACKBOX_MODEL:-claude-sonnet-4-5}
+      BLACKBOX_MODEL: ${BLACKBOX_MODEL:-claude-sonnet-4-6}
     ports:
       - "8000:8000"
     depends_on:

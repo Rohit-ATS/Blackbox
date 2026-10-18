@@ -10,7 +10,7 @@ TENANTS = ["acme", "globex"]
 EMBED_DIM = 384
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "").strip()
-MODEL = os.getenv("BLACKBOX_MODEL", "claude-sonnet-4-5")
+MODEL = os.getenv("BLACKBOX_MODEL", "claude-sonnet-4-6")
 
 SEED = 42
 

@@ -25,9 +25,9 @@ from typing import Any
 
 from . import config
 
-# The build plan named claude-sonnet-4-5; that id is retired, so the default
-# is the current Opus. Override with BLACKBOX_MODEL.
-DEFAULT_MODEL = "claude-opus-5-5"
+# Sonnet is the cost-conscious default for live runs. Override with
+# BLACKBOX_MODEL when a different Anthropic model is desired.
+DEFAULT_MODEL = "claude-sonnet-4-6"
 
 
 @dataclass
@@ -41,8 +41,7 @@ class Turn:
 
 def model_name() -> str:
     name = os.getenv("BLACKBOX_MODEL", "").strip() or config.MODEL
-    # the plan's placeholder, mapped forward
-    if name in ("claude-sonnet-4-5", ""):
+    if name == "":
         return DEFAULT_MODEL
     return name
 
