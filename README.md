@@ -473,7 +473,9 @@ asserted in the tests, and visible in the console's tenant switcher, which swaps
 
 ## 🔌 Drive it from your own Claude
 
-The same nine tools over MCP stdio — see [`mcp/README.md`](./mcp/README.md).
+The same nine tools over MCP stdio, plus `graph_overview` and `agent_trace` —
+eleven in total, importing `backend/blackbox/tools.py` rather than
+reimplementing anything. See [`mcp/README.md`](./mcp/README.md).
 
 ```json
 {
@@ -504,6 +506,33 @@ path prefers `payments-api` over the equal-hop-count alternative, that
 `recent_changes` **misses** the cause at one hop and finds it at two, that the
 warm run cites a postmortem whose `created_by` is `blackbox`, and that the tenants
 cannot see each other.
+
+<details>
+<summary><b>Last full verification run — 18 Oct 2026, clean machine, live FalkorDB</b></summary>
+
+<br>
+
+```
+docker compose up -d falkordb          → healthy
+python -m blackbox.seed --all          → acme 42 services / 2660 rels · globex 16 / 412
+python -m pytest -q                    → 29 passed in 1.61s
+python -m blackbox.run_demo --reset    → cold 11 calls · warm 7 calls
+                                         "recalled its own postmortem" (PM-INC-3001-BB, 0.5888)
+                                         wrote CAUSED_BY, Postmortem, RESOLVED_BY
+curl /api/health                       → ok, 42 services, 9 tools
+curl /api/incident/stream              → SSE events stream, planner fallback on a bad key
+curl /api/trace?incident_id=INC-3001   → 11 AgentStep rows with their TOUCHED nodes
+mcp/server.py                          → 11 tools over stdio; affected_services → 11 / 3 customer-facing
+GRAPH.QUERY tenant:globex 'checkout-api' → 0 rows (isolation holds)
+```
+
+The run above also exercised the failure path: with an invalid `ANTHROPIC_API_KEY`
+the stream emitted *"Model unavailable (HTTP 401); running the deterministic
+planner instead. Findings still come from the graph"* and completed the
+investigation anyway — which is the degradation behaviour described above, observed
+rather than asserted.
+
+</details>
 
 ## 📂 Layout
 
